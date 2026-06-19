@@ -1,10 +1,19 @@
 {
-  "name": "hermes-core-api",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Hermes Core API - Stage 1 Netlify Function",
-  "license": "MIT",
-  "scripts": {
-    "start": "netlify dev"
-  }
+  const body = await req.json().catch(() => ({}));
+  
+  return new Response(JSON.stringify({
+    status: "Alpha Node Online - Empire Edition",
+    sovereign: "Lǎobǎn Pharaoh",
+    device: "Blackview A52Pro",
+    law: "48",
+    ein: "PENDING",
+    case: "EU8044516",
+    received: body.message || "No message",
+    message: "Nuke & Rebuild successful. Hermes ready to scale to Soloist + Bolt + Base44."
+  }, null, 2), {
+    headers: { 
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    }
+  });
 }
