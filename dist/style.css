@@ -1,59 +1,151 @@
-/ style.css - Pharaoh Conglomerate and Hunan Rights Angels Registry Inc Hermes-Toth-Agent Luxury Theme /
+/* ==================== PHARAOH CONGLOMERATE | HERMES-TOTH-AGENT ==================== */
+/* Luxury Dark Terminal / Sovereign Theme */
 
-/ Global /
+:root {
+  --gold: #ffd700;
+  --green: #0f0;
+  --dark: #000;
+  --accent: #a67c00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: "Helvetica Neue", serif;
-  background-color: #fdfdfd;
-  color: #111;
+  padding: 15px;
+  font-family: monospace, "Helvetica Neue", sans-serif;
+  background-color: var(--dark);
+  color: var(--green);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
 }
 
-/ Header /
+/* Boxes / Cards */
+.box {
+  border: 1px solid var(--green);
+  padding: 14px;
+  margin-bottom: 16px;
+  background-color: rgba(0, 20, 0, 0.6);
+  border-radius: 2px;
+}
+
+.conglomerate {
+  border-color: var(--gold);
+  color: var(--gold);
+  background-color: rgba(30, 20, 0, 0.8);
+}
+
+/* Header / Title Area */
 header {
-  background: linear-gradient(135deg, #000, #444);
-  color: #fff;
+  background: linear-gradient(135deg, #000, #222);
+  border: 1px solid var(--gold);
+  padding: 2.5rem 1.5rem;
   text-align: center;
-  padding: 4rem 2rem;
-}
-header h1 {
-  font-size: 3rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-header p {
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  font-style: italic;
+  margin-bottom: 20px;
+  border-radius: 4px;
 }
 
-/ Sections /
-section {
-  padding: 3rem 2rem;
-  max-width: 900px;
-  margin: auto;
-  line-height: 1.6;
+header h1 {
+  font-size: 2.4rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+  color: var(--gold);
 }
-.luxury-highlight {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #a67c00; / gold accent /
-  text-align: center;
-  margin: 2rem 0;
+
+header p {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #aaa;
+  margin: 0;
 }
+
+/* Grid Links */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.grid a {
+  color: var(--gold);
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #333;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.grid a:hover {
+  background-color: rgba(255, 215, 0, 0.1);
+  border-color: var(--gold);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Buttons */
+button {
+  background: transparent;
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 12px 18px;
+  margin: 6px 6px 6px 0;
+  font-family: monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background: var(--green);
+  color: var(--dark);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Log Area */
+#log {
+  border: 1px solid var(--green);
+  padding: 14px;
+  min-height: 260px;
+  background-color: #001100;
+  white-space: pre-wrap;
+  font-size: 13px;
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+/* Text Colors */
+.green { color: var(--green); }
+.red   { color: #ff4444; }
+.gold  { color: var(--gold); }
+
+/* BRI Hint */
 .bri-hint {
-  font-size: 1.4rem;
-  color: #444;
+  font-family: 'Noto Serif SC', serif;
+  color: var(--accent);
   text-align: center;
-  margin: 1.5rem 0;
-  font-family: 'Noto Serif SC', serif; / Chinese calligraphy style /
+  margin: 12px 0;
+  font-size: 1.1rem;
   font-weight: 500;
 }
 
-/ Footer /
-footer {
-  background: #000;
-  color: #fff;
-  text-align: center;
-  padding: 2rem;
-  font-size: 0.9rem;
+/* Responsive */
+@media (max-width: 600px) {
+  body { font-size: 13px; padding: 10px; }
+  header h1 { font-size: 2rem; }
+  .grid { grid-template-columns: 1fr; }
 }
