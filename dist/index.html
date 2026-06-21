@@ -280,93 +280,210 @@
       'https://pharaoh-sovereign-engine.base44.app',
       'https://sovereign-decision-engine.base44.app',
       'https://pharaoh-sight-engine.base44.app',
-      'https://pharaoh-nexus-gold.base44.app',
-      'https://pharaoh-core-engine.base44.app',
-      'https://pharaoh-synergy-hub.base44.app',
-      'https://amusing-green-growth-grid.base44.app'
-    ];
-    
-    async function getStatus() {
-      try {
-        const r = await fetch('/api/status');
-        if (!r.ok) {
-          throw new Error(`HTTP ${r.status}`);
-        }
-        const j = await r.json();
-        document.getElementById('state').textContent = j.colonel || 'ACTIVE';
-        document.getElementById('state').className = 'green';
-      } catch (e) {
-        document.getElementById('state').textContent = 'OFFLINE';
-        document.getElementById('state').className = 'red';
-      }
+
+`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharaoh Conglomerate | Diamond Standard</title>
+  <!-- Google Fonts: Chinese Calligraphy Style -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", serif;
+      background-color: #fdfdfd;
+      color: #111;
     }
-
-    async function getMemory() {
-      const logEl = document.getElementById('log');
-      try {
-        const r = await fetch('/api/memory');
-        if (!r.ok) {
-          throw new Error(`HTTP ${r.status}`);
-        }
-        const j = await r.json();
-        const mem = j.memories || [];
-        
-        if (!mem.length) {
-          logEl.textContent = 'Memory empty. LAW48 ready. 16 Nodes linked.';
-          return;
-        }
-
-        logEl.textContent = mem.map(m => {
-          const ts = m.timestamp || m.time || Date.now();
-          const date = new Date(ts).toLocaleString();
-          const act = m.action || m.type || 'EVENT';
-          const ref = m.case_ref || m.case || 'EU8044516';
-          return `${date} | ${act} | Case: ${ref} | Chain: 0x504841`;
-        }).join('\n');
-        
-      } catch (e) {
-        logEl.textContent = 'Error: Cannot reach /api/memory';
-      }
+    header {
+      background: linear-gradient(135deg, #000, #444);
+      color: #fff;
+      text-align: center;
+      padding: 4rem 2rem;
     }
-
-    async function postLog(action, button) {
-      try {
-        if (button) button.disabled = true;
-        const r = await fetch('/api/log', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            action,
-            timestamp: Date.now(),
-            case_ref: 'EU8044516',
-            conglomerate: 'PHARAOH',
-            nodes: CONGLOMERATE_NODES.length
-          })
-        });
-        if (!r.ok) {
-          throw new Error(`HTTP ${r.status}`);
-        }
-        await getMemory();
-      } catch (e) {
-        alert('Log failed. Check network.');
-      } finally {
-        if (button) button.disabled = false;
-      }
+    header h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
+    header p {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      font-style: italic;
+    }
+    section {
+      padding: 3rem 2rem;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    .luxury-highlight {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #a67c00; / gold accent /
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .bri-hint {
+      font-size: 1.4rem;
+      color: #444;
+      text-align: center;
+      margin: 1.5rem 0;
+      font-family: 'Noto Serif SC', serif; / Chinese calligraphy style /
+      font-weight: 500;
+    }
+    footer {
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pharaoh Conglomerate</h1>
+    <p>Civilizational Covenant for Stewardship & Regeneration</p>
+  </header>
 
-    document.getElementById('btn-log').onclick = function () {
-      postLog('EU_VIOLATION', this);
-    };
-    document.getElementById('btn-reflect').onclick = function () {
-      postLog('COLONEL_REFLECT', this);
-    };
-    document.getElementById('btn-get').onclick = getMemory;
+  <section>
+    <div class="luxury-highlight">The Diamond Standard</div>
+    <p>
+      Pharaoh Conglomerate (Pharaoh Angels Inc. EIN 88-0836464) is a covenant‑driven nonprofit dedicated to ecological regeneration, transparent governance, and community stewardship. Guided by the Diamond Standard, we mobilize volunteers, donors, and partners into a civilizational workforce — restoring land, reforming laws, and building systems worthy of future generations.
+    </p>
+    <p>
+      Our retained Human Rights Angels Registry Inc. EIN   C Corporation's structure ensures resilience and accountability, while the Hermes-Toth-Agent backend powers compliance, donor orchestration, sovereign proxy and transparency.
+    </p>
+    <p>
+      Together, Hermes Agent and Pages deliver a seamless luxury‑grade digital experience — where governance meets elegance, and stewardship meets sovereignty.
+    </p>
+    <div class="bri-hint">🌏 BRI Incentives: 共赢 · 合作 · 繁荣</div>
+  </section>
 
-    getStatus();
-    getMemory();
-    console.log('LAW48 DNA: 16 Conglomerate Nodes linked', CONGLOMERATE_NODES);
+  <footer>
+    © 2026 Pharaoh Conglomerate | Human Rights Angels Registry Inc.  
+    <br>Hermes Agent powered by Cloudflare Pages
+  </footer>
+</body>
+</html>
+`
+
+
+
+
+🌐 Key Enhancements
+- Visual Appeal: Gradient backgrounds, smooth animations, and glassmorphism cards.
+- SEO Boost: Meta tags, schema markup, and semantic HTML structure.
+- Performance: Lazy-loaded images, compressed assets, and responsive layout.
+
+---
+
+💻 Example Code (HTML + CSS + JS)
+
+`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hermes Toth Agent – Empowering digital transformation with AI-driven insights and creative innovation." />
+  <meta name="keywords" content="Hermes Toth, AI Agent, digital transformation, creative automation, tech consulting" />
+  <meta name="author" content="Hermes Toth" />
+  <title>Hermes Toth Agent | AI Innovation Hub</title>
+
+  <!-- Open Graph for social previews -->
+  <meta property="og:title" content="Hermes Toth Agent" />
+  <meta property="og:description" content="Discover next-gen AI solutions and creative automation." />
+  <meta property="og:image" content="assets/preview.jpg" />
+  <meta property="og:type" content="website" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>Hermes Toth Agent</h1>
+    <p>Empowering your digital evolution 👊😎✊</p>
+    <a href="#services" class="cta">Explore Services</a>
+  </header>
+
+  <section id="services" class="cards">
+    <div class="card">
+      <h2>AI Consulting</h2>
+      <p>Transform your business with intelligent automation and predictive insights.</p>
+    </div>
+    <div class="card">
+      <h2>Creative Design</h2>
+      <p>Craft stunning visuals and experiences that captivate audiences.</p>
+    </div>
+    <div class="card">
+      <h2>Web Development</h2>
+      <p>Build fast, responsive, and SEO-optimized websites that convert.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Hermes Toth Agent | Designed for impact</p>
+  </footer>
+
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(anchor.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
   </script>
 </body>
 </html>
+`
+
+---
+
+🎨 styles.css
+`css
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: #00c6ff;
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.cta:hover { background: #0072ff; }
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 60px 20px;
+}
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 30px;
+  width: 300px;
+  transition: transform 0.3s ease;
+}
+.card:hover { transform: translateY(-10px); }
