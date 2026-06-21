@@ -1,5 +1,3 @@
-`markdown
-
 Pharaoh Conglomerate | Hermes Toth Agent 👑
 
 Civilizational Covenant for Stewardship & Regeneration.  
