@@ -1,4 +1,3 @@
-'js
 // utils/dateFormatter.js
 export function formatDate(ts) {
   // Handles both ISO strings and numeric timestamps
