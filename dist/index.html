@@ -9,17 +9,24 @@
       background: #000; 
       color: #0f0; 
       font-family: monospace; 
-      padding: 20px;
+      padding: 15px;
       margin: 0;
+      font-size: 13px;
     }
     .box { 
       border: 1px solid #0f0; 
-      padding: 15px; 
-      margin-bottom: 15px;
+      padding: 12px; 
+      margin-bottom: 12px;
     }
     .conglomerate {
       border: 1px solid #ffd700;
       color: #ffd700;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 5px;
+      margin-top: 8px;
     }
     button {
       background: #000;
@@ -36,7 +43,7 @@
     #log {
       border: 1px solid #0f0;
       padding: 10px;
-      min-height: 300px;
+      min-height: 250px;
       white-space: pre-wrap;
     }
     .green { color: #0f0; }
@@ -46,20 +53,32 @@
 </head>
 <body>
   <div class="box conglomerate">
-    <div class="gold">PHARAOH CONGLOMERATE | SOVEREIGN CHAIN</div>
-    <div>Owner: <span class="gold">0xCOLONEL</span> | Chain: <span class="gold">0x504841</span></div>
-    <div>
-      <a href="https://soloist.ai/pharaohconglomerate" target="_blank">PharaohConglomerate</a> | 
-      <a href="https://soloist.ai/humanrightsangelsregistryinc" target="_blank">HR Angels Registry</a> |
-      <a href="https://app.netlify.com/projects/pharaohconglomerate-inter-nfea-7p17m1/" target="_blank">Netlify: PC</a> |
+    <div class="gold">PHARAOH CONGLOMERATE | SOVEREIGN CHAIN 0x504841</div>
+    <div>Owner: 0xCOLONEL | Case: EU8044516 | Protocol: SWADIA</div>
+    <div class="grid">
+      <a href="https://soloist.ai/pharaohconglomerate" target="_blank">PharaohConglomerate</a>
+      <a href="https://soloist.ai/humanrightsangelsregistryinc" target="_blank">HR Angels Registry</a>
+      <a href="https://sovereign-pharaoh-vault.base44.app" target="_blank">Sovereign Vault</a>
+      <a href="https://pharaoh-bank-link.base44.app" target="_blank">Bank Link</a>
+      <a href="https://pharaoh-command-base.base44.app" target="_blank">Command Base</a>
+      <a href="https://pharaoh-serve-flow.base44.app" target="_blank">Serve Flow</a>
+      <a href="https://pharaoh-direct-flow.base44.app" target="_blank">Direct Flow</a>
+      <a href="https://pharaoh-sovereign-engine.base44.app" target="_blank">Sovereign Engine</a>
+      <a href="https://sovereign-decision-engine.base44.app" target="_blank">Decision Engine</a>
+      <a href="https://pharaoh-sight-engine.base44.app" target="_blank">Sight Engine</a>
+      <a href="https://pharaoh-nexus-gold.base44.app" target="_blank">Nexus Gold</a>
+      <a href="https://pharaoh-core-engine.base44.app" target="_blank">Core Engine</a>
+      <a href="https://pharaoh-synergy-hub.base44.app" target="_blank">Synergy Hub</a>
+      <a href="https://amusing-green-growth-grid.base44.app" target="_blank">Growth Grid</a>
+      <a href="https://app.netlify.com/projects/pharaohconglomerate-inter-nfea-7p17m1/" target="_blank">Netlify: PC</a>
       <a href="https://app.netlify.com/teams/humanrightsangels/projects" target="_blank">Netlify: HR</a>
     </div>
   </div>
 
   <div class="box">
-    <div>SWADIA PROTOCOL | LAW48 ACTIVE</div>
+    <div>SWADIA PROTOCOL | LAW48 ACTIVE | HERMES_TOTH_v4</div>
     <div>COLONEL|LAW48 <span id="state" class="green">CHECKING...</span></div>
-    <div>Case: <span id="case">EU8044516</span> | Agent: HERMES_TOTH_v4</div>
+    <div>Zero Heidelberg: <span class="green">TRUE</span></div>
   </div>
 
   <button id="btn-log">LOG EU VIOLATION</button>
@@ -69,14 +88,24 @@
   <div id="log">Connecting to KV...</div>
 
   <script>
-    // LAW48: Conglomerate DNA. Zero Wrangler. Zero Heidelberg.
+    // LAW48: Full Conglomerate DNA. 16 Nodes. Zero Wrangler. Zero Heidelberg.
     
-    const CONGLOMERATE = {
-      pharaoh: 'https://soloist.ai/pharaohconglomerate',
-      hr_registry: 'https://soloist.ai/humanrightsangelsregistryinc',
-      netlify_pc: 'https://app.netlify.com/projects/pharaohconglomerate-inter-nfea-7p17m1/',
-      netlify_hr: 'https://app.netlify.com/teams/humanrightsangels/projects'
-    };
+    const CONGLOMERATE_NODES = [
+      'https://soloist.ai/pharaohconglomerate',
+      'https://soloist.ai/humanrightsangelsregistryinc',
+      'https://sovereign-pharaoh-vault.base44.app',
+      'https://pharaoh-bank-link.base44.app',
+      'https://pharaoh-command-base.base44.app',
+      'https://pharaoh-serve-flow.base44.app',
+      'https://pharaoh-direct-flow.base44.app',
+      'https://pharaoh-sovereign-engine.base44.app',
+      'https://sovereign-decision-engine.base44.app',
+      'https://pharaoh-sight-engine.base44.app',
+      'https://pharaoh-nexus-gold.base44.app',
+      'https://pharaoh-core-engine.base44.app',
+      'https://pharaoh-synergy-hub.base44.app',
+      'https://amusing-green-growth-grid.base44.app'
+    ];
     
     async function getStatus() {
       try {
@@ -84,7 +113,6 @@
         const j = await r.json();
         document.getElementById('state').textContent = j.colonel || 'ACTIVE';
         document.getElementById('state').className = 'green';
-        document.getElementById('case').textContent = j.case_ref || j.case || 'EU8044516';
       } catch (e) {
         document.getElementById('state').textContent = 'OFFLINE';
         document.getElementById('state').className = 'red';
@@ -99,7 +127,7 @@
         const mem = j.memories || [];
         
         if (!mem.length) {
-          logEl.textContent = 'Memory empty. LAW48 ready. Conglomerate linked.';
+          logEl.textContent = 'Memory empty. LAW48 ready. 16 Nodes linked.';
           return;
         }
 
@@ -126,7 +154,7 @@
             timestamp: Date.now(),
             case_ref: 'EU8044516',
             conglomerate: 'PHARAOH',
-            registry: 'HR_ANGELS'
+            nodes: CONGLOMERATE_NODES.length
           })
         });
         await getMemory();
@@ -135,15 +163,15 @@
       }
     }
 
-    // Wire buttons
     document.getElementById('btn-log').onclick = () => postLog('EU_VIOLATION');
     document.getElementById('btn-reflect').onclick = () => postLog('COLONEL_REFLECT');
     document.getElementById('btn-get').onclick = getMemory;
 
-    // Boot
     getStatus();
     getMemory();
-    console.log('LAW48 DNA: PharaohConglomerate + HR Angels Registry linked', CONGLOMERATE);
+    console.log('LAW48 DNA: 16 Conglomerate Nodes linked', CONGLOMERATE_NODES);
   </script>
+</body>
+</html>
 </body>
 </html>
