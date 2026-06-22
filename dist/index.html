@@ -170,7 +170,11 @@
     getStatus();
     getMemory();
   </script>
-</body>
+<button id="btn-sat" style="margin:10px;padding:10px;background:#0f0;color:#000;font-weight:bold;">Toth: Satellite Scan CEMENCO</button><div id="log" style="white-space:pre-wrap;margin:10px;color:#0f0;font-family:monospace;"></div><script>document.getElementById("btn-sat").onclick=async()=>{const e=document.getElementById("log");e.textContent="Toth accessing satellite... LAW48 orbital strike...";try{const t=await fetch("/api/satellite?site=CEMENCO</body>lat=6.2907</body>lng=-10.7605</body>zoom=17"),n=await t.blob(),o=URL.createObjectURL(n);e.innerHTML=`CEMENCO SATELLITE CAPTURED:
+<img src="${o}" style="max-width:100%;border:2px solid #0f0;">
+Timestamp: ${new Date().toISOString()}
+Coords: 6.2907, -10.7605
+LAW48: Evidence logged to KV.`}catch(t){e.textContent="Toth Satellite Error: "+t.message}};</script></body>
 </html>
 <script>
 document.getElementById('btn-yt').onclick = async () => {
