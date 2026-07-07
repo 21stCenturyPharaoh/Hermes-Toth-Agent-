@@ -7,7 +7,7 @@ export async function onRequestPost(context) {
   if (ein === '88-0710776') alpha_node = 'Alpha-Hesed';
   if (ein === '88-0836464') alpha_node = 'Alpha-Nefertari';
   
-  return Response.json({
+  return new Response(JSON.stringify({
     status: 'LAW48_ACTIVE',
     alpha_node,
     ein,
@@ -16,5 +16,11 @@ export async function onRequestPost(context) {
     maps_key_ready: !!env.MAPS_KEY,
     netlify_bloat_purged: true,
     law: 48
+  }), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
   });
 }
