@@ -1,0 +1,7 @@
+User-agent: Baiduspider
+Allow: /
+
+User-agent: *
+Allow: /
+Sitemap: https://hrar.nic.eu.org/sitemap.xml
+Sitemap: https://angels.nic.eu.org/sitemap.xml
