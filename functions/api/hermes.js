@@ -19,7 +19,6 @@ export async function onRequest(context) {
   
   console.log(`LAW48: ${alpha_node} executed ${event} for ${ein}`);
   
-  // Check Google keys
   const youtube_ready = !!env.YOUTUBE_API_KEY;
   const maps_ready = !!env.GOOGLE_MAPS_API_KEY;
   
