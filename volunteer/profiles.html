@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Volunteer Profiles | H.A.L.EL NODE</title>
+  <style>
+    body{background:#0a0a0a;color:#d4af37;font-family:Georgia;padding:1rem}
+    h1{text-align:center;text-shadow:0 0 20px #d4af37}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;max-width:1400px;margin:auto}
+    .card{background:#1a1a1a;border:2px solid #d4af37;padding:1.5rem}
+    .btn{background:#d4af37;color:#0a0a0a;padding:0.5rem 1rem;text-decoration:none;display:inline-block;margin:0.5rem 0}
+    .form-card{background:#1a1a1a;border:1px solid #d4af37;padding:1rem;margin:1rem 0}
+    input,textarea,select{width:100%;padding:0.5rem;margin:0.5rem 0;background:#0a0a0a;color:#d4af37;border:1px solid #d4af37}
+    .youtube{margin:2rem 0;text-align:center}
+  </style>
+</head>
+<body>
+  <h1>VOLUNTEER EXCHANGE PORTAL</h1>
+  <p style="text-align:center">LinkedIn • Fiverr • Taproot • AngelList • Catchafire • Idealist • VolunteerMatch</p>
+  
+  <div class="grid">
+    <div class="card">
+      <h3>📋 Post Your Profile</h3>
+      <p>Like LinkedIn: Resume, Skills, Order, Consulate, Team</p>
+      <form class="form-card" data-endpoint="/api/profile">
+        <input type="text" placeholder="Full Name" required>
+        <input type="email" placeholder="Email" required>
+        <select><option>Select Order</option><option>Ruth</option><option>Esther</option><option>Sarah</option></select>
+        <select><option>Select Node Team</option><option>Aleph</option><option>Bet</option><option>Gimel</option></select>
+        <textarea placeholder="Skills & Resume"></textarea>
+        <button type="submit" class="btn">Create Profile</button>
+      </form>
+    </div>
+    
+    <div class="card">
+      <h3>🪙 Trade Eco-Stewardship Tokens</h3>
+      <p>Post or trade tokens earned from missions</p>
+      <form class="form-card" data-endpoint="/api/tokens">
+        <input type="number" placeholder="Token Amount">
+        <select><option>Trade For</option><option>Diamond Certificate</option><option>Mission Access</option><option>Badge</option></select>
+        <button type="submit" class="btn">Post Trade</button>
+      </form>
+    </div>
+    
+    <div class="card">
+      <h3>💎 Diamond Certificates</h3>
+      <p>Post BRI & ESG certificates earned</p>
+      <form class="form-card" data-endpoint="/api/certificates">
+        <input type="text" placeholder="Certificate Name">
+        <input type="file" accept=".pdf,.jpg">
+        <button type="submit" class="btn">Upload Certificate</button>
+      </form>
+    </div>
+    
+    <div class="card">
+      <h3>💼 Business/Nonprofit Portal</h3>
+      <p>Post volunteer needs - Fee to Fiscal Agent</p>
+      <form class="form-card" data-endpoint="/api/business-post">
+        <input type="text" placeholder="Organization Name" required>
+        <input type="email" placeholder="Contact Email" required>
+        <textarea placeholder="Volunteer Need Description" required></textarea>
+        <input type="number" placeholder="Volunteers Needed">
+        <p style="color:#ff6b6b">Fee: Paid to CashApp $LetGodHelp</p>
+        <button type="submit" class="btn">Post Need + Pay Fee</button>
+      </form>
+    </div>
+  </div>
+  
+  <div class="youtube">
+    <h3>📺 Training Videos</h3>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+    <p>Replace YOUR_VIDEO_ID with actual H.A.L.EL training content</p>
+  </div>
+  
+  <footer style="text-align:center;margin-top:3rem;color:#666">
+    <p><strong>Let
+# 1. UPDATE EMPIRE LANDING WITH ALL 3 EINS
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PHARAOH EMPIRE | Law 48 Trinity</title>
+  <style>
+    body{background:#000;color:#d4af37;font-family:Georgia;margin:0;padding:2rem}
+    .empire{text-align:center;max-width:1400px;margin:auto}
+    h1{font-size:3.5rem;text-shadow:0 0 30px #d4af37;margin:0}
+    .trinity{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin:3rem 0}
+    .node{border:3px solid;padding:2rem;text-decoration:none;transition:all 0.3s}
+    .hesed{border-color:#d4af37;color:#d4af37}
+    .nefertari{border-color:#c0c0c0;color:#c0c0c0}
+    .firewall{border-color:#8b0000;color:#ff6b6b}
+    .node:hover{transform:scale(1.05);background:rgba(212,175,55,0.1)}
+    .law{color:#888;font-style:italic;margin:2rem 0}
+    .ein{font-size:0.8rem;color:#666;margin-top:0.5rem}
+  </style>
+</head>
+<body>
+  <div class="empire">
+    <h1>PHARAOH EMPIRE</h1>
+    <p class="law">Law 48: Three EINs. Two Citadels. One Firewall. One Sovereign.</p>
+    
+    <div class="trinity">
+      <a href="/hrar" class="node hesed">
+        <h2>HRAR INC.</h2>
+        <p>Alpha-Hesed Command</p>
+        <p class="ein">EIN: 88-0710776</p>
+        <p>Real Estate Citadel</p>
+      </a>
+      
+      <a href="/angels" class="node nefertari">
+        <h2>PHARAOH ANGELS INC.</h2>
+        <p>Alpha-Nefertari Command</p>
+        <p class="ein">EIN: 88-0836464</p>
+        <p>Intelligence Citadel</p>
+      </a>
+      
+      <div class="node firewall">
+        <h2>LET GOD HELP RESOURCES</h2>
+        <p>Fiscal Agent Firewall</p>
+        <p class="ein">EIN: 52-0409059</p>
+        <p>CashApp: $LetGodHelp</p>
+        <p>26 Airdrie Drive Bear, DE</p>
+      </div>
+    </div>
+    
+    <a href="/portal/" style="background:#d4af37;color:#000;padding:1.5rem 3rem;text-decoration:none;display:inline-block;font-size:1.2rem;margin-top:2rem">
+      ⚔️ ENTER H.A.L.EL NODE ⚔️
+    </a>
+    
+    <p style="color:#555;font-size:0.8rem;margin-top:3rem">
+      IRS FIREWALL ACTIVE: All entities legally separate. 501(c)(3) compliance maintained.
+    </p>
+  </div>
+</body>
+</html>
