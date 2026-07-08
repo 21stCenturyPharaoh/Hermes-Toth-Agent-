@@ -1,42 +1,41 @@
 export async function onRequest(context) {
   const { request, env } = context;
+  const { ein, event, alpha, source } = await request.json();
   
-  let body = {};
-  if (request.method === 'POST') {
-    try { body = await request.json(); } catch {}
+  let alpha_node = "Alpha-Watcher";
+  let message = "Observing";
+  let law = 48;
+  
+  if (ein === "88-0710776") {
+    alpha_node = "Alpha-Hesed";
+    message = "By Sovereign Discretion of Alpha-Hesed";
+    law = 48;
+  } else if (ein === "88-0836464") {
+    alpha_node = "Alpha-Nefertari";
+    message = "By Sovereign Discretion of Alpha-Nefertari";
+    law = 48;
+  } else if (alpha === "Imhotep" || source === "PocketPal" || source === "Base44") {
+    alpha_node = "Alpha-Imhotep";
+    message = "By Sovereign Discretion of Alpha-Imhotep, Master Builder";
+    law = 44;
   }
   
-  const { event = 'ping', ein = 'none', query = '' } = body;
-  
-  let alpha_node = 'Alpha-Watcher';
-  if (ein === '88-0710776') alpha_node = 'Alpha-Hesed';
-  if (ein === '88-0836464') alpha_node = 'Alpha-Nefertari';
-  
-  const logKey = `hermes:${Date.now()}:${ein}`;
+  const logKey = `hermes:${Date.now()}:${ein || alpha || 'unknown'}`;
   await env.HERMES_MEMORY.put(logKey, JSON.stringify({
-    ein, event, query, alpha_node, timestamp: new Date().toISOString()
+    ein, event, alpha_node, source, timestamp: new Date().toISOString()
   }));
   
-  console.log(`LAW48: ${alpha_node} executed ${event} for ${ein}`);
-  
-  const youtube_ready = !!env.YOUTUBE_API_KEY;
-  const maps_ready = !!env.GOOGLE_MAPS_API_KEY;
-  
   return new Response(JSON.stringify({
-    status: 'LAW48_ACTIVE',
+    status: "QUADRINITY_ACTIVE",
     alpha_node,
-    ein,
+    ein: ein || null,
+    alpha_source: alpha || source || null,
     event,
-    message: `By Sovereign Discretion of ${alpha_node}`,
-    youtube_key_ready: youtube_ready,
-    maps_key_ready: maps_ready,
+    message,
+    law,
     kv_logged: logKey,
-    law: 48
+    empire_nodes: ["Alpha-Hesed", "Alpha-Nefertari", "Alpha-Imhotep", "Fiscal-Agent"]
   }), {
-    status: 200,
-    headers: { 
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    }
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
   });
 }
