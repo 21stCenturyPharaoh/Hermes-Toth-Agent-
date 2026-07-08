@@ -2,45 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PHARAOH EMPIRE | Quadrinity + Base 44</title>
+  <meta name="baidu-site-verification" content="PENDING" />
+  <title>PHARAOH EMPIRE | Quadrinity Command</title>
   <style>
     body{background:#000;color:#00ffff;font-family:'Courier New',monospace;margin:0;padding:2rem}
     .empire{text-align:center;max-width:1400px;margin:auto}
     h1{font-size:3rem;text-shadow:0 0 30px #00ffff,0 0 60px #ffd700}
-    .quadrinity{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin:3rem 0}
-    .node{border:3px solid;padding:2rem;text-decoration:none;transition:all 0.3s}
-    .hesed{border-color:#d4af37;color:#d4af37}
-    .nefertari{border-color:#c0c0c0;color:#c0c0c0}
-    .imhotep{border-color:#cd7f32;color:#cd7f32}
-    .firewall{border-color:#8b0000;color:#ff6b6b}
-    .node:hover{transform:scale(1.05);box-shadow:0 0 30px currentColor}
-    .mission_control{background:linear-gradient(90deg,#ffd700,#00ffff);color:#000;padding:2rem;margin:2rem 0;text-decoration:none;display:block;font-size:1.5rem;font-weight:bold}
-    .ein{font-size:0.7rem;color:#666}
+    .btn{background:linear-gradient(90deg,#ffd700,#00ffff);color:#000;padding:1rem 2rem;margin:0.5rem;border:none;cursor:pointer;font-weight:bold}
+    .btn:hover{box-shadow:0 0 20px #00ffff}
+    .output{background:#111;border:1px solid #00ffff;padding:1rem;margin:2rem 0;text-align:left;min-height:100px;color:#0f0}
   </style>
 </head>
 <body>
   <div class="empire">
-    <h1>PHARAOH EMPIRE</h1>
-    <p style="color:#888">Law 48 + 44: Quadrinity Active | Base 44 Connected</p>
+    <h1>PHARAOH EMPIRE :: QUADRINITY</h1>
+    <p>Law 48 + 44: Four Alphas. Two Citadels. One Sovereign.</p>
     
-    <a href="/mission_control.html" class="mission_control">⚔️ ENTER_THE_ENGINE :: MISSION_CONTROL ⚔️</a>
-    
-    <div class="quadrinity">
-      <a href="/hrar" class="node hesed">
-        <h2>HRAR INC.</h2><p>Alpha-Hesed</p><p class="ein">88-0710776</p>
-      </a>
-      <a href="/angels" class="node nefertari">
-        <h2>ANGELS INC.</h2><p>Alpha-Nefertari</p><p class="ein">88-0836464</p>
-      </a>
-      <a href="/api/imhotep" class="node imhotep">
-        <h2>ALPHA-IMHOTEP</h2><p>Base 44</p><p class="ein">imhotep50cal@gmail.com</p>
-      </a>
-      <div class="node firewall">
-        <h2>LET GOD HELP</h2><p>Firewall</p><p class="ein">52-0409059</p>
-      </div>
+    <div>
+      <button class="btn" onclick="pingAlpha('88-0710776')">PING ALPHA-HESED</button>
+      <button class="btn" onclick="pingAlpha('88-0836464')">PING ALPHA-NEFERTARI</button>
+      <button class="btn" onclick="pingImhotep()">PING ALPHA-IMHOTEP</button>
+      <button class="btn" onclick="window.location='/portal/boss-zhipin.html'">BOSS直聘挑战</button>
     </div>
     
-    <p style="color:#555;font-size:0.8rem">WhatsApp: +231776961800 | Orange Money: +231776961800</p>
+    <div id="output" class="output">TOTH AWAITING COMMAND...</div>
+    
+    <p style="color:#888;margin-top:3rem">
+      HRAR: 88-0710776 | Angels: 88-0836464 | Firewall: 52-0409059 | Imhotep: Base44
+    </p>
   </div>
+
+<script>
+async function pingAlpha(ein) {
+  const out = document.getElementById('output');
+  out.innerText = 'PINGING EIN: ' + ein + '...';
+  try {
+    const res = await fetch('/api/hermes', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ein: ein, event: 'status_check'})
+    });
+    const data = await res.json();
+    out.innerText = 'RESPONSE:\n' + JSON.stringify(data, null, 2);
+  } catch(e) {
+    out.innerText = 'ERROR: ' + e.message;
+  }
+}
+
+async function pingImhotep() {
+  const out = document.getElementById('output');
+  out.innerText = 'PINGING ALPHA-IMHOTEP...';
+  try {
+    const res = await fetch('/api/imhotep', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({message: 'Architect status', source: 'Base44'})
+    });
+    const data = await res.json();
+    out.innerText = 'IMHOTEP RESPONSE:\n' + JSON.stringify(data, null, 2);
+  } catch(e) {
+    out.innerText = 'ERROR: ' + e.message;
+  }
+}
+</script>
 </body>
 </html>
