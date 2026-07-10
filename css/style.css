@@ -1,0 +1,43 @@
+/* HERMES-TOTH-AGENT | CSS | v1.0 | Law 48 Legally Blind Friendly */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+:root{
+  --gold: #d9b25f;       /* Primary Gold */
+  --gold-glow: #fbbf24;  /* Glow Gold */
+  --emerald: #22c55e;    /* Angel Emerald */
+  --slate-950: #020617;  /* Deep Black */
+  --slate-900: #0f172a;  /* Card BG */
+  --text-lg: 1.25rem;    /* Base text 20px */
+  --text-xl: 1.5rem;     /* Headings 24px */
+}
+
+body{
+  font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+  background-color: var(--slate-950);
+  color: #ffffff;
+  font-size: var(--text-lg);
+  line-height: 1.6;
+}
+
+.hanzi{ font-family: 'Noto Sans SC', sans-serif; }
+
+.glow-gold{ text-shadow: 0 0 20px var(--gold-glow); }
+.glow-emerald{ text-shadow: 0 0 20px var(--emerald); }
+
+/* ACCESSIBILITY: LEGALLY BLIND FRIENDLY ✅ */
+h1, h2, h3 { font-weight: 900; letter-spacing: 0.02em; }
+p, a, button, li { font-size: var(--text-lg); }
+a:focus, button:focus, input:focus {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+a:hover { color: var(--gold); }
+
+/* HIGH CONTRAST CARDS */
+.bg-slate-900\/40 { background-color: rgba(15, 23, 42, 0.6); }
+.border-amber-500\/30 { border-color: rgba(217, 178, 95, 0.3); }
+.border-emerald-500\/30 { border-color: rgba(34, 197, 94, 0.3); }
+.border-blue-500\/30 { border-color: rgba(59, 130, 246, 0.3); }
+
+/* BUTTONS LARGE TOUCH TARGETS */
+button, a.inline-block { min-height: 48px; min-width: 48px; }
