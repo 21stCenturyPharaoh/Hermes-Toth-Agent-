@@ -1,0 +1,65 @@
+[
+  {
+    "id": "michael",
+    "name": "Michael",
+    "title": "Commander",
+    "emoji": "⚔️",
+    "color": "#FFD700",
+    "capability": "Mission authorization, system routing, override commands",
+    "keywords": ["command", "override", "status", "urgent"]
+  },
+  {
+    "id": "gabriel",
+    "name": "Gabriel", 
+    "title": "Messenger",
+    "emoji": "📯",
+    "color": "#22C55E",
+    "capability": "Deliver messages, notifications, external comms",
+    "keywords": ["message", "send", "notify", "deliver"]
+  },
+  {
+    "id": "raphael",
+    "name": "Raphael",
+    "title": "Healer", 
+    "emoji": "🌿",
+    "color": "#34D399",
+    "capability": "Memory vault restore, data repair, logs cleanse",
+    "keywords": ["repair", "restore", "heal", "memory"]
+  },
+  {
+    "id": "uriel",
+    "name": "Uriel",
+    "title": "Scribe",
+    "emoji": "📜", 
+    "color": "#FBBF24",
+    "capability": "Write logs, record knowledge, document missions",
+    "keywords": ["log", "write", "record", "scribe"]
+  },
+  {
+    "id": "sariel",
+    "name": "Sariel",
+    "title": "Gatekeeper",
+    "emoji": "🛡️",
+    "color": "#3B82F6", 
+    "capability": "Access control, security checks, firewall rules",
+    "keywords": ["access", "security", "gate", "auth"]
+  },
+  {
+    "id": "raguel",
+    "name": "Raguel",
+    "title": "Justice",
+    "emoji": "⚖️",
+    "color": "#A855F7",
+    "capability": "Verify volunteer profiles, compliance, 501c3 forms",
+    "keywords": ["verify", "compliance", "volunteer", "justice"]
+  },
+  {
+    "id": "remiel",
+    "name": "Remiel",
+    "title": "Guide",
+    "emoji": "✨",
+    "color": "#F472B6",
+    "capability": "Next step guidance, mission queue, recommendations",
+    "keywords": ["guide", "next", "step", "mission"]
+  }
+]
