@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missions | Hermes-Toth Agent</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-950 text-white">
+<header class="border-b border-pink-500/30 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-xl font-black text-amber-400 glow-gold">← Command Center</a>
+    <h1 class="text-lg font-bold text-pink-300">Mission Queue</h1>
+  </div>
+</header>
+
+<main class="container mx-auto px-6 py-12">
+  <p class="text-center text-gray-400 mb-8">Current Build Path. Static = Live. Workers = Next.</p>
+  
+  <div id="missions-list" class="space-y-4 max-w-3xl mx-auto"></div>
+</main>
+
+<footer class="mt-16 border-t border-slate-800 py-6 text-center text-gray-500 text-xs">
+  Missions v1.0 | Reads data/missions.json
+</footer>
+<script src="js/memory.js"></script>
+</body></html>
