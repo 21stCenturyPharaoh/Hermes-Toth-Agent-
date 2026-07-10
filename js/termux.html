@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termux Throne | Hermes-Toth Agent</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-950 text-white">
+<header class="border-b border-orange-500/30 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-xl font-black text-amber-400 glow-gold">← Command Center</a>
+    <h1 class="text-lg font-bold text-orange-300">Termux Throne</h1>
+  </div>
+</header>
+
+<main class="container mx-auto px-6 py-12 max-w-3xl">
+  <div class="p-6 bg-slate-900/40 border-orange-500/30 rounded-2xl">
+    <h2 class="text-2xl font-bold text-orange-300 mb-4">📯 Blackview Bridge | Block 3</h2>
+    <p class="text-gray-400 mb-4">Zero SMS. Zero Cost. 7-Color Terminal Alerts via `hermes.sh` polling.</p>
+    <pre class="bg-slate-950 p-4 rounded-lg text-xs overflow-x-auto text-emerald-300">
+<code>#!/data/data/com.termux/files/usr/bin/sh
+# hermes.sh | Polls .hermes_pings.sh queue
+while true; do
+  if [ -f .hermes_pings.sh ]; then source .hermes_pings.sh; fi
+  sleep 10
+done</code>
+    </pre>
+    <p class="text-xs text-gray-500 mt-3">See `js/termux.js` for ping formats.</p>
+  </div>
+</main>
+
+<footer class="mt-16 border-t border-slate-800 py-6 text-center text-gray-500 text-xs">
+  Termux v1.0 | Blackview: Live
+</footer>
+<script src="js/termux.js"></script>
+</body></html>
