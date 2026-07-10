@@ -1,0 +1,41 @@
+// HERMES-TOTH-AGENT | APP.JS | v1.0 | Core Engine
+console.log('⚔️ HERMES-TOTH-AGENT ONLINE | Law 48 Enforced');
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Glow check for accessibility
+  const glowElements = document.querySelectorAll('.glow-gold, .glow-emerald');
+  glowElements.forEach(el => {
+    el.style.transition = 'text-shadow 0.3s ease';
+  });
+
+  // 2. Load Agent Data for Command Center
+  loadAgents();
+
+  // 3. 1-800 GO CALL US Click Tracker = No Spoofing ✅
+  const callBtn = document.querySelector('a[href^="tel:"]');
+  if(callBtn){
+    callBtn.addEventListener('click', () => {
+      console.log('📞 Intl Call Initiated: +231776961800 | Not Toll-Free');
+    });
+  }
+});
+
+// Fetch agents.json for dashboard.html / angels.html
+async function loadAgents(){
+  try{
+    const res = await fetch('data/agents.json');
+    if(!res.ok) throw new Error('agents.json not found');
+    const data = await res.json();
+    window.HERMES_AGENTS = data; // Global for other JS files
+    console.log('✅ Angels Loaded:', data.length);
+  }catch(err){
+    console.warn('⚠️ agents.json missing. Static mode active.', err);
+  }
+}
+
+// Helper: Notify Termux via custom event if polling
+window.HermesNotify = (agent, msg) => {
+  const event = new CustomEvent('hermes-ping', { detail: {agent, msg}});
+  document.dispatchEvent(event);
+  console.log(`📯 Hermes Ping: ${agent} -> ${msg}`);
+};
