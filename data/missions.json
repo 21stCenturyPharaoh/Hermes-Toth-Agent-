@@ -1,0 +1,54 @@
+[
+  {
+    "id": "b1",
+    "block": "Block 1",
+    "title": "Static Fortress",
+    "status": "Live",
+    "color": "#22C55E",
+    "tasks": [
+      "9 HTML Pages Complete",
+      "Gold Dark CSS + Accessibility",
+      "7 Angels Data Loaded",
+      "GitHub Pages Deploy Ready"
+    ]
+  },
+  {
+    "id": "b2", 
+    "block": "Block 2",
+    "title": "Workers API",
+    "status": "Next",
+    "color": "#FBBF24",
+    "tasks": [
+      "Deploy hermes-toth-commander.workers.dev",
+      "AI Routing with @cloudflare/ai",
+      "Angel Keyword Engine",
+      "501c3 Compliance Firewall"
+    ]
+  },
+  {
+    "id": "b3",
+    "block": "Block 3", 
+    "title": "Termux Throne",
+    "status": "Live",
+    "color": "#22C55E",
+    "tasks": [
+      "hermes.sh Polling Script",
+      ".hermes_pings.sh Queue",
+      "7 Color Notifications",
+      "0 SMS = 0 Cost"
+    ]
+  },
+  {
+    "id": "b4",
+    "block": "Block 4",
+    "title": "KV Memory Vault",
+    "status": "Planned",
+    "color": "#A855F7",
+    "tasks": [
+      "Cloudflare KV Namespace",
+      "Mission Logs Storage",
+      "Volunteer Profiles",
+      "User Memory Cache"
+    ]
+  }
+]
