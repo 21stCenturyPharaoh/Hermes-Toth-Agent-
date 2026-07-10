@@ -1,0 +1,12 @@
+{
+  "high_priestess": "Nefetari",
+  "order": "Melchizedek",
+  "sect": "Commonwealth of Israel Essene",
+  "bots": [
+    {"id": "SOR-01", "name": "Zhipin-Challenger", "role": "Boss Zhipin Ops", "status": "STANDBY"},
+    {"id": "SOR-02", "name": "Crowdfund-Scribe", "role": "Campaign Writer", "status": "STANDBY"},
+    {"id": "SOR-03", "name": "Recruit-Angel", "role": "Volunteer Outreach", "status": "STANDBY"},
+    {"id": "SOR-04", "name": "Ops-Overseer", "role": "Volunteer Ops AI", "status": "STANDBY"}
+  ],
+  "chain_of_command": "Hermes-Toth-Agent > Nefetari > Sorority Bots > Human Overseers"
+}
