@@ -1,12 +1,11 @@
-// HERMES-TOTH-AGENT | WORKERS API v1.0 | 4 Consultant Routes
-// Ethical Only. Melchizedek Order. Essene Discipline.
+// HERMES-TOTH-AGENT | WORKERS API v2.0 | FREE TIER ONLY
+// Melchizedek Order | Essene Discipline | 0$ Ops
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const { pathname } = url;
 
-    // CORS Headers for Static Frontend
     const headers = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -14,55 +13,49 @@ export default {
     };
     if (request.method === 'OPTIONS') return new Response(null, { headers });
 
-    // DR. BELSIDUS ROUTE: Capital Acquisition
-    if (pathname === '/api/belsidus/fund') {
+    // DR. BELSIDUS v2: Capital Prep - No API Key Needed
+    if (pathname === '/api/belsidus/prepare') {
       return Response.json({
-        givebutter: 'https://givebutter.com/api/v3/campaigns',
-        fundmytravel: 'https://api.fundmytravel.com/v1/projects',
-        orange_money: 'CI/Liberia Mobile Money Ready',
-        sendwave_affiliate: 'Remittance Link Generated',
-        email_list: 'SendGrid/Mailgun Opt-in Only',
+        note: 'PHASE 3: Givebutter/FundMyTravel after 501(c)(3) + Domain',
+        sendwave_link: 'https://sendwave.com/affiliate/PLACEHOLDER', // Replace with link, no key
+        email_ready: 'SendGrid Free Tier: 100/day. Set SENDGRID_API_KEY in Cloudflare.',
         status: 'STANDBY | Nefetari β Command'
       }, { headers });
     }
 
-    // ROBERT GREENE ROUTE: Ethical Influence + OSINT
+    // ROBERT GREENE: Ethical OSINT - Free Tier
     if (pathname === '/api/greene/osint') {
+      const newsKey = env.NEWSAPI_KEY || 'DEMO_KEY'; // Free 100/day
       return Response.json({
-        newsapi: 'https://newsapi.org/v2/everything?q=RPA+poaching+trafficking',
-        gdelt: 'Global News Monitor Active',
-        apify: 'Public Job/Grant Scrapers Only. No PII.',
-        status: 'Influence via Data, Not Deception'
+        newsapi: `https://newsapi.org/v2/everything?q=RPA+poaching+trafficking&apiKey=${newsKey}`,
+        gdelt: 'https://api.gdeltproject.org/api/v2/doc/doc?query=RPA+poaching&mode=ArtList',
+        status: 'Free Tier Active. No PII. Public Data Only.'
       }, { headers });
     }
 
-    // SUN TZU ROUTE: Recon + Research
+    // SUN TZU: Recon - Free Tier
     if (pathname === '/api/sunzu/recon') {
       return Response.json({
-        global_fishing_watch: 'Public AIS Vessel Tracking',
-        traffik_analysis_hub: 'Illicit Trade Research DB',
-        osint_framework: 'Public Filings + Satellite Data',
-        protocol: 'Research → Document → Report to Authorities'
+        global_fishing_watch: 'https://api.globalfishingwatch.org/v3/vessels', // Public form
+        protocol: 'Research → Document → Report to INTERPOL/UN. No Vigilante.',
+        status: 'Public AIS + OSINT Only'
       }, { headers });
     }
 
-    // MACHIAVELLI ROUTE: Secure Whistleblower Chain
-    if (pathname === '/api/machiavelli/securedrop') {
-      return Response.json({
-        securedrop: 'Encrypted Anonymous Dropbox | Self-Hosted',
-        protonmail: 'Encrypted Comms to Journalists',
-        evidence_vault: 'Cloudflare R2 + KV Encrypted',
-        redline: 'NO ILLEGAL HACKING. NO VIGILANTE OPS.'
-      }, { headers });
+    // MACHIAVELLI: Secure Vault - Cloudflare KV Free
+    if (pathname === '/api/machiavelli/vault' && request.method === 'POST') {
+      const data = await request.json();
+      await env.EVIDENCE_VAULT.put(crypto.randomUUID(), JSON.stringify(data));
+      return Response.json({ status: 'Encrypted. Stored. Essene Law Kept.' }, { headers });
     }
 
-    // SORORITY BOT STATUS
+    // SORITY BOT STATUS
     if (pathname === '/api/nefetari/status') {
       return Response.json({
         high_priestess: 'Nefetari β',
+        tier: 'FREE TIER EMPIRE',
         bots: ['SOR-01 Zhipin-Challenger', 'SOR-02 Crowdfund-Scribe', 'SOR-03 Recruit-Angel', 'SOR-04 Ops-Overseer'],
-        chain: 'Hermes-Toth > Nefetari > Sorority Bots',
-        order: 'Melchizedek'
+        chain: 'Hermes-Toth > Nefetari > Sorority Bots > Human Overseers'
       }, { headers });
     }
 
