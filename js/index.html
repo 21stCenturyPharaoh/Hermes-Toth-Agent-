@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes-Toth-Agent | Command Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+
+  <header class="p-6 border-b border-gray-800">
+    <h1 class="text-3xl font-bold">🜃 Hermes-Toth-Agent</h1>
+    <p class="text-gray-400 text-sm mt-1">Command Dashboard — <span id="angel-count">0</span> Angels Active</p>
+  </header>
+
+  <main class="p-6 space-y-10 max-w-5xl mx-auto">
+
+    <!-- Agents Grid -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Angels Roster</h2>
+      <div id="agents-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- Live News Panel -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">📰 Live Intel Feed</h2>
+      <div class="flex gap-2 mb-4">
+        <input id="news-query" type="text" placeholder="topic e.g. technology"
+          class="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm flex-1">
+        <button id="news-fetch-btn"
+          class="bg-blue-600 hover:bg-blue-500 transition px-4 py-2 rounded text-sm font-medium">
+          Fetch News
+        </button>
+      </div>
+      <div id="news-results" class="space-y-3 text-sm text-gray-300"></div>
+    </section>
+
+    <!-- Send Alert -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">✉️ Send Alert</h2>
+      <div class="space-y-2 max-w-md">
+        <input id="alert-to" type="email" placeholder="recipient email"
+          class="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm w-full">
+        <input id="alert-subject" type="text" placeholder="subject"
+          class="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm w-full">
+        <textarea id="alert-text" placeholder="message" rows="3"
+          class="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm w-full"></textarea>
+        <button id="alert-send-btn"
+          class="bg-green-600 hover:bg-green-500 transition px-4 py-2 rounded text-sm font-medium">
+          Send Alert
+        </button>
+        <p id="alert-status" class="text-xs text-gray-400"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/dashboard.js"></script>
+  <script src="js/api.js"></script>
+</body>
+</html>
