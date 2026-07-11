@@ -1,7 +1,6 @@
 // HERMES-TOTH-AGENT | API.JS | v1.0 | Connects dashboard to angels-hosts-api3
 const API_BASE = 'https://angels-hosts-api3.pharangels.workers.dev';
 
-// News fetch
 document.getElementById('news-fetch-btn').addEventListener('click', async () => {
   const query = document.getElementById('news-query').value || 'top';
   const resultsEl = document.getElementById('news-results');
@@ -27,7 +26,6 @@ document.getElementById('news-fetch-btn').addEventListener('click', async () => 
   }
 });
 
-// Send alert
 document.getElementById('alert-send-btn').addEventListener('click', async () => {
   const to = document.getElementById('alert-to').value;
   const subject = document.getElementById('alert-subject').value;
