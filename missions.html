@@ -1,0 +1,7 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mission Queue | Hermes-Toth-Agent</title><link rel="stylesheet" href="css/style.css"></head><body><main style="max-width:1000px;margin:auto;padding:1.5rem"><p><a href="index.html">← Command Center</a></p><h1>Mission Queue</h1><div id="content"><p>Loading…</p></div></main>
+<script>
+fetch('data/missions.json').then(r=>r.json()).then(items=>{
+ const el=document.getElementById('content');
+ el.innerHTML=items.map(x=>`<article class="asa-card"><strong>${x.emoji||x.title||x.name} ${x.name||x.title}</strong><span>${x.capability||x.status||x.block||''}</span></article>`).join('');
+}).catch(e=>document.getElementById('content').textContent='Unable to load data: '+e.message);
+</script></body></html>
