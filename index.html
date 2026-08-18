@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Hermes-Toth-Agent V26.8 Command Center">
+<title>Hermes-Toth-Agent | V26.8 Command Center</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to Command Center</a>
+<header style="padding:1.25rem;border-bottom:2px solid #334155">
+  <h1>🜃 Hermes-Toth-Agent</h1>
+  <p>V26.8 Autonomous Synthetic Assets Command Center</p>
+</header>
+
+<main id="main" style="max-width:1100px;margin:auto;padding:1.5rem">
+  <section aria-labelledby="core">
+    <h2 id="core">Core Nodes</h2>
+    <div class="asa-card">
+      <strong>🧠 H.A.L.EL</strong><span>Chief Operations Node</span>
+      <button id="voice-status" type="button">🔊 Read Status</button>
+    </div>
+    <div class="asa-card">
+      <strong>⚡ TOTH</strong><span>Algorithm + Acceleration</span>
+    </div>
+    <div class="asa-card">
+      <strong>🌹 MOSETTA</strong><span>Eternal Attribution</span>
+      <span id="ref-status">Referral: none captured</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="links">
+    <h2 id="links">Command Navigation</h2>
+    <p>
+      <a class="button" href="angels.html">👼 Angels</a>
+      <a class="button" href="missions.html">🎯 Missions</a>
+      <a class="button" href="nodes.html">🧠 Nodes</a>
+      <a class="button" href="routes.html">🛣️ Routes</a>
+      <a class="button" href="memory.html">💾 Memory</a>
+    </p>
+  </section>
+
+  <section aria-labelledby="dashboard-title">
+    <h2 id="dashboard-title">Live Business + Affiliate Dashboard</h2>
+    <div id="dashboard" aria-live="polite"><p>Loading…</p></div>
+  </section>
+
+  <section aria-labelledby="health-title">
+    <h2 id="health-title">Worker Health</h2>
+    <pre id="health-output" aria-live="polite">Checking…</pre>
+  </section>
+</main>
+
+<footer style="padding:2rem;text-align:center;border-top:2px solid #334155">
+  Hermes-Toth-Agent V26.8
+</footer>
+
+<script type="module" src="public/js/routes.js"></script>
+<script type="module" src="public/js/dashboard.js"></script>
+<script type="module" src="public/js/health.js"></script>
+<script type="module">
+import AGENTS from "./public/js/agents.js";
+document.getElementById("voice-status")?.addEventListener("click", () => {
+  const ref = localStorage.getItem("pharaoh_ref");
+  AGENTS.HALEL.speak(ref ? `Hermes is active. Referral ${ref} is captured.` : "Hermes is active. No referral code is currently captured.");
+});
+const ref = localStorage.getItem("pharaoh_ref");
+document.getElementById("ref-status").textContent = ref ? `Referral: ${ref}` : "Referral: none captured";
+</script>
+</body>
+</html>
