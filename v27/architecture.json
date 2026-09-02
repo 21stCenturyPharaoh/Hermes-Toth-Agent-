@@ -1,0 +1,110 @@
+{
+  "version": "V27.1",
+  "name": "Hermes-Toth-Agent",
+  "layers": {
+    "real_platform": {
+      "name": "REAL PLATFORM",
+      "purpose": "Registration, Volunteer Exchange, missions, records, participating organizations/programs.",
+      "rule": "Operational system; not a game."
+    },
+    "halel_larp": {
+      "name": "H.A.L.EL LARP",
+      "purpose": "Optional fictional/game layer for personas, Orders, Consulates, Node Teams, Stones, Gates, Corps, Elements, ranks, badges and storyline.",
+      "rule": "The LARP is a game and must remain distinct from real organizational/legal operations."
+    },
+    "bridge": {
+      "name": "HERMES-TOTH BRIDGE",
+      "purpose": "Automation/interface layer connecting the operational platform and optional LARP presentation without replacing human responsibility."
+    }
+  },
+  "workflow": [
+    "Register",
+    "Join a Consulate",
+    "Select an Order",
+    "Join a Node Team",
+    "Complete missions",
+    "Earn recognition",
+    "Advance in the optional LARP storyline"
+  ],
+  "nodes": [
+    "Aleph",
+    "Bet",
+    "Gimel",
+    "Dalet",
+    "He",
+    "Vav",
+    "Zayin"
+  ],
+  "gates": [
+    {
+      "id": "I",
+      "name": "North Gate",
+      "city": "Dakar"
+    },
+    {
+      "id": "II",
+      "name": "South Gate",
+      "city": "Cape Town"
+    },
+    {
+      "id": "III",
+      "name": "East Gate",
+      "city": "Addis Ababa"
+    },
+    {
+      "id": "IV",
+      "name": "West Gate",
+      "city": "Nairobi"
+    },
+    {
+      "id": "V",
+      "name": "Central Gate",
+      "city": "Cairo"
+    }
+  ],
+  "corps": [
+    "Humanitarian Angels Corps",
+    "Humanitarian Ladies Corps",
+    "Humanitarian Divas Corps"
+  ],
+  "elements": [
+    "Air",
+    "Water",
+    "Earth",
+    "Fire"
+  ],
+  "consulate_roles": [
+    "Consul",
+    "Deputy Consul",
+    "Quartermaster",
+    "Archivist",
+    "Event Coordinator",
+    "Training Coordinator",
+    "Hospitality Coordinator"
+  ],
+  "orders": [
+    "Havah",
+    "Sarah",
+    "Rebecca",
+    "Leah",
+    "Bilhah",
+    "Zilpah",
+    "Miriam (wife of Moses)",
+    "Miriam (mother of Yeshua)",
+    "Candace (Kandake)",
+    "Ruth",
+    "Esther",
+    "Elizabeth",
+    "Hagar"
+  ],
+  "asian_character_nods": {
+    "公益": "public benefit",
+    "智慧": "wisdom",
+    "使命": "mission",
+    "服务": "service",
+    "守护": "protection",
+    "连接": "connection",
+    "记": "record"
+  },
+  "golden_rule": "Separate game from reality."
+}

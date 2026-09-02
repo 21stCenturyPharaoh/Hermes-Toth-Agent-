@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Michael",
+    "role": "Mission authorization, system routing, override commands"
+  },
+  {
+    "name": "Gabriel",
+    "role": "Messages, notifications, external communications"
+  },
+  {
+    "name": "Raphael",
+    "role": "Memory vault restore, data repair, logs cleanse"
+  },
+  {
+    "name": "Uriel",
+    "role": "Write logs, record knowledge, document missions"
+  },
+  {
+    "name": "Sariel",
+    "role": "Access control, security checks, firewall rules"
+  },
+  {
+    "name": "Raguel",
+    "role": "Verify volunteer profiles, compliance, forms"
+  },
+  {
+    "name": "Remiel",
+    "role": "Next-step guidance, mission queue, recommendations"
+  }
+]
