@@ -1,29 +1,34 @@
-# HERMES-TOTH-AGENT V26.8
+# HERMES-TOTH AGENT // V27.1.1 - H.A.L.EL PORTALS LIVE 🫡
 
-Autonomous Synthetic Assets command-center foundation.
+> 13 Orders // 9 Halel Portals // 4-Video Grid // 100% GitHub Pages
 
-## Core modules
-- `public/js/agents.js` — H.A.L.EL, TOTH, MOSETTA
-- `public/js/dashboard.js` — affiliate/business dashboard
-- `public/js/bridge.js` — Auto-Delivery Worker bridge
-- `public/js/memory.js` — local preference memory
-- `public/js/routes.js` — referral capture, link tagging and click tracking
+**Live:** https://21stCenturyPharaoh.github.io/Hermes-Toth-Agent-/
 
-## Worker
-Primary bridge target:
-`https://pharaoh-auto-delivery.pharangels.workers.dev`
+### 🚀 MAIN PORTAL
+- [ROOT INDEX - Video Wired](https://21stCenturyPharaoh.github.io/Hermes-Toth-Agent-/index.html)
 
-Expected routes:
-- `/health`
-- `/register-affiliate`
-- `/register-business`
-- `/track-click`
-- `/affiliates`
+### ⚡ H.A.L.EL PORTALS - 9/9 WIRED + VIDEOS
+All portals include V27.1.1 4-video grid: `yKufPwpT4E4 | dhLboOnPljo | mHBJN0QA8Fo | SGPJWd2q2RM`
 
-The `/affiliates` read is intentionally tolerant: if it is not implemented by the Worker yet, the dashboard shows an empty-state instead of crashing.
+| Portal | Link | Status |
+|--------|------|--------|
+| Missions | [missions.html](v27/halel/missions.html) | ✅ 1 |
+| Teams | [teams.html](v27/halel/teams.html) | ✅ 1 |
+| Index | [halel/index.html](v27/halel/index.html) | ✅ 1 |
+| Orders | [orders.html](v27/halel/orders.html) | ✅ 1 |
+| Consulates | [consulates.html](v27/halel/consulates.html) | ✅ 1 |
+| Gates | [gates.html](v27/halel/gates.html) | ✅ 1 |
+| Corps | [corps.html](v27/halel/corps.html) | ✅ 1 |
+| Elements | [elements.html](v27/halel/elements.html) | ✅ 1 |
+| **Lore - 13 Orders** | [lore.html](v27/halel/lore.html) | ✅ NEW V27 |
 
-## Deployment
-Deploy this repository as a Cloudflare Pages project or GitHub Pages static site. For Cloudflare Pages, the repository root is the project root and `index.html` is the entry point.
+### 📜 13 Orders Lore
+V27 introduces full 13 Orders canon — wired into `lore.html` with video placements.
 
-## Important
-This package does not claim that the Auto-Delivery Worker endpoints or KV bindings are deployed/working. They must be verified against the actual Worker source/configuration.
+### 🎥 Videos V27.1.1
+- yKufPwpT4E4
+- dhLboOnPljo  
+- mHBJN0QA8Fo - NEW
+- SGPJWd2q2RM
+
+### 🛠️ Build Log
