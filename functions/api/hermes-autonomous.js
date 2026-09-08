@@ -1,23 +1,15 @@
 /**
  * HERMES-TOTH AUTONOMOUS SYNTHETIC WORKFLOW
- * Central orchestration layer for the Pharaoh ecosystem.
  */
-
 const HERMES = {
   name: "Hermes-Toth",
   role: "orchestrator",
   mode: "autonomous-synthetic-workflow",
   version: "1.0.0"
 };
-
-const ENTITIES = {
-  COMMERCIAL: "commercial",
-  NONPROFIT: "nonprofit"
-};
-
+const ENTITIES = { COMMERCIAL: "commercial", NONPROFIT: "nonprofit" };
 const COMMERCIAL_PILLARS = ["pharaoh-library", "microphone-kingdom", "pharaoh-registry"];
 const NONPROFIT_PILLARS = ["hall-el"];
-
 const EVENTS = {
   CONTENT_CREATED: "content.created",
   CAMPAIGN_CREATED: "campaign.created",
@@ -29,7 +21,6 @@ const EVENTS = {
   REGISTRY_SIGNUP: "registry.signup",
   ALERT_REQUESTED: "alert.requested"
 };
-
 function json(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
     status,
@@ -38,13 +29,8 @@ function json(data, status = 200) {
 }
 function requestId() { return crypto.randomUUID(); }
 function now() { return new Date().toISOString(); }
-
-function normalizeEntity(entity) {
-  return entity === ENTITIES.NONPROFIT ? ENTITIES.NONPROFIT : ENTITIES.COMMERCIAL;
-}
-function normalizePillar(pillar) {
-  return [...COMMERCIAL_PILLARS, ...NONPROFIT_PILLARS].includes(pillar) ? pillar : "pharaoh-registry";
-}
+function normalizeEntity(entity) { return entity === ENTITIES.NONPROFIT ? ENTITIES.NONPROFIT : ENTITIES.COMMERCIAL; }
+function normalizePillar(pillar) { return [...COMMERCIAL_PILLARS, ...NONPROFIT_PILLARS].includes(pillar) ? pillar : "pharaoh-registry"; }
 function normalizeEvent(input = {}) {
   return {
     id: requestId(),
@@ -58,17 +44,10 @@ function normalizeEvent(input = {}) {
     approved: input.approved === true
   };
 }
-
 async function remember(env, key, value) {
   if (!env.HERMES_MEMORY) return { stored: false, reason: "HERMES_MEMORY binding unavailable" };
   await env.HERMES_MEMORY.put(key, JSON.stringify(value));
   return { stored: true, key };
-}
-async function recall(env, key) {
-  if (!env.HERMES_MEMORY) return null;
-  const value = await env.HERMES_MEMORY.get(key);
-  if (!value) return null;
-  try { return JSON.parse(value); } catch { return value; }
 }
 async function callWorker(binding, path, payload) {
   if (!binding) return { ok: false, error: "Service binding unavailable" };
@@ -103,22 +82,11 @@ async function routeHosting(event, env) {
       return { ok: true, routed: false, reason: "No hosting action required" };
   }
 }
-
-// --- THIS IS WHAT WAS MISSING ---
 export async function onRequest(context) {
   const { request, env } = context;
-  const url = new URL(request.url);
-
   if (request.method === "GET") {
-    return json({
-      hermes: HERMES,
-      status: "online",
-      timestamp: now(),
-      pillars: { commercial: COMMERCIAL_PILLARS, nonprofit: NONPROFIT_PILLARS },
-      endpoints: { POST: "/api/hermes-autonomous" }
-    });
+    return json({ hermes: HERMES, status: "online", timestamp: now(), pillars: { commercial: COMMERCIAL_PILLARS, nonprofit: NONPROFIT_PILLARS } });
   }
-
   if (request.method === "POST") {
     try {
       const input = await request.json();
@@ -131,6 +99,5 @@ export async function onRequest(context) {
       return json({ ok: false, error: err.message }, 500);
     }
   }
-
   return json({ ok: false, error: "Method not allowed" }, 405);
-  }
+}
