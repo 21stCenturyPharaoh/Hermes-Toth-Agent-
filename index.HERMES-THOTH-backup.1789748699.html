@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hermes-Toth-Agent V27.5 亚洲之门</title>
+<style>body{background:#070b1e;color:#e6e8ff;font-family:system-ui;padding:24px}
+.gold{color:#D4AF37}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.vid{background:#0f1630;border:1px solid #1e2a5a;border-radius:16px;overflow:hidden}
+.vid iframe{width:100%;aspect-ratio:16/9;border:0}.meta{padding:12px;font-size:12px}
+.top{border:1px solid #1e2a5a;padding:16px;border-radius:12px;margin-bottom:20px;text-align:center}
+.btn{background:#D4AF37;color:#000;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:800;font-size:11px}
+</style></head><body>
+<div class="top"><h1 class="gold">HERMES-TOTH-AGENT V27.5 亚洲之门</h1><p style="font-size:11px;opacity:.7">AUTO-GALLERY FROM angels-hosts-api3 | TOTH / HERMES → H.A.L.L.EL | HALLEL-API-ONLY</p>
+<p id="status">Loading...</p>
+<p><a class="btn" href="https://angels-hosts-api3.pharangels.workers.dev/v27.5/videos.json" target="_blank">VIDEOS.JSON</a>
+<a class="btn" href="https://pharaoh-conglomerate.org/" target="_blank">CONGLOMERATE</a></p>
+</div>
+<div id="grid" class="grid">Loading 5-video...</div>
+<script>
+const API="https://angels-hosts-api3.pharangels.workers.dev/v27.5/videos.json";
+const HEALTH="https://angels-hosts-api3.pharangels.workers.dev/v27.5/health";
+async function load(){
+ try{const h=await fetch(HEALTH).then(r=>r.json());document.getElementById('status').innerText=`LIVE ${h.worker} ${h.version} ${h.asia_gate} | ${h.videos} videos`;}catch{}
+ const d=await fetch(API).then(r=>r.json());const v=d.videos||d.placements||[];
+ document.getElementById('grid').innerHTML=v.map(x=>`<div class="vid"><iframe src="https://www.youtube.com/embed/${x.id}" allowfullscreen></iframe><div class="meta"><b class="gold">${x.slot}</b> — ${x.title}<br><a href="${x.youtube}" target="_blank">${x.id}</a></div></div>`).join('');
+}
+load();
+</script>
+
+<!-- BASE44 SOVEREIGN WIRED V27.5 AUTO -->
+<div id="base44-hub" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:20px 0"></div>
+<script>
+fetch('https://angels-hosts-api3.pharangels.workers.dev/v27.5/engines.json').then(r=>r.json()).then(d=>{
+  const h=document.getElementById('base44-hub');
+  if(!h)return;
+  h.innerHTML=Object.entries(d.engines).map(([k,v])=>`<a href="${v}" target="_blank" style="background:#0f1630;border:1px solid #D4AF37;padding:14px;border-radius:10px;text-decoration:none;color:#D4AF37;font-weight:800;font-size:11px;text-align:center;display:block">${k}<br><small style="color:#889;font-size:9px">${v.replace('https://','')}</small></a>`).join('');
+});
+</script>
+</body></html>
