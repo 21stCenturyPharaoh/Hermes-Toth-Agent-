@@ -1,8 +1,8 @@
 {
   "name": "METATRON + DJ DEHRTAY DOG — TikTok LIVE",
   "short_name": "METATRON LIVE",
-  "description": "METATRON Scribe + DJ Dehrtay Dog Doberman Royal Costume No Ankhs — Pharaoh Chamber TikTok LIVE",
-  "start_url": "./index.html?v=337315c",
+  "description": "METATRON Scribe + DJ Dehrtay Dog — Pharaoh Chamber TikTok LIVE — Add to Home Screen",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
