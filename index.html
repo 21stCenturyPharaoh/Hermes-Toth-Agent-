@@ -198,6 +198,11 @@ font-size:58px;
 }
 }
 </style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#c9a227">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="/icon-192.png">
 </head>
 
 <body>
@@ -623,6 +628,7 @@ constitute independent religious, legal or financial authority.
 
 </footer>
 
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js"));}</script>
 </body>
 </html>
 <!-- ========== PATCH: DJ DEHRTAY DOG COMMAND CHAIR — NEW ROOM — BUILD ALONGSIDE NEVER OVERWRITE ========== -->
