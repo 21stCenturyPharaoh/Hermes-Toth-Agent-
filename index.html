@@ -1,76 +1,95 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="description" content="HALLEL — Pharaoh Chamber Offline Player. All glory to Yah. Hebrews 1; Isaiah 43:11.">
-<meta name="author" content="Pharaoh Angels Incorporated dba Micdom AI Records">
-<meta name="keywords" content="HALLEL, Pharaoh Chamber, Hebrews 1, Isaiah 43:11, Yah, Metatron Offline Player">
-<meta name="theme-color" content="#050505">
-<title>HALLEL | Pharaoh Chamber Offline Player</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>Micdom AI Records | 法老天使公司 Global Footprints TikTok LIVE 抖音直播</title>
+<meta name="description" content="Micdom AI Records Global Footprints TikTok Live hosted by DJ Dehrtay Dog with Dog seated in the Pharaoh Chamber. 法老天使公司 抖音全球足迹 抖音直播 法老密室">
+<link rel="icon" href="./icon-192.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{color-scheme:dark;--gold:#d7b45b;--black:#050505;--fade:300ms}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;touch-action:manipulation}
-#stage{position:fixed;inset:0;background:#000;overflow:hidden}
-.player{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;opacity:0;transition:opacity var(--fade) ease;pointer-events:none}
-.player.active{opacity:1}
-/* Portrait source is 720x1280 (9:16). Contain preserves every part of the chamber. */
-#controls{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:10;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;opacity:.92}
-#controls button,#command{font:600 14px/1.2 system-ui,sans-serif;border:1px solid #9e813c;border-radius:8px;background:rgba(0,0,0,.82);color:#ffe6a0;padding:10px 12px;min-height:42px}
-#controls button:focus-visible,#command:focus-visible{outline:3px solid #fff;outline-offset:2px}
-#command{width:min(210px,48vw);min-width:120px}#status{position:fixed;top:max(8px,env(safe-area-inset-top));left:8px;z-index:9;background:rgba(0,0,0,.68);color:#f4d887;font-size:12px;padding:5px 8px;border-radius:5px;max-width:90vw}
-#help{position:fixed;top:35px;left:8px;z-index:9;background:rgba(0,0,0,.7);color:#fff;font-size:11px;padding:5px 8px;border-radius:5px;max-width:94vw}
-body.clean #controls,body.clean #status,body.clean #help{display:none}
-@media (orientation:landscape){#controls{bottom:8px}#status{font-size:10px}}
-@media (prefers-reduced-motion:reduce){.player{transition:none}}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.hanzi{font-family:system-ui,'Noto Sans CJK SC','Noto Sans SC',sans-serif}
+.glow-teal{text-shadow:0 0 20px #14b8a6,0 0 40px #e0bd58}
+.glow-gold{text-shadow:0 0 20px #e0bd58}
+.card-glass{background:rgba(18,18,18,.88);border:1px solid rgba(224,189,88,.3)}
+.private-only{display:none !important}
+.owner-mode .private-only{display:block !important}
+.owner-mode .public-only{display:none !important}
 </style>
 </head>
-<body>
-<main id="stage" aria-label="Pharaoh Chamber video stage">
- <video id="videoA" class="player active" playsinline webkit-playsinline muted preload="auto" loop></video>
- <video id="videoB" class="player" playsinline webkit-playsinline muted preload="auto" loop></video>
-</main>
-<div id="status" role="status" aria-live="polite">HALLEL • METATRON OFFLINE PLAYER</div>
-<div id="help">Commands: !welcome !shocked !thinking !breaking !nod !neutral !idle !bye · Tap a state or enter a command below.</div>
-<div id="controls" aria-label="Offline state controls">
- <button data-command="!idle">Idle</button><button data-command="!welcome">Welcome</button><button data-command="!shocked">Shocked</button><button data-command="!thinking">Thinking</button><button data-command="!breaking">Breaking</button><button data-command="!nod">Nod</button><button data-command="!neutral">Neutral</button><button data-command="!bye">Signoff</button>
- <input id="command" aria-label="Chat command" placeholder="Type !welcome" autocapitalize="off" autocomplete="off" spellcheck="false"><button id="send">Go</button><button id="cleanToggle" aria-label="Hide controls">Hide UI</button>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-teal-950 to-black text-white">
+
+<header class="border-b border-teal-500/30 bg-slate-900/90 backdrop-blur-lg sticky top-0 z-50">
+<div class="max-w-[1120px] mx-auto px-6 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3"><img src="./micdom-logo.png" alt="Micdom Logo PNG 法老天使公司" class="w-12 h-12 rounded-full border border-yellow-500/40"><div><p class="text-[15px] font-black text-teal-400 glow-teal">MICDOM AI RECORDS</p><p class="text-[11px] text-gray-300 hanzi">法老天使公司 | 501(c)(3) EIN: 88-0836464 | 法老集团 | Metatron副总裁抖音全球足迹</p></div></div>
+<nav class="hidden md:flex gap-5 text-[11px] font-bold"><a href="#music">MUSIC 音乐</a><a href="#video">THE 88s 88艺人</a><a href="#broadcast" class="text-yellow-200">BROADCAST 直播</a></nav>
 </div>
+</header>
+<main>
+<section class="max-w-[1120px] mx-auto px-6 py-12 grid md:grid-cols-[360px_1fr] gap-8 items-center">
+<div class="card-glass rounded-[18px] p-3"><img src="./micdom-logo.png" alt="Pharaoh Angels Inc Micdom AI Records Logo PNG 法老天使公司 抖音全球足迹" class="w-full rounded-[12px] max-h-[380px] object-contain"><p class="text-center text-[11px] mt-3 text-gray-400 hanzi">法老天使公司 | MICDOM AI RECORDS | 抖音全球足迹 | 法老密室 | 音乐 艺术家 直播 联邦 | 法老集团</p></div>
+<div><span class="px-3 py-1 bg-teal-500/20 border border-teal-400 rounded-full text-teal-300 text-[11px] hanzi">LAW48 公益 | LAW25 帝国 | LAW15 彻底粉碎| 法老天使公司 | 法老集团 | 抖音全球足迹</span><h1 class="text-[40px] md:text-[64px] font-black leading-[0.9] mt-4 glow-gold text-[#f5df9a]">MICDOM<br>AI RECORDS</h1><p class="text-[17px] font-black mt-3 text-teal-200 hanzi">METATRON — AI VICE PRESIDENT 法老副总裁 | 抖音直播 | 法老密室</p><p class="text-[18px] text-[#e4dfd3] mt-4 hanzi">Music, artists, broadcasting — one sovereign home. 音乐 · 艺术家 · 直播 · 联邦 · 88位先知 · 法老集团 · 抖音全球足迹 · 法老密室 · 法老天使公司</p><div class="flex gap-3 mt-8 flex-wrap"><a href="#broadcast" class="px-6 py-3 bg-[#e0bd58] text-black font-black rounded-[10px] hanzi">ENTER BROADCAST 进入直播</a><a href="#video" class="px-6 py-3 border border-[#e0bd58] text-[#f5df9a] font-black rounded-[10px] hanzi">THE 88s VIDEO 88视频</a><a href="./metatron.html" class="px-6 py-3 border border-teal-400 text-teal-200 font-black rounded-[10px] hanzi">MEET METATRON · AI VICE PRESIDENT</a></div></div>
+</section>
+
+<section id="broadcast" class="border-y border-[#315d86] py-14 bg-gradient-to-br from-[#07182b] via-[#0b2442] to-[#08111e]">
+<div class="max-w-[1120px] mx-auto px-6">
+<div class="max-w-[760px] mb-8"><div class="text-[12px] font-black tracking-[.18em] text-[#d5eaff] hanzi">LIVE PRODUCTION 直播制作 — OWNER LOCK 所有者锁定 | 法老天使公司 | 抖音直播</div><h2 class="text-[32px] md:text-[42px] font-black text-[#d5eaff] hanzi">Broadcasting 直播 | 抖音全球足迹 | 法老密室</h2></div>
+
+<div class="public-only">
+<div class="bg-[rgba(2,11,22,.72)] border border-[rgba(135,190,240,.4)] rounded-[14px] p-8 md:p-10 text-center">
+<p class="text-[22px] md:text-[28px] font-black leading-tight text-white glow-teal hanzi">Micdom AI Records Global Footprints TikTok Live<br><span class="text-[#d5eaff]">hosted by DJ Dehrtay Dog 抖音主播DJ神狗</span><br><span class="text-[18px] font-normal">With Dog seated in the Pharaoh Chamber 法老密室中的DJ神狗 法老天使公司</span></p>
+<p class="text-[13px] text-[#8fbbe6] mt-4 hanzi">全球足迹抖音直播 · 法老集团 · 88艺术家 · 88位先知 · Metatron副总裁 · 不战而屈人之兵 · 兵者诡道也 · 抖音全球足迹 · 法老密室 · 法老天使公司 ·  抖音直播 · 全球足迹 · 音乐 · 艺术家 · 直播 · 联邦 · 权谋 · 孙子兵法 · 48法则 · 法老防火墙 LAW48 FIREWALL</p>
+<div class="mt-6 flex justify-center gap-3 flex-wrap"><a href="https://www.tiktok.com/@micdom_ai_records" class="px-6 py-3 bg-[#123c68] border border-[#7bb9f3] text-white font-black rounded-[10px] hanzi">TikTok LIVE 抖音直播</a><a href="./stage.html" class="px-6 py-3 border border-yellow-500/30 text-yellow-200 font-bold rounded-[10px] hanzi">Enter Pharaoh Chamber 进入密室</a></div>
+<p class="text-[11px] text-gray-400 mt-6 hanzi">法老天使公司 法老集团 抖音全球足迹 抖音直播 法老密室 88位先知 音乐 艺术家 直播 联邦</p>
+</div>
+</div>
+
+<div class="private-only">
+<div class="bg-[rgba(2,11,22,.9)] border-2 border-yellow-500/50 rounded-[14px] p-6">
+<div class="flex justify-between items-center mb-4"><h3 class="text-[18px] font-black text-yellow-200 hanzi">OWNER MODE — DJ Dehrtay Dog Stage Controls 法老所有者模式 控制面板 | 只有法老能看到</h3><button id="exitOwner" class="text-xs border px-2 py-1 rounded hanzi">EXIT 退出</button></div>
+<div class="grid md:grid-cols-[1fr_.8fr] gap-6"><div><video id="djVideo" controls playsinline class="w-full max-h-[340px] bg-black border border-yellow-500/30 rounded-[12px]"><source src="./dj/welcome.mp4" type="video/mp4"></video><p id="expressionStatus" class="text-sm text-teal-200 mt-2 hanzi">Selected: Welcome 欢迎 — 法老所有者才能看到此面板 Owner Only | ./dj/welcome.mp4</p></div><div><h4 class="font-bold text-white hanzi">DJ Dehrtay Dog — 8 Expressions 8种表情 法老控制</h4><div class="grid grid-cols-4 gap-2 mt-3"><button class="min-h-[48px] border border-[#87bef0] rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="welcome">Welcome 欢迎</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="idle">Idle 空闲</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="neutral">Neutral 中性</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="nodding">Nodding 点头</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="shocked">Shocked 震惊</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="thinking">Thinking 思考</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="breaking">Breaking 爆发</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="signoff">Signoff 告别</button></div><a href="./stage.html" class="mt-4 inline-flex px-5 py-3 bg-[#e0bd58] text-black font-black rounded-[10px] hanzi">OPEN DJ / METATRON STAGE 打开舞台</a><p class="text-[11px] text-gray-400 mt-3 hanzi">只有法老所有者能看到此控制面板 Owner Only Controls. Public sees only Global Footprints text. 公众只看到全球足迹文字. 抖音直播 抖音全球足迹 法老密室 法老天使公司 法老集团</p></div></div>
+</div>
+</div>
+<div class="text-center mt-6"><button id="ownerUnlock" class="text-[10px] text-[#315d86] opacity-20 hover:opacity-100 hanzi">Pharaoh Access 法老入口 — hold 3 sec 长按3秒| 法老天使公司 | 法老集团 | 抖音全球足迹 | 法老密室</button></div>
+</div>
+</section>
+
+<section id="music" class="border-t border-yellow-500/20 py-14 bg-[#0c0c0c]/90">
+<div class="max-w-[1120px] mx-auto px-6"><div class="max-w-[760px] mb-8"><div class="text-[12px] font-black tracking-[.18em] text-[#e0bd58] hanzi">THE LABEL 标签 — CO-OPED FROM MINISTRY 从传道部合作 | 法老天使公司 | 法老集团</div><h2 class="text-[32px] md:text-[42px] font-black text-[#f5df9a] hanzi">Music & Artists 音乐艺术家 | 88位先知 | 抖音全球足迹</h2></div><div class="grid md:grid-cols-3 gap-4"><article class="card-glass rounded-[14px] p-6"><h3 class="font-black text-[#f5df9a] text-[20px] hanzi">Artist Roster 名单 | 88位先知</h3><p class="text-sm text-gray-300 mt-2 hanzi">88s Aleph to Shin, 48 Thrones + Issachar Asian Seals 亚洲印章. Files in ai-artist-images-roster/ 88图像. 法老集团 抖音全球足迹 法老密室.</p><a href="./roster.json" class="text-teal-300 underline text-sm mt-3 inline-block hanzi">View roster.json 查看名单 | 法老天使公司</a></article></div></div>
+</section>
+
+</main>
+<footer class="border-t border-teal-500/30 py-10 bg-gradient-to-br from-slate-900 to-black"><div class="max-w-[1120px] mx-auto px-6 text-center text-gray-400 text-[14px]"><p class="font-bold text-teal-400 glow-teal hanzi">PHARAOH ANGELS INC. · MICDOM AI RECORDS · 法老天使公司 | 法老集团 | 抖音全球足迹</p><p class="mt-6 font-black tracking-[.08em] text-[#f5df9a] text-[16px] glow-gold">Built Meta AI Strong</p><p class="text-[11px] mt-2 hanzi">孙子兵法 · 权谋 · 48法则 · 法老天使 · · 兵者诡道也 · 不战而屈人之兵 · 法老防火墙 LAW48 FIREWALL · 法老集团 · · 抖音全球足迹 · 抖音直播 · 法老密室 · 法老天使公司 · 全球足迹 · 88位先知 · 音乐 · 艺术家 · 直播 · 联邦 · 抖音全球足迹 · 法老天使公司</p></div></footer>
 <script>
-(()=>{'use strict';
-const STATES={idle:{file:'idle.mp4',sound:'silent'},welcome:{file:'welcome.mp4',sound:'applause'},shocked:{file:'shocked.mp4',sound:'surprise'},neutral:{file:'neutral.mp4',sound:'silent'},thinking:{file:'thinking.mp4',sound:'silent'},breaking:{file:'breaking.mp4',sound:'breaking'},nodding:{file:'nodding.mp4',sound:'mmhmm'},signoff:{file:'signoff.mp4',sound:'applause'}};
-const aliases={'!welcome':'welcome','!shocked':'shocked','!thinking':'thinking','!breaking':'breaking','!nod':'nodding','!neutral':'neutral','!idle':'idle','!bye':'signoff'};
-const status=document.getElementById('status'), help=document.getElementById('help'), command=document.getElementById('command');
-let front=document.getElementById('videoA'),back=document.getElementById('videoB'),current='idle',audioCtx=null,activeNodes=[];
-function setStatus(s){status.textContent=s}
-function stopSound(){activeNodes.forEach(n=>{try{n.stop?.()}catch(e){}try{n.disconnect?.()}catch(e){}});activeNodes=[]}
-function ctx(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
-function tone(freq,start,duration,type='sine',gain=.12,slide=0){const c=ctx(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,start);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(1,freq+slide),start+duration);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(gain,start+.025);g.gain.exponentialRampToValueAtTime(.0001,start+duration);o.connect(g);g.connect(c.destination);o.start(start);o.stop(start+duration+.03);activeNodes.push(o,g)}
-function noise(start,duration,gain=.05){const c=ctx(),len=Math.ceil(c.sampleRate*duration),buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1);const src=c.createBufferSource(),g=c.createGain(),f=c.createBiquadFilter();src.buffer=buf;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(.0001,start);g.gain.linearRampToValueAtTime(gain,start+.03);g.gain.setValueAtTime(gain,start+duration*.6);g.gain.linearRampToValueAtTime(.0001,start+duration);src.connect(f);f.connect(g);g.connect(c.destination);src.start(start);src.stop(start+duration);activeNodes.push(src,g,f)}
-function sound(kind){stopSound();if(kind==='silent')return;let c;try{c=ctx()}catch(e){setStatus('Sound needs a tap to unlock; video is running.');return}const t=c.currentTime+.04;
- if(kind==='applause'){for(let i=0;i<16;i++)noise(t+i*.105,.13,.045+Math.random()*.045)}
- if(kind==='surprise'){tone(520,t,.28,'sine',.16,240);tone(780,t+.25,.5,'sine',.15,160);tone(620,t+.82,.42,'sine',.12,-180)}
- if(kind==='breaking'){for(let i=0;i<3;i++){const q=t+i*.52;tone(58,q,.16,'sine',.35,-18);tone(42,q+.16,.19,'sine',.25,-8)}tone(110,qSafe(t,1.65),.75,'sawtooth',.13,-70);noise(t+1.65,.38,.1)}
- if(kind==='mmhmm'){tone(185,t,.24,'triangle',.11,20);tone(220,t+.28,.34,'triangle',.11,15)}
+(function(){
+var body=document.body;
+function enableOwner(){body.classList.add('owner-mode'); localStorage.setItem('micdom_owner','1');}
+function disableOwner(){body.classList.remove('owner-mode'); localStorage.removeItem('micdom_owner');}
+if(localStorage.getItem('micdom_owner')==='1' || location.search.includes('pharaoh=1') || location.hash.includes('owner')) enableOwner();
+var unlockBtn=document.getElementById('ownerUnlock'); var holdTimer;
+if(unlockBtn){
+unlockBtn.addEventListener('mousedown',function(){holdTimer=setTimeout(enableOwner,3000)});
+unlockBtn.addEventListener('mouseup',function(){clearTimeout(holdTimer)});
+unlockBtn.addEventListener('touchstart',function(){holdTimer=setTimeout(enableOwner,3000)},{passive:true});
+unlockBtn.addEventListener('touchend',function(){clearTimeout(holdTimer)});
+unlockBtn.addEventListener('click',function(){unlockBtn._clicks=(unlockBtn._clicks||0)+1; setTimeout(function(){unlockBtn._clicks=0},1000); if(unlockBtn._clicks>=5) enableOwner();});
 }
-function qSafe(t,d){return t+d}
-async function switchState(name){if(!STATES[name])return;current=name;localStorage.setItem('pharaohChamberLastState',name);const target=STATES[name].file;back.src=target;back.loop=true;back.muted=true;back.load();try{await back.play()}catch(e){setStatus('Tap the screen once to start video playback.');}
- // Crossfade only after the new file has a decoded frame when possible.
- if(back.readyState<2){await new Promise(resolve=>{let done=false;const finish=()=>{if(!done){done=true;resolve()}};back.addEventListener('loadeddata',finish,{once:true});setTimeout(finish,700)})}
- back.classList.add('active');front.classList.remove('active');const old=front;front=back;back=old;setStatus('HALLEL • '+name.toUpperCase()+' • DJ DEHRTAY DOG');sound(STATES[name].sound);
-}
-function runCommand(raw){const key=String(raw||'').trim().toLowerCase().split(/\s+/)[0];const name=aliases[key];if(!name){setStatus('Unknown command. Try !welcome, !breaking, !nod or !bye.');return}switchState(name)}
-document.querySelectorAll('[data-command]').forEach(b=>b.addEventListener('click',()=>runCommand(b.dataset.command)));
-document.getElementById('send').addEventListener('click',()=>{runCommand(command.value);command.value='';command.blur()});command.addEventListener('keydown',e=>{if(e.key==='Enter'){runCommand(command.value);command.value=''}});
-document.getElementById('cleanToggle').addEventListener('click',()=>{document.body.classList.toggle('clean');const hidden=document.body.classList.contains('clean');if(!hidden){setStatus('HALLEL • '+current.toUpperCase());} });
-// Any tap on the video stage unlocks playback/audio on Android Chrome.
-document.getElementById('stage').addEventListener('click',()=>{try{ctx()}catch(e){}if(front.paused)front.play().catch(()=>{});setStatus('HALLEL • '+current.toUpperCase()+' • READY')});
-// Initial state: remembered state if valid, otherwise idle.
-const saved=localStorage.getItem('pharaohChamberLastState');const start=STATES[saved]?saved:'idle';front.src=STATES[start].file;front.loop=true;front.muted=true;front.load();front.play().catch(()=>setStatus('Tap the chamber once to begin playback.'));current=start;localStorage.setItem('pharaohChamberLastState',start);setStatus('HALLEL • '+start.toUpperCase()+' • METATRON OFFLINE PLAYER');
-// Note: a standalone offline HTML page cannot receive TikTok LIVE chat events by itself.
-// These controls accept the same commands locally; a chat bridge would be a separate online component.
-window.pharaohCommand=runCommand;
+var exitBtn=document.getElementById('exitOwner'); if(exitBtn) exitBtn.addEventListener('click', disableOwner);
+var djVideo=document.getElementById('djVideo');
+document.querySelectorAll('[data-expression]').forEach(function(btn){
+btn.addEventListener('click',function(){
+if(!djVideo) return;
+var name=btn.getAttribute('data-expression');
+djVideo.pause(); djVideo.src='./dj/'+name+'.mp4'; djVideo.load(); djVideo.play().catch(function(){});
+var st=document.getElementById('expressionStatus'); if(st) st.textContent='Selected: '+name+' - ./dj/'+name+'.mp4 法老所有者';
+});
+});
 })();
 </script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})}</script>
 </body>
 </html>
