@@ -54,7 +54,7 @@ button.go{background:var(--gold);color:#000}
  </svg>
  <div id="banner"><b>BREAKING NEWS</b><div id="tick"><span>TIKTOK LIVE &bull; MONROVIA TO ZION &bull; LIBERIA &rarr; ASIA &rarr; WORLD &bull; PHARAOH CHAMBER &bull; SPHINX LOCKED &bull; MICDOM AI RECORDS &bull;</span></div></div>
  <div id="prod"><i>EP1</i><i>EP2</i><i>EP3</i></div>
- <div id="chair"><video id="v" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
+ <div id="chair"><video id="v" loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
  <div id="lt"><h1>PHARAOH &times; METATRON LIVE</h1><p id="ltp">Chamber ready</p></div>
  <div id="g"><span style="position:absolute;top:4px;left:8px;font-size:11px;color:#f88">profile + viewers</span></div>
 </div>
@@ -78,7 +78,7 @@ function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent +=
 function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
-  const paths = ["dj/"+id+".mp4", id+".mp4"]; let i = 0;
+  const paths = ["dj/expressions-v2/"+id+".mp4", "dj/"+id+".mp4", id+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
   t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
   t.onerror = () => { if (++i < paths.length) t.src = paths[i]; else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
@@ -86,7 +86,7 @@ function probe(id){
 }
 function show(id){
   v.style.display = "block"; $("ph").style.display = "none";
-  if (P[id]) { v.src = P[id]; v.play().catch(()=>{}); }
+  if (P[id]) { v.muted = false; v.volume = 1; v.src = P[id]; v.play().catch(()=>{}); }
   else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
          $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
 }
