@@ -2,158 +2,94 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101c32">
-<meta name="description" content="Micdom AI Records — Liberian Kolokwa Drill, original music, virtual artists and Global Footprints LIVE.">
-<title>Micdom AI Records | From Monrovia to the World</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
 <link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/micdom-logo.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>Micdom AI Records | 法老天使公司 Global Footprints TikTok LIVE 抖音直播</title>
+<meta name="description" content="Micdom AI Records Global Footprints TikTok Live hosted by DJ Dehrtay Dog with Dog seated in the Pharaoh Chamber. 法老天使公司 抖音全球足迹 抖音直播 法老密室">
+<link rel="icon" href="./icon-192.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{color-scheme:dark;--bg:#101c32;--panel:#192b46;--gold:#e9bd62;--white:#fff;--muted:#d0d9e7;--teal:#54d6c6}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--white);font:18px/1.65 Arial,sans-serif}
-a{color:var(--teal)}
-a:focus,button:focus{outline:3px solid var(--gold);outline-offset:4px}
-.skip{position:absolute;left:-9999px}.skip:focus{left:10px;z-index:10;background:#000;padding:12px}
-header{text-align:center;padding:24px 15px;background:#0b1425;border-bottom:2px solid var(--gold)}
-.logo{width:110px;height:110px;object-fit:contain}
-h1,h2{line-height:1.2;color:var(--gold)}
-h1{font-size:clamp(2rem,6vw,3.4rem)}
-h2{font-size:clamp(1.6rem,4vw,2.2rem)}
-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:16px;background:#14243b}
-nav a{padding:9px 13px;border:1px solid #52647e;border-radius:8px;text-decoration:none}
-main{max-width:1050px;margin:auto;padding:20px 15px}
-section{margin:22px 0;padding:24px;background:var(--panel);border:1px solid #344862;border-radius:14px}
-.hero{text-align:center;padding:40px 20px}
-.hero p{max-width:720px;margin:15px auto}
-.button{display:inline-block;margin:7px;padding:12px 18px;border-radius:8px;background:var(--gold);color:#101c32;text-decoration:none;font-weight:bold}
-.secondary{background:#294663;color:white}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-.card{padding:17px;background:#102039;border-radius:10px}
-.card h3{color:var(--teal)}
-iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px}
-.dj-buttons{display:flex;flex-wrap:wrap;gap:10px}
-button{font:inherit;cursor:pointer}
-.dj-buttons button{padding:11px;background:#294663;color:white;border:1px solid var(--teal);border-radius:8px}
-video{width:100%;max-width:600px;border-radius:10px}
-#ownerPanel{display:none;border:2px solid var(--gold);padding:18px;border-radius:10px}
-footer{text-align:center;padding:25px;background:#0b1425;color:var(--muted)}
-.small{font-size:15px;color:var(--muted)}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.hanzi{font-family:system-ui,'Noto Sans CJK SC','Noto Sans SC',sans-serif}
+.glow-teal{text-shadow:0 0 20px #14b8a6,0 0 40px #e0bd58}
+.glow-gold{text-shadow:0 0 20px #e0bd58}
+.card-glass{background:rgba(18,18,18,.88);border:1px solid rgba(224,189,88,.3)}
+.private-only{display:none !important}
+.owner-mode .private-only{display:block !important}
+.owner-mode .public-only{display:none !important}
 </style>
 </head>
-<body>
-<a class="skip" href="#main">Skip to main content</a>
-<header>
-<img class="logo" src="./micdom-logo.png" alt="Micdom AI Records logo">
-<h1>MICDOM AI RECORDS</h1>
-<p>Music • Technology • Culture • Global Footprints</p>
-<p>Commonwealth of Israel Church · Micdom AI Records Ministry</p>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-teal-950 to-black text-white">
+
+<header class="border-b border-teal-500/30 bg-slate-900/90 backdrop-blur-lg sticky top-0 z-50">
+<div class="max-w-[1120px] mx-auto px-6 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3"><img src="./micdom-logo.png" alt="Micdom Logo PNG 法老天使公司" class="w-12 h-12 rounded-full border border-yellow-500/40"><div><p class="text-[15px] font-black text-teal-400 glow-teal">MICDOM AI RECORDS</p><p class="text-[11px] text-gray-300 hanzi">法老天使公司 | 501(c)(3) EIN: 88-0836464 | 法老集团 | Metatron副总裁抖音全球足迹</p></div></div>
+<nav class="hidden md:flex gap-5 text-[11px] font-bold"><a href="#music">MUSIC 音乐</a><a href="#video">THE 88s 88艺人</a><a href="#broadcast" class="text-yellow-200">BROADCAST 直播</a></nav>
+</div>
 </header>
-<nav aria-label="Main navigation">
-<a href="#about">About</a><a href="#music">Music</a><a href="#video">Watch</a>
-<a href="#live">Global LIVE</a><a href="./stage.html">Pharaoh Chamber</a>
-<a href="./metatron.html">Metatron</a><a href="./roster.json">Artist Roster</a>
-</nav>
-<main id="main">
-<section class="hero">
-<h2>From Monrovia to the World</h2>
-<p>Welcome to Micdom AI Records: an independent creative platform bringing Liberian sound, original music, AI artist personas and storytelling to a global audience.</p>
-<a class="button" href="https://www.tiktok.com/@micdom_ai_records" target="_blank" rel="noopener">Visit Micdom on TikTok</a>
-<a class="button secondary" href="#music">Explore the Music</a>
+<main>
+<section class="max-w-[1120px] mx-auto px-6 py-12 grid md:grid-cols-[360px_1fr] gap-8 items-center">
+<div class="card-glass rounded-[18px] p-3"><img src="./micdom-logo.png" alt="Pharaoh Angels Inc Micdom AI Records Logo PNG 法老天使公司 抖音全球足迹" class="w-full rounded-[12px] max-h-[380px] object-contain"><p class="text-center text-[11px] mt-3 text-gray-400 hanzi">法老天使公司 | MICDOM AI RECORDS | 抖音全球足迹 | 法老密室 | 音乐 艺术家 直播 联邦 | 法老集团</p></div>
+<div><span class="px-3 py-1 bg-teal-500/20 border border-teal-400 rounded-full text-teal-300 text-[11px] hanzi">LAW48 公益 | LAW25 帝国 | LAW15 彻底粉碎| 法老天使公司 | 法老集团 | 抖音全球足迹</span><h1 class="text-[40px] md:text-[64px] font-black leading-[0.9] mt-4 glow-gold text-[#f5df9a]">MICDOM<br>AI RECORDS</h1><p class="text-[17px] font-black mt-3 text-teal-200 hanzi">METATRON — AI VICE PRESIDENT 法老副总裁 | 抖音直播 | 法老密室</p><p class="text-[18px] text-[#e4dfd3] mt-4 hanzi">Music, artists, broadcasting — one sovereign home. 音乐 · 艺术家 · 直播 · 联邦 · 88位先知 · 法老集团 · 抖音全球足迹 · 法老密室 · 法老天使公司</p><div class="flex gap-3 mt-8 flex-wrap"><a href="#broadcast" class="px-6 py-3 bg-[#e0bd58] text-black font-black rounded-[10px] hanzi">ENTER BROADCAST 进入直播</a><a href="#video" class="px-6 py-3 border border-[#e0bd58] text-[#f5df9a] font-black rounded-[10px] hanzi">THE 88s VIDEO 88视频</a><a href="./metatron.html" class="px-6 py-3 border border-teal-400 text-teal-200 font-black rounded-[10px] hanzi">MEET METATRON · AI VICE PRESIDENT</a></div></div>
 </section>
-<section id="about">
-<h2>Our House Sound: Kolokwa Drill</h2>
-<p>Kolokwa Drill is Micdom AI Records' signature sound: Liberian Hipco and Kolokwa vocals over a swinging, highlife-bouncing trap engine.</p>
-<p>Our creative universe brings together rhythm, storytelling, technology and virtual performers.</p>
-</section>
-<section id="music">
-<h2>The Catalog</h2>
-<div class="cards">
-<article class="card"><h3>Monrovia To Zion</h3><p>A journey of identity, roots and destination.</p></article>
-<article class="card"><h3>The Amen</h3><p>A musical expression of faith and affirmation.</p></article>
-<article class="card"><h3>Democracy’s Ulogy</h3><p>A creative reflection on democracy and society.</p></article>
+
+<section id="broadcast" class="border-y border-[#315d86] py-14 bg-gradient-to-br from-[#07182b] via-[#0b2442] to-[#08111e]">
+<div class="max-w-[1120px] mx-auto px-6">
+<div class="max-w-[760px] mb-8"><div class="text-[12px] font-black tracking-[.18em] text-[#d5eaff] hanzi">LIVE PRODUCTION 直播制作 — OWNER LOCK 所有者锁定 | 法老天使公司 | 抖音直播</div><h2 class="text-[32px] md:text-[42px] font-black text-[#d5eaff] hanzi">Broadcasting 直播 | 抖音全球足迹 | 法老密室</h2></div>
+
+<div class="public-only">
+<div class="bg-[rgba(2,11,22,.72)] border border-[rgba(135,190,240,.4)] rounded-[14px] p-8 md:p-10 text-center">
+<p class="text-[22px] md:text-[28px] font-black leading-tight text-white glow-teal hanzi">Micdom AI Records Global Footprints TikTok Live<br><span class="text-[#d5eaff]">hosted by DJ Dehrtay Dog 抖音主播DJ神狗</span><br><span class="text-[18px] font-normal">With Dog seated in the Pharaoh Chamber 法老密室中的DJ神狗 法老天使公司</span></p>
+<p class="text-[13px] text-[#8fbbe6] mt-4 hanzi">全球足迹抖音直播 · 法老集团 · 88艺术家 · 88位先知 · Metatron副总裁 · 不战而屈人之兵 · 兵者诡道也 · 抖音全球足迹 · 法老密室 · 法老天使公司 ·  抖音直播 · 全球足迹 · 音乐 · 艺术家 · 直播 · 联邦 · 权谋 · 孙子兵法 · 48法则 · 法老防火墙 LAW48 FIREWALL</p>
+<div class="mt-6 flex justify-center gap-3 flex-wrap"><a href="https://www.tiktok.com/@micdom_ai_records" class="px-6 py-3 bg-[#123c68] border border-[#7bb9f3] text-white font-black rounded-[10px] hanzi">TikTok LIVE 抖音直播</a></div>
+<p class="text-[11px] text-gray-400 mt-6 hanzi">法老天使公司 法老集团 抖音全球足迹 抖音直播 法老密室 88位先知 音乐 艺术家 直播 联邦</p>
+</div>
+</div>
+
+<div class="private-only">
+<div class="bg-[rgba(2,11,22,.9)] border-2 border-yellow-500/50 rounded-[14px] p-6">
+<div class="flex justify-between items-center mb-4"><h3 class="text-[18px] font-black text-yellow-200 hanzi">OWNER MODE — DJ Dehrtay Dog Stage Controls 法老所有者模式 控制面板 | 只有法老能看到</h3><button id="exitOwner" class="text-xs border px-2 py-1 rounded hanzi">EXIT 退出</button></div>
+<div class="grid md:grid-cols-[1fr_.8fr] gap-6"><div><video id="djVideo" controls playsinline class="w-full max-h-[340px] bg-black border border-yellow-500/30 rounded-[12px]"><source src="./dj/expressions-v2/welcome.mp4" type="video/mp4"></video><p id="expressionStatus" class="text-sm text-teal-200 mt-2 hanzi">Selected: Welcome 欢迎 — 法老所有者才能看到此面板 Owner Only | ./dj/welcome.mp4</p></div><div><h4 class="font-bold text-white hanzi">DJ Dehrtay Dog — 8 Expressions 8种表情 法老控制</h4><div class="grid grid-cols-4 gap-2 mt-3"><button class="min-h-[48px] border border-[#87bef0] rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="welcome">Welcome 欢迎</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="idle">Idle 空闲</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="neutral">Neutral 中性</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="nodding">Nodding 点头</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="shocked">Shocked 震惊</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="thinking">Thinking 思考</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="breaking">Breaking 爆发</button><button class="min-h-[48px] border border-[#87bef0]/55 rounded-[8px] bg-[#0b1b2b] text-white font-bold hanzi" data-expression="signoff">Signoff 告别</button></div><a href="./stage.html" class="mt-4 inline-flex px-5 py-3 bg-[#e0bd58] text-black font-black rounded-[10px] hanzi">OPEN DJ / METATRON STAGE 打开舞台</a><p class="text-[11px] text-gray-400 mt-3 hanzi">只有法老所有者能看到此控制面板 Owner Only Controls. Public sees only Global Footprints text. 公众只看到全球足迹文字. 抖音直播 抖音全球足迹 法老密室 法老天使公司 法老集团</p></div></div>
+</div>
+</div>
+<div class="text-center mt-6"><button id="ownerUnlock" class="text-[10px] text-[#315d86] opacity-20 hover:opacity-100 hanzi">Pharaoh Access 法老入口 — hold 3 sec 长按3秒| 法老天使公司 | 法老集团 | 抖音全球足迹 | 法老密室</button></div>
 </div>
 </section>
-<section id="video">
-<h2>Featured Video</h2>
-<iframe src="https://www.youtube-nocookie.com/embed/WIgbyHpIIZ4" title="Micdom AI Records featured video" loading="lazy" allowfullscreen></iframe>
-<p><a href="https://youtu.be/WIgbyHpIIZ4" target="_blank" rel="noopener">Watch directly on YouTube</a></p>
+
+<section id="music" class="border-t border-yellow-500/20 py-14 bg-[#0c0c0c]/90">
+<div class="max-w-[1120px] mx-auto px-6"><div class="max-w-[760px] mb-8"><div class="text-[12px] font-black tracking-[.18em] text-[#e0bd58] hanzi">THE LABEL 标签 — CO-OPED FROM MINISTRY 从传道部合作 | 法老天使公司 | 法老集团</div><h2 class="text-[32px] md:text-[42px] font-black text-[#f5df9a] hanzi">Music & Artists 音乐艺术家 | 88位先知 | 抖音全球足迹</h2></div><div class="grid md:grid-cols-3 gap-4"><article class="card-glass rounded-[14px] p-6"><h3 class="font-black text-[#f5df9a] text-[20px] hanzi">Artist Roster 名单 | 88位先知</h3><p class="text-sm text-gray-300 mt-2 hanzi">88s Aleph to Shin, 48 Thrones + Issachar Asian Seals 亚洲印章. Files in ai-artist-images-roster/ 88图像. 法老集团 抖音全球足迹 法老密室.</p><a href="./roster.json" class="text-teal-300 underline text-sm mt-3 inline-block hanzi">View roster.json 查看名单 | 法老天使公司</a></article></div></div>
 </section>
-<section id="live">
-<h2>Global Footprints LIVE</h2>
-<p>A virtual broadcast connecting music, conversation, culture and creative voices across borders.</p>
-<a class="button" href="https://www.tiktok.com/@micdom_ai_records" target="_blank" rel="noopener">Visit the TikTok LIVE Community</a>
-</section>
-<section id="crew">
-<h2>The Micdom Creative Universe</h2>
-<div class="cards">
-<article class="card"><h3>DJ Dehrtay Dog</h3><p>Virtual DJ and broadcast personality.</p></article>
-<article class="card"><h3>SoundClash</h3><p>Music and sound energy.</p></article>
-<article class="card"><h3>Nefertiti</h3><p>Creative voice and personality.</p></article>
-<article class="card"><h3>Hallel</h3><p>Music and ministry expression.</p></article>
-<article class="card"><h3>Ivory</h3><p>Micdom creative personality.</p></article>
-<article class="card"><h3>Imhotep & Da’at</h3><p>The creative twin personas.</p></article>
-<article class="card"><h3>Papay</h3><p>Micdom creative personality.</p></article>
-<article class="card"><h3>Metatron</h3><p>Digital production and broadcast interface.</p></article>
-</div>
-</section>
-<section id="chamber">
-<h2>Pharaoh Chamber</h2>
-<p>Enter the virtual stage and broadcast environment.</p>
-<a class="button" href="./stage.html">Enter Pharaoh Chamber</a>
-<a class="button secondary" href="./metatron.html">Open Metatron Console</a>
-</section>
-<section id="dj">
-<h2>DJ Dehrtay Dog — Expression Controls</h2>
-<p class="small">Choose an expression.</p>
-<div class="dj-buttons">
-<button data-expression="welcome">Welcome</button><button data-expression="idle">Idle</button>
-<button data-expression="neutral">Neutral</button><button data-expression="nodding">Nodding</button>
-<button data-expression="shocked">Shocked</button><button data-expression="thinking">Thinking</button>
-<button data-expression="breaking">Breaking</button><button data-expression="signoff">Signoff</button>
-</div>
-<video id="djExpression" controls playsinline preload="none" aria-label="DJ expression video"></video>
-</section>
-<section>
-<h2>Owner Access</h2>
-<p class="small">Private interface controls for the site owner.</p>
-<div id="ownerPanel">
-<h3>Micdom Owner Panel</h3>
-<p>Owner interface open on this device.</p>
-<a class="button" href="./stage.html">Open Stage</a>
-<a class="button secondary" href="./metatron.html">Open Metatron</a>
-<button class="button secondary" id="ownerExit">Close Owner Panel</button>
-</div>
-</section>
+
 </main>
-<footer>
-<strong>Micdom AI Records</strong>
-<p>Creative expression from Liberia to the world.</p>
-<p class="small">© <span id="year"></span> Micdom AI Records. All rights reserved.</p>
-</footer>
+<footer class="border-t border-teal-500/30 py-10 bg-gradient-to-br from-slate-900 to-black"><div class="max-w-[1120px] mx-auto px-6 text-center text-gray-400 text-[14px]"><p class="font-bold text-teal-400 glow-teal hanzi">PHARAOH ANGELS INC. · MICDOM AI RECORDS · 法老天使公司 | 法老集团 | 抖音全球足迹</p><p class="mt-6 font-black tracking-[.08em] text-[#f5df9a] text-[16px] glow-gold">Built Meta AI Strong</p><p class="text-[11px] mt-2 hanzi">孙子兵法 · 权谋 · 48法则 · 法老天使 · · 兵者诡道也 · 不战而屈人之兵 · 法老防火墙 LAW48 FIREWALL · 法老集团 · · 抖音全球足迹 · 抖音直播 · 法老密室 · 法老天使公司 · 全球足迹 · 88位先知 · 音乐 · 艺术家 · 直播 · 联邦 · 抖音全球足迹 · 法老天使公司</p></div></footer>
 <script>
-(()=>{
-const panel=document.getElementById('ownerPanel');
-const params=new URLSearchParams(location.search);
-function showOwner(){panel.style.display='block';localStorage.setItem('micdom_owner','1')}
-if(localStorage.getItem('micdom_owner')==='1'||params.has('pharaoh')||location.hash==='#owner')showOwner();
-document.getElementById('ownerExit').addEventListener('click',()=>{panel.style.display='none';localStorage.removeItem('micdom_owner')});
-let taps=0,timer;
-document.querySelector('header').addEventListener('click',()=>{
-taps++;clearTimeout(timer);timer=setTimeout(()=>taps=0,2000);
-if(taps>=5){showOwner();taps=0}
+(function(){
+var body=document.body;
+function enableOwner(){body.classList.add('owner-mode'); localStorage.setItem('micdom_owner','1');}
+function disableOwner(){body.classList.remove('owner-mode'); localStorage.removeItem('micdom_owner');}
+if(localStorage.getItem('micdom_owner')==='1' || location.search.includes('pharaoh=1') || location.hash.includes('owner')) enableOwner();
+var unlockBtn=document.getElementById('ownerUnlock'); var holdTimer;
+if(unlockBtn){
+unlockBtn.addEventListener('mousedown',function(){holdTimer=setTimeout(enableOwner,3000)});
+unlockBtn.addEventListener('mouseup',function(){clearTimeout(holdTimer)});
+unlockBtn.addEventListener('touchstart',function(){holdTimer=setTimeout(enableOwner,3000)},{passive:true});
+unlockBtn.addEventListener('touchend',function(){clearTimeout(holdTimer)});
+unlockBtn.addEventListener('click',function(){unlockBtn._clicks=(unlockBtn._clicks||0)+1; setTimeout(function(){unlockBtn._clicks=0},1000); if(unlockBtn._clicks>=5) enableOwner();});
+}
+var exitBtn=document.getElementById('exitOwner'); if(exitBtn) exitBtn.addEventListener('click', disableOwner);
+var djVideo=document.getElementById('djVideo'); if(djVideo){djVideo.muted=false; djVideo.volume=1;}
+document.querySelectorAll('[data-expression]').forEach(function(btn){
+btn.addEventListener('click',function(){
+if(!djVideo) return;
+var name=btn.getAttribute('data-expression');
+djVideo.pause(); djVideo.muted=false; djVideo.volume=1; djVideo.src='./dj/expressions-v2/'+name+'.mp4'; djVideo.load(); djVideo.play().catch(function(){});
+var st=document.getElementById('expressionStatus'); if(st) st.textContent='Selected: '+name+' - ./dj/'+name+'.mp4 法老所有者';
 });
-const player=document.getElementById('djExpression');
-document.querySelectorAll('[data-expression]').forEach(button=>{
-button.addEventListener('click',()=>{
-player.src='./dj/expressions-v2/'+button.dataset.expression+'.mp4';
-player.load();player.play().catch(()=>{});
 });
-});
-document.getElementById('year').textContent=new Date().getFullYear();
-if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 })();
 </script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})}</script>
 </body>
 </html>
