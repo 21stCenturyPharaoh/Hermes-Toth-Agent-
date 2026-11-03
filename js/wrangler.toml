@@ -6,13 +6,6 @@ compatibility_date = "2026-09-04"
 ENVIRONMENT = "production"
 DOCTRINE = "Melchizedek Order | Essene Discipline"
 
-# SECRETS TO ADD IN CLOUDFLARE DASHBOARD:
-# GIVEBUTTER_API_KEY = ""
-# SENDGRID_API_KEY = ""
-# NEWSAPI_KEY = ""
-# ORANGE_MONEY_KEY = ""
-# SENDWAVE_AFFILIATE_ID = ""
-
 [[kv_namespaces]]
 binding = "EVIDENCE_VAULT"
-id = "PLACEHOLDER_KV_ID" # Create in Cloudflare > KV > Add
+id = "08f64f613aac421e959e462badaafd48"
