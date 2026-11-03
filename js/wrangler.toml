@@ -1,4 +1,4 @@
-name = "hermes-toth-agent-api"
+name = "hermes-toth-agent-worker"
 main = "workers/api.js"
 compatibility_date = "2026-09-04"
 
