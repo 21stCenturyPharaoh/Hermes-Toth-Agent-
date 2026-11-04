@@ -1,26 +1,20 @@
-
 /**
  * HERMES-TOTH AGENT
- * Backend Worker API
+ * Hybrid Authority API — development release
  *
- * Intended hostname:
- * https://toth-agent.pharaoh-conglomerate.org
+ * Separate legal authority:
+ * - Micdom AI Records: Pharaoh Angels Incorporated DBA
+ * - Human Rights Angels Registry Incorporated: separate corporation
+ * - CWOIC: outside these API authority domains
  *
- * Version: 1.0.0
+ * Storage: EVIDENCE_VAULT KV
  *
- * Initial safe release:
- * - API health checks
- * - Service information
- * - CORS for approved frontends
- * - JSON responses
- * - Safe handling of unknown routes
- *
- * No email, membership, payment, or database writes
- * are enabled in this initial release.
+ * No Registry client records, orders, payments, or webhooks
+ * are enabled in this release.
  */
 
 const SERVICE_NAME = "Hermes-Toth-Agent";
-const VERSION = "1.0.0";
+const VERSION = "2.0.0";
 
 const ALLOWED_ORIGINS = new Set([
   "https://micdom-records.pharaoh-conglomerate.org",
@@ -28,6 +22,9 @@ const ALLOWED_ORIGINS = new Set([
   "https://275860d9.hermes-toth-agent.pages.dev",
   "https://21stcenturypharaoh.github.io"
 ]);
+
+const MAX_BODY_BYTES = 16 * 1024;
+const MAX_LIST_ITEMS = 100;
 
 function makeHeaders(origin) {
   const headers = {
@@ -39,7 +36,7 @@ function makeHeaders(origin) {
 
   if (origin && ALLOWED_ORIGINS.has(origin)) {
     headers["Access-Control-Allow-Origin"] = origin;
-    headers["Access-Control-Allow-Methods"] = "GET, OPTIONS";
+    headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";
     headers["Access-Control-Allow-Headers"] =
       "Content-Type, Authorization";
     headers["Access-Control-Max-Age"] = "86400";
@@ -49,22 +46,304 @@ function makeHeaders(origin) {
 }
 
 function jsonResponse(data, status, origin) {
-  return new Response(JSON.stringify(data, null, 2), {
+  return new Response(JSON.stringify(data), {
     status,
     headers: makeHeaders(origin)
   });
 }
 
-function getHealthData() {
+function safeEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  if (a.length !== b.length) return false;
+
+  let difference = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    difference |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+
+  return difference === 0;
+}
+
+function bearerToken(request) {
+  const header = request.headers.get("Authorization") || "";
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : "";
+}
+
+function authenticateOrg(request, env) {
+  const token = bearerToken(request);
+  if (!token) return null;
+
+  const micdom = env.MICDOM_API_TOKEN || "";
+  const registry = env.REGISTRY_API_TOKEN || "";
+
+  // Never permit one shared credential to represent both organizations.
+  if (micdom && registry && safeEqual(micdom, registry)) {
+    return null;
+  }
+
+  const isMicdom = micdom && safeEqual(token, micdom);
+  const isRegistry = registry && safeEqual(token, registry);
+
+  if (isMicdom && !isRegistry) return "micdom";
+  if (isRegistry && !isMicdom) return "registry";
+
+  return null;
+}
+
+function authenticateOwner(request, env) {
+  const token = bearerToken(request);
+  const owner = env.MICDOM_OWNER_TOKEN || "";
+  const micdom = env.MICDOM_API_TOKEN || "";
+  const registry = env.REGISTRY_API_TOKEN || "";
+
+  if (!token || !owner) return false;
+
+  // The approval credential must be distinct from both organization tokens.
+  if (safeEqual(owner, micdom) || safeEqual(owner, registry)) {
+    return false;
+  }
+
+  return safeEqual(token, owner);
+}
+
+function requireKV(env) {
+  return env && env.EVIDENCE_VAULT &&
+    typeof env.EVIDENCE_VAULT.put === "function" &&
+    typeof env.EVIDENCE_VAULT.get === "function" &&
+    typeof env.EVIDENCE_VAULT.list === "function";
+}
+
+async function readJSONBody(request) {
+  const contentType = request.headers.get("Content-Type") || "";
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return { error: "Content-Type must be application/json" };
+  }
+
+  const declaredLength = Number(
+    request.headers.get("Content-Length") || 0
+  );
+
+  if (declaredLength > MAX_BODY_BYTES) {
+    return { error: "Request body is too large" };
+  }
+
+  const text = await request.text();
+
+  if (new TextEncoder().encode(text).length > MAX_BODY_BYTES) {
+    return { error: "Request body is too large" };
+  }
+
+  try {
+    const value = JSON.parse(text);
+
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return { error: "JSON body must be an object" };
+    }
+
+    return { value };
+  } catch {
+    return { error: "Invalid JSON body" };
+  }
+}
+
+function cleanText(value, maxLength) {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+}
+
+function makeId() {
+  return crypto.randomUUID();
+}
+
+async function saveRecord(env, prefix, record) {
+  await env.EVIDENCE_VAULT.put(
+    prefix + record.id,
+    JSON.stringify(record)
+  );
+}
+
+async function getRecord(env, prefix, id) {
+  const value = await env.EVIDENCE_VAULT.get(prefix + id);
+  if (!value) return null;
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
+async function listRecords(env, prefix) {
+  const result = await env.EVIDENCE_VAULT.list({
+    prefix,
+    limit: MAX_LIST_ITEMS
+  });
+
+  const records = [];
+
+  for (const item of result.keys || []) {
+    const value = await env.EVIDENCE_VAULT.get(item.name);
+
+    if (!value) continue;
+
+    try {
+      records.push(JSON.parse(value));
+    } catch {
+      // Ignore malformed stored records; never expose raw KV values.
+    }
+  }
+
+  return records.sort((a, b) =>
+    String(b.createdAt || "").localeCompare(
+      String(a.createdAt || "")
+    )
+  );
+}
+
+async function writeAudit(env, action, resourceType, resourceId) {
+  const event = {
+    id: makeId(),
+    organization: "micdom",
+    action,
+    resourceType,
+    resourceId,
+    createdAt: new Date().toISOString()
+  };
+
+  await env.EVIDENCE_VAULT.put(
+    "audit:micdom:" + Date.now() + ":" + event.id,
+    JSON.stringify(event)
+  );
+}
+
+async function createMicdomDraft(request, env, type) {
+  const body = await readJSONBody(request);
+
+  if (body.error) {
+    return { status: 400, data: { ok: false, error: body.error } };
+  }
+
+  const title = cleanText(body.value.title, 160);
+
+  if (!title) {
+    return {
+      status: 400,
+      data: { ok: false, error: "A title is required" }
+    };
+  }
+
+  const prefix = type === "release"
+    ? "micdom:releases:"
+    : "micdom:announcements:";
+
+  const record = {
+    id: makeId(),
+    organization: "micdom",
+    type,
+    title,
+    status: "draft",
+    createdAt: new Date().toISOString()
+  };
+
+  if (type === "release") {
+    record.artist = cleanText(body.value.artist, 120);
+    record.releaseDate = cleanText(body.value.releaseDate, 40);
+    record.description = cleanText(body.value.description, 2000);
+  } else {
+    record.body = cleanText(body.value.body, 5000);
+
+    if (!record.body) {
+      return {
+        status: 400,
+        data: { ok: false, error: "Announcement body is required" }
+      };
+    }
+  }
+
+  await saveRecord(env, prefix, record);
+  await writeAudit(env, "draft.created", type, record.id);
+
   return {
-    ok: true,
-    service: SERVICE_NAME,
-    version: VERSION,
-    status: "online",
-    role: "backend-api",
-    timestamp: new Date().toISOString()
+    status: 201,
+    data: { ok: true, record }
   };
 }
+
+async function approveMicdomRecord(request, env, type, id) {
+  if (!authenticateOwner(request, env)) {
+    return {
+      status: 403,
+      data: { ok: false, error: "Owner approval credential required" }
+    };
+  }
+
+  const prefix = type === "release"
+    ? "micdom:releases:"
+    : "micdom:announcements:";
+
+  const record = await getRecord(env, prefix, id);
+
+  if (!record) {
+    return {
+      status: 404,
+      data: { ok: false, error: "Record not found" }
+    };
+  }
+
+  if (record.status !== "draft") {
+    return {
+      status: 409,
+      data: { ok: false, error: "Only draft records can be approved" }
+    };
+  }
+
+  record.status = "approved";
+  record.approvedAt = new Date().toISOString();
+
+  await saveRecord(env, prefix, record);
+  await writeAudit(env, "draft.approved", type, id);
+
+  return {
+    status: 200,
+    data: { ok: true, record }
+  };
+}
+
+async function publicMicdomRecords(env, type) {
+  const prefix = type === "release"
+    ? "micdom:releases:"
+    : "micdom:announcements:";
+
+  const records = await listRecords(env, prefix);
+
+  return records.filter(record => record.status === "approved");
+}
+
+const REGISTRY_SERVICES = [
+  {
+    id: "corporate-documents",
+    name: "Corporate document services",
+    status: "information-only"
+  },
+  {
+    id: "registry-applications",
+    name: "Registry client applications",
+    status: "not-enabled"
+  },
+  {
+    id: "commercial-orders",
+    name: "Commercial service orders",
+    status: "not-enabled"
+  },
+  {
+    id: "payments",
+    name: "Payment processing",
+    status: "not-enabled"
+  }
+];
 
 export default {
   async fetch(request, env, ctx) {
@@ -74,7 +353,6 @@ export default {
     const origin = request.headers.get("Origin");
 
     try {
-      // Browser CORS preflight
       if (method === "OPTIONS") {
         return new Response(null, {
           status: 204,
@@ -82,7 +360,6 @@ export default {
         });
       }
 
-      // Backend root: service identification
       if (path === "/" && method === "GET") {
         return jsonResponse({
           ok: true,
@@ -93,43 +370,238 @@ export default {
         }, 200, origin);
       }
 
-      // Health endpoint
       if (
         (path === "/api/health" || path === "/health") &&
         method === "GET"
       ) {
-        return jsonResponse(getHealthData(), 200, origin);
+        return jsonResponse({
+          ok: true,
+          service: SERVICE_NAME,
+          version: VERSION,
+          status: "online",
+          role: "backend-api",
+          timestamp: new Date().toISOString()
+        }, 200, origin);
       }
 
-      // Reject unsupported methods on known health endpoints
+      if (path === "/api/v1/registry/services" && method === "GET") {
+        return jsonResponse({
+          ok: true,
+          organization: "Human Rights Angels Registry Incorporated",
+          services: REGISTRY_SERVICES
+        }, 200, origin);
+      }
+
+      if (path === "/api/v1/public/micdom/releases" && method === "GET") {
+        if (!requireKV(env)) {
+          return jsonResponse({
+            ok: false,
+            error: "Storage is not configured"
+          }, 503, origin);
+        }
+
+        return jsonResponse({
+          ok: true,
+          records: await publicMicdomRecords(env, "release")
+        }, 200, origin);
+      }
+
       if (
-        (path === "/api/health" || path === "/health") &&
-        method !== "GET"
+        path === "/api/v1/public/micdom/announcements" &&
+        method === "GET"
       ) {
+        if (!requireKV(env)) {
+          return jsonResponse({
+            ok: false,
+            error: "Storage is not configured"
+          }, 503, origin);
+        }
+
         return jsonResponse({
-          ok: false,
-          error: "Method not allowed",
-          allowed: ["GET", "OPTIONS"]
-        }, 405, origin);
+          ok: true,
+          records: await publicMicdomRecords(env, "announcement")
+        }, 200, origin);
       }
 
-      // Unknown API route
-      if (path.startsWith("/api/")) {
+      if (path.startsWith("/api/v1/")) {
+        if (method !== "GET" && method !== "POST") {
+          return jsonResponse({
+            ok: false,
+            error: "Method not allowed"
+          }, 405, origin);
+        }
+
+        let organization = authenticateOrg(request, env);
+
+        if (!organization && authenticateOwner(request, env)) {
+          organization = "micdom-owner";
+        }
+
+        if (!organization) {
+          return jsonResponse({
+            ok: false,
+            error: "Valid organization credential required"
+          }, 401, origin);
+        }
+
+        if (path === "/api/v1/status" && method === "GET") {
+          return jsonResponse({
+            ok: true,
+            authenticated: true,
+            organization
+          }, 200, origin);
+        }
+
+        if (path === "/api/v1/micdom/status" && method === "GET") {
+          if (organization !== "micdom" && organization !== "micdom-owner") {
+            return jsonResponse({
+              ok: false,
+              error: "Organization access denied"
+            }, 403, origin);
+          }
+
+          return jsonResponse({
+            ok: true,
+            organization: "Micdom AI Records",
+            legalEntity: "Pharaoh Angels Incorporated",
+            relationship: "DBA",
+            approvalRequiredForPublication: true
+          }, 200, origin);
+        }
+
+        if (path === "/api/v1/registry/status" && method === "GET") {
+          if (organization !== "registry") {
+            return jsonResponse({
+              ok: false,
+              error: "Organization access denied"
+            }, 403, origin);
+          }
+
+          return jsonResponse({
+            ok: true,
+            organization: "Human Rights Angels Registry Incorporated",
+            legalEntity: "Human Rights Angels Registry Incorporated",
+            services: "information-only",
+            applications: "disabled",
+            orders: "disabled",
+            payments: "disabled"
+          }, 200, origin);
+        }
+
+        if (path.startsWith("/api/v1/micdom/")) {
+          if (organization !== "micdom" && organization !== "micdom-owner") {
+            return jsonResponse({
+              ok: false,
+              error: "Organization access denied"
+            }, 403, origin);
+          }
+
+          if (!requireKV(env)) {
+            return jsonResponse({
+              ok: false,
+              error: "Storage is not configured"
+            }, 503, origin);
+          }
+
+          const collection = path.match(
+            /^\/api\/v1\/micdom\/(releases|announcements)$/
+          );
+
+          if (collection && method === "GET") {
+            const type = collection[1] === "releases"
+              ? "release"
+              : "announcement";
+
+            const prefix = type === "release"
+              ? "micdom:releases:"
+              : "micdom:announcements:";
+
+            return jsonResponse({
+              ok: true,
+              records: await listRecords(env, prefix)
+            }, 200, origin);
+          }
+
+          if (collection && method === "POST") {
+            const type = collection[1] === "releases"
+              ? "release"
+              : "announcement";
+
+            const result = await createMicdomDraft(request, env, type);
+            return jsonResponse(result.data, result.status, origin);
+          }
+
+          const approval = path.match(
+            /^\/api\/v1\/micdom\/(releases|announcements)\/([a-f0-9-]+)\/approve$/i
+          );
+
+          if (approval && method === "POST") {
+            const type = approval[1] === "releases"
+              ? "release"
+              : "announcement";
+
+            const result = await approveMicdomRecord(
+              request,
+              env,
+              type,
+              approval[2]
+            );
+
+            return jsonResponse(result.data, result.status, origin);
+          }
+
+          if (path === "/api/v1/micdom/audit" && method === "GET") {
+            const result = await env.EVIDENCE_VAULT.list({
+              prefix: "audit:micdom:",
+              limit: MAX_LIST_ITEMS
+            });
+
+            const events = [];
+
+            for (const item of result.keys || []) {
+              const value = await env.EVIDENCE_VAULT.get(item.name);
+              if (!value) continue;
+
+              try {
+                events.push(JSON.parse(value));
+              } catch {
+                // Do not expose malformed records.
+              }
+            }
+
+            return jsonResponse({
+              ok: true,
+              events
+            }, 200, origin);
+          }
+        }
+
+        if (path.startsWith("/api/v1/registry/")) {
+          if (organization !== "registry") {
+            return jsonResponse({
+              ok: false,
+              error: "Organization access denied"
+            }, 403, origin);
+          }
+
+          return jsonResponse({
+            ok: false,
+            error: "Registry applications, orders, and payments are not enabled"
+          }, 501, origin);
+        }
+
         return jsonResponse({
           ok: false,
-          error: "API route not implemented",
-          path: path
+          error: "API route not found"
         }, 404, origin);
       }
 
-      // Unknown non-API route
       return jsonResponse({
         ok: false,
         error: "Not found"
       }, 404, origin);
 
     } catch (error) {
-      // Do not expose internal errors or secrets to callers
       console.error("Hermes Worker error:", error);
 
       return jsonResponse({
