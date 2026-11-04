@@ -27,10 +27,12 @@ class MockKV {
 
 function setup() {
   return {
+    ENVIRONMENT: "production",
     MICDOM_API_TOKEN: "micdom-test-token",
     REGISTRY_API_TOKEN: "registry-test-token",
     MICDOM_OWNER_TOKEN: "owner-test-token",
-    EVIDENCE_VAULT: new MockKV()
+    EVIDENCE_VAULT: new MockKV(),
+    EVIDENCE_PREVIEW_VAULT: new MockKV()
   };
 }
 
@@ -275,4 +277,58 @@ test("Micdom draft creation rejects non-JSON requests", async () => {
   });
 
   assert.equal(response.status, 400);
+});
+
+
+test("Preview writes use Preview KV and never Production KV", async () => {
+  const env = setup();
+  env.ENVIRONMENT = "preview";
+
+  const response = await call(env, "/api/v1/micdom/releases", {
+    method: "POST",
+    headers: {
+      ...auth("micdom-test-token"),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ title: "Preview Isolation Test" })
+  });
+
+  assert.equal(response.status, 201);
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.size, 2);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
+});
+
+test("Preview fails closed when Preview KV is missing", async () => {
+  const env = setup();
+  env.ENVIRONMENT = "preview";
+  delete env.EVIDENCE_PREVIEW_VAULT;
+
+  const response = await call(env, "/api/v1/micdom/releases", {
+    method: "POST",
+    headers: {
+      ...auth("micdom-test-token"),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ title: "Missing Preview KV Test" })
+  });
+
+  assert.equal(response.status, 503);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
+});
+
+test("Unknown environment fails closed without using Production KV", async () => {
+  const env = setup();
+  env.ENVIRONMENT = "staging";
+
+  const response = await call(env, "/api/v1/micdom/releases", {
+    method: "POST",
+    headers: {
+      ...auth("micdom-test-token"),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ title: "Unknown Environment Test" })
+  });
+
+  assert.equal(response.status, 503);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
 });

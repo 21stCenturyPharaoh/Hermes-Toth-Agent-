@@ -108,11 +108,27 @@ function authenticateOwner(request, env) {
   return safeEqual(token, owner);
 }
 
+function getEvidenceVault(env) {
+  if (!env) return null;
+
+  if (env.ENVIRONMENT === "preview") {
+    return env.EVIDENCE_PREVIEW_VAULT || null;
+  }
+
+  if (env.ENVIRONMENT === "production") {
+    return env.EVIDENCE_VAULT || null;
+  }
+
+  return null;
+}
+
 function requireKV(env) {
-  return env && env.EVIDENCE_VAULT &&
-    typeof env.EVIDENCE_VAULT.put === "function" &&
-    typeof env.EVIDENCE_VAULT.get === "function" &&
-    typeof env.EVIDENCE_VAULT.list === "function";
+  const kv = getEvidenceVault(env);
+
+  return !!kv &&
+    typeof kv.put === "function" &&
+    typeof kv.get === "function" &&
+    typeof kv.list === "function";
 }
 
 async function readJSONBody(request) {
@@ -179,14 +195,13 @@ function makeId() {
 }
 
 async function saveRecord(env, prefix, record) {
-  await env.EVIDENCE_VAULT.put(
-    prefix + record.id,
-    JSON.stringify(record)
-  );
+  const kv = getEvidenceVault(env);
+  await kv.put(prefix + record.id, JSON.stringify(record));
 }
 
 async function getRecord(env, prefix, id) {
-  const value = await env.EVIDENCE_VAULT.get(prefix + id);
+  const kv = getEvidenceVault(env);
+  const value = await kv.get(prefix + id);
   if (!value) return null;
 
   try {
@@ -197,7 +212,8 @@ async function getRecord(env, prefix, id) {
 }
 
 async function listRecords(env, prefix) {
-  const result = await env.EVIDENCE_VAULT.list({
+  const kv = getEvidenceVault(env);
+  const result = await kv.list({
     prefix,
     limit: MAX_LIST_ITEMS
   });
@@ -205,7 +221,7 @@ async function listRecords(env, prefix) {
   const records = [];
 
   for (const item of result.keys || []) {
-    const value = await env.EVIDENCE_VAULT.get(item.name);
+    const value = await kv.get(item.name);
 
     if (!value) continue;
 
@@ -234,7 +250,8 @@ async function writeAudit(env, actor, action, resourceType, resourceId) {
     createdAt: new Date().toISOString()
   };
 
-  await env.EVIDENCE_VAULT.put(
+  const kv = getEvidenceVault(env);
+  await kv.put(
     "audit:micdom:" + Date.now() + ":" + event.id,
     JSON.stringify(event)
   );
@@ -572,7 +589,8 @@ export default {
           }
 
           if (path === "/api/v1/micdom/audit" && method === "GET") {
-            const result = await env.EVIDENCE_VAULT.list({
+            const kv = getEvidenceVault(env);
+            const result = await kv.list({
               prefix: "audit:micdom:",
               limit: MAX_LIST_ITEMS
             });
@@ -580,7 +598,7 @@ export default {
             const events = [];
 
             for (const item of result.keys || []) {
-              const value = await env.EVIDENCE_VAULT.get(item.name);
+              const value = await kv.get(item.name);
               if (!value) continue;
 
               try {

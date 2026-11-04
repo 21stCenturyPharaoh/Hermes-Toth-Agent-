@@ -9,3 +9,10 @@ DOCTRINE = "Melchizedek Order | Essene Discipline"
 [[kv_namespaces]]
 binding = "EVIDENCE_VAULT"
 id = "08f64f613aac421e959e462badaafd48"
+
+[previews.vars]
+ENVIRONMENT = "preview"
+
+[[previews.kv_namespaces]]
+binding = "EVIDENCE_PREVIEW_VAULT"
+id = "11dc0e0abfd74498bd1f66eaa38be5c8"
