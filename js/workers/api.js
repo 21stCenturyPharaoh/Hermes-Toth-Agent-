@@ -117,32 +117,52 @@ function requireKV(env) {
 
 async function readJSONBody(request) {
   const contentType = request.headers.get("Content-Type") || "";
+  const mediaType = contentType.split(";")[0].trim().toLowerCase();
 
-  if (!contentType.toLowerCase().includes("application/json")) {
+  if (mediaType !== "application/json") {
     return { error: "Content-Type must be application/json" };
   }
 
-  const declaredLength = Number(
-    request.headers.get("Content-Length") || 0
-  );
-
-  if (declaredLength > MAX_BODY_BYTES) {
-    return { error: "Request body is too large" };
+  const declaredLength = request.headers.get("Content-Length");
+  if (declaredLength !== null) {
+    if (!/^\d+$/.test(declaredLength)) {
+      return { error: "Invalid Content-Length" };
+    }
+    if (Number(declaredLength) > MAX_BODY_BYTES) {
+      return { error: "Request body is too large" };
+    }
   }
 
-  const text = await request.text();
+  if (!request.body) return { error: "JSON body is required" };
 
-  if (new TextEncoder().encode(text).length > MAX_BODY_BYTES) {
-    return { error: "Request body is too large" };
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let totalBytes = 0;
+  let text = "";
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      totalBytes += value.byteLength;
+      if (totalBytes > MAX_BODY_BYTES) {
+        await reader.cancel();
+        return { error: "Request body is too large" };
+      }
+
+      text += decoder.decode(value, { stream: true });
+    }
+    text += decoder.decode();
+  } catch {
+    return { error: "Unable to read request body" };
   }
 
   try {
     const value = JSON.parse(text);
-
     if (!value || typeof value !== "object" || Array.isArray(value)) {
       return { error: "JSON body must be an object" };
     }
-
     return { value };
   } catch {
     return { error: "Invalid JSON body" };
@@ -203,10 +223,11 @@ async function listRecords(env, prefix) {
   );
 }
 
-async function writeAudit(env, action, resourceType, resourceId) {
+async function writeAudit(env, actor, action, resourceType, resourceId) {
   const event = {
     id: makeId(),
     organization: "micdom",
+    actor,
     action,
     resourceType,
     resourceId,
@@ -219,7 +240,7 @@ async function writeAudit(env, action, resourceType, resourceId) {
   );
 }
 
-async function createMicdomDraft(request, env, type) {
+async function createMicdomDraft(request, env, type, actor) {
   const body = await readJSONBody(request);
 
   if (body.error) {
@@ -264,7 +285,7 @@ async function createMicdomDraft(request, env, type) {
   }
 
   await saveRecord(env, prefix, record);
-  await writeAudit(env, "draft.created", type, record.id);
+  await writeAudit(env, actor, "draft.created", type, record.id);
 
   return {
     status: 201,
@@ -304,7 +325,7 @@ async function approveMicdomRecord(request, env, type, id) {
   record.approvedAt = new Date().toISOString();
 
   await saveRecord(env, prefix, record);
-  await writeAudit(env, "draft.approved", type, id);
+  await writeAudit(env, "micdom-owner", "draft.approved", type, id);
 
   return {
     status: 200,
@@ -527,7 +548,7 @@ export default {
               ? "release"
               : "announcement";
 
-            const result = await createMicdomDraft(request, env, type);
+            const result = await createMicdomDraft(request, env, type, organization);
             return jsonResponse(result.data, result.status, origin);
           }
 
