@@ -482,6 +482,78 @@ export default {
           }, 401, origin);
         }
 
+        // Owner-only, temporary KV write/read/delete verification.
+        if (
+          path === "/api/v1/owner/storage/self-test" &&
+          method === "POST"
+        ) {
+          if (organization !== "micdom-owner") {
+            return jsonResponse({
+              ok: false,
+              error: "Owner credential required"
+            }, 403, origin);
+          }
+
+          const kv = getEvidenceVault(env);
+
+          if (
+            !kv ||
+            typeof kv.put !== "function" ||
+            typeof kv.get !== "function" ||
+            typeof kv.delete !== "function"
+          ) {
+            return jsonResponse({
+              ok: false,
+              error: "Storage self-test requires put, get, and delete"
+            }, 503, origin);
+          }
+
+          const key = "self-test:micdom:" + crypto.randomUUID();
+          const marker = crypto.randomUUID();
+
+          let write = false;
+          let read = false;
+          let deleted = false;
+          let cleanupVerified = false;
+          let writeAttempted = false;
+
+          try {
+            writeAttempted = true;
+            await kv.put(key, marker);
+            write = true;
+
+            read = (await kv.get(key)) === marker;
+
+            await kv.delete(key);
+            deleted = true;
+            cleanupVerified = (await kv.get(key)) === null;
+          } catch (error) {
+            console.error("Owner storage self-test operation failed");
+
+            // If any operation fails after the write attempt, try cleanup.
+            if (writeAttempted && !deleted) {
+              try {
+                await kv.delete(key);
+                deleted = true;
+                cleanupVerified = (await kv.get(key)) === null;
+              } catch {
+                // Report cleanup failure without exposing the test key.
+              }
+            }
+          }
+
+          const ok = write && read && deleted && cleanupVerified;
+
+          return jsonResponse({
+            ok,
+            storage: env.ENVIRONMENT,
+            write,
+            read,
+            delete: deleted,
+            cleanupVerified
+          }, ok ? 200 : 500, origin);
+        }
+
         if (path === "/api/v1/status" && method === "GET") {
           return jsonResponse({
             ok: true,

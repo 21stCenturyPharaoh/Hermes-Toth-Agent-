@@ -15,6 +15,10 @@ class MockKV {
     return this.data.has(key) ? this.data.get(key) : null;
   }
 
+  async delete(key) {
+    this.data.delete(key);
+  }
+
   async list({ prefix = "", limit = 100 } = {}) {
     const keys = [...this.data.keys()]
       .filter(key => key.startsWith(prefix))
@@ -328,6 +332,87 @@ test("Unknown environment fails closed without using Production KV", async () =>
     },
     body: JSON.stringify({ title: "Unknown Environment Test" })
   });
+
+  assert.equal(response.status, 503);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
+});
+
+
+test("owner storage self-test writes, reads, deletes, and verifies cleanup", async () => {
+  const env = setup();
+
+  const response = await call(
+    env,
+    "/api/v1/owner/storage/self-test",
+    {
+      method: "POST",
+      headers: auth("owner-test-token")
+    }
+  );
+
+  const data = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(data.ok, true);
+  assert.equal(data.storage, "production");
+  assert.equal(data.write, true);
+  assert.equal(data.read, true);
+  assert.equal(data.delete, true);
+  assert.equal(data.cleanupVerified, true);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.size, 0);
+});
+
+test("Micdom organization credential cannot run owner storage self-test", async () => {
+  const env = setup();
+
+  const response = await call(
+    env,
+    "/api/v1/owner/storage/self-test",
+    {
+      method: "POST",
+      headers: auth("micdom-test-token")
+    }
+  );
+
+  assert.equal(response.status, 403);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
+});
+
+test("owner storage self-test uses Preview KV and leaves Production untouched", async () => {
+  const env = setup();
+  env.ENVIRONMENT = "preview";
+
+  const response = await call(
+    env,
+    "/api/v1/owner/storage/self-test",
+    {
+      method: "POST",
+      headers: auth("owner-test-token")
+    }
+  );
+
+  const data = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(data.storage, "preview");
+  assert.equal(data.cleanupVerified, true);
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.size, 0);
+  assert.equal(env.EVIDENCE_VAULT.data.size, 0);
+});
+
+test("owner storage self-test fails closed when KV delete is unavailable", async () => {
+  const env = setup();
+  env.EVIDENCE_VAULT.delete = undefined;
+
+  const response = await call(
+    env,
+    "/api/v1/owner/storage/self-test",
+    {
+      method: "POST",
+      headers: auth("owner-test-token")
+    }
+  );
 
   assert.equal(response.status, 503);
   assert.equal(env.EVIDENCE_VAULT.data.size, 0);
