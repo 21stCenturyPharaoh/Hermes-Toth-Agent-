@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<link rel="manifest" href="/manifest.webmanifest">
+<link rel="manifest" href="/manifest.json">
 <title>Pharaoh Chamber - DJ Dehrtay Dog</title>
 <style>
 :root{--gold:#d4af37;--gold2:#ffd54a;--ink:#070604;--dim:#8c6a13}
@@ -18,7 +18,7 @@ html,body{height:100%;background:#000;color:var(--gold);font-family:Georgia,'Tim
 #tick span{display:inline-block;padding-left:100%;animation:t 26s linear infinite}
 @keyframes t{to{transform:translateX(-100%)}}
 #prod{position:absolute;top:calc(12.5dvh + 46px);right:11%;display:flex;gap:6px}
-#prod i{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);background:#120d03;display:grid;place-items:center;font:700 11px Georgia;font-style:normal}
+#prod i{width:38px;height:50px;border-radius:4px;border:2px solid var(--gold);background:#120d03;overflow:hidden;display:grid;place-items:center;font:700 11px Georgia;font-style:normal}#prod img{width:100%;height:100%;object-fit:cover;display:block}input[type=range]{width:100%;accent-color:var(--gold)}label{font-size:11px;display:block}
 #chair{position:absolute;left:50%;top:24%;transform:translateX(-50%);height:38dvh;aspect-ratio:9/16;max-width:72vw;border:3px solid var(--gold);border-radius:14px;overflow:hidden;background:#0a0703;box-shadow:0 0 36px rgba(212,175,55,.35)}
 #v{width:100%;height:100%;object-fit:cover;display:block}
 #ph{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:12px;padding:12px;background:#0a0703}
@@ -38,6 +38,7 @@ button{font:700 11px Georgia;letter-spacing:.06em;color:var(--gold);background:#
 button.on{background:var(--gold);color:#000;border-color:var(--gold2)}
 button.miss{opacity:.4;text-decoration:line-through}
 button.go{background:var(--gold);color:#000}
+button.stop{background:#a00;color:#fff;border-color:#f55}
 #log{font:10px monospace;color:#b99a3a;height:64px;overflow:auto;background:#000;border:1px solid #2a2008;border-radius:6px;padding:4px;white-space:pre-wrap}
 @media (prefers-reduced-motion:reduce){#tick span{animation:none;padding-left:8px}}
 </style>
@@ -52,16 +53,19 @@ button.go{background:var(--gold);color:#000}
   <path d="M232 128V96q0-18 20-20h10q20 2 20 20v32z" fill="#d4af37" opacity=".32"/>
   <path d="M236 82l-10 46h66l-10-46q-22-14-46 0z" fill="#d4af37" opacity=".4"/>
  </svg>
- <div id="banner"><b>BREAKING NEWS</b><div id="tick"><span>TIKTOK LIVE &bull; MONROVIA TO ZION &bull; LIBERIA &rarr; ASIA &rarr; WORLD &bull; PHARAOH CHAMBER &bull; SPHINX LOCKED &bull; MICDOM AI RECORDS &bull;</span></div></div>
+ <div id="banner"><b>BREAKING NEWS</b><div id="tick"><span>TIKTOK LIVE &bull; MONROVIA TO ZION &bull; LIBERIA &rarr; ASIA &rarr; WORLD &bull; PHARAOH CHAMBER &bull; SPHINX LOCKED &bull; MICDOM AI RECORDS &bull; TIKTOK &bull; RUMBLE &bull; ROUTENOTE &bull; APPLE MUSIC &bull; SPOTIFY &bull;</span></div></div>
  <div id="prod"><i>EP1</i><i>EP2</i><i>EP3</i></div>
- <div id="chair"><video id="v" loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
+ <div id="chair"><video id="v" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
  <div id="lt"><h1>PHARAOH &times; METATRON LIVE</h1><p id="ltp">Chamber ready</p></div>
  <div id="g"><span style="position:absolute;top:4px;left:8px;font-size:11px;color:#f88">profile + viewers</span></div>
 </div>
 <button id="dot" aria-label="Controls"></button>
 <div id="dr">
  <div class="row c4" id="ex"></div>
- <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button></div>
+ <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button><button id="bRepeat">REPEAT</button><button class="stop" id="bStop">EMERGENCY STOP</button></div>
+ <div class="row c4" id="sn"></div>
+ <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><span></span></div>
+ <div class="row c2"><label>CROWD VOLUME<input type="range" id="vol" min="0" max="100" value="70"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
  <div class="row c2"><button id="bGuides">GUIDES ON/OFF</button><button class="go" id="bStage">STAGE MODE</button></div>
  <div id="log"></div>
 </div>
@@ -71,14 +75,17 @@ const METATRON_API = "";   // paste your Metatron endpoint URL here (POST {messa
 const SEGMENTS = ["HALLEL LARP: Choose Order","Council assigns Team","Choose Persona"];
 const EX = [["idle","IDLE","\u{1F43E}"],["welcome","WELCOME","\u{1F44B}"],["shocked","SHOCKED","\u{1F631}"],["neutral","NEUTRAL","\u{1F436}"],["thinking","THINKING","\u{1F914}"],["breaking","BREAKING","\u{1F6A8}"],["signoff","SIGNOFF","\u270C\uFE0F"],["nodding","NODDING","\u{1F44D}"]];
 const HOLD_MS = 6500;
+const RELEASE = "New Release Dropping Soon!";   // edit the breaking-news line here
+const SND = ["applause","laugh","ooh","wow","aww","cheer","sting"];   // files: snd/<name>.mp3
+const AUTO = {welcome:"applause", signoff:"applause", shocked:"ooh", thinking:"wow", breaking:"sting"};
 // ---- STATE ----
 const $ = id => document.getElementById(id), v = $("v"), P = {}, btn = {};
-let cur = "", seg = 0, timer = 0, wl = null;
+let cur = "", last = "", proposal = "", AUDS = [], seg = 0, timer = 0, wl = null, auto = false, soundOn = true, touched = false, keep = true;
 function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; }
 function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
-  const paths = ["dj/expressions-v2/"+id+".mp4", "dj/"+id+".mp4", id+".mp4"]; let i = 0;
+  const paths = ["dj/"+id+".mp4", id+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
   t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
   t.onerror = () => { if (++i < paths.length) t.src = paths[i]; else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
@@ -86,30 +93,37 @@ function probe(id){
 }
 function show(id){
   v.style.display = "block"; $("ph").style.display = "none";
-  if (P[id]) { v.muted = false; v.volume = 1; v.src = P[id]; v.play().catch(()=>{}); }
+  if (P[id]) { v.loop = keep; v.muted = !(soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.play().catch(()=>{}); }
   else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
          $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
 }
 function setExp(id, hold){
-  clearTimeout(timer); cur = id; show(id);
+  clearTimeout(timer); cur = id; if (id !== "idle") last = id; keep = (id === "idle" || !!hold); show(id);
   for (const k in btn) btn[k].classList.toggle("on", k === id);
   log("expression: " + id);
   if (id !== "idle" && !hold) timer = setTimeout(() => setExp("idle"), HOLD_MS);
 }
-EX.forEach(([id,label]) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => setExp(id); $("ex").appendChild(b); btn[id] = b; });
+function play(n){ const a = new Audio("snd/"+n+".mp3"); a.volume = $("vol").value/100; a.onerror = () => log("no snd/"+n+".mp3 yet"); AUDS.push(a); a.play().catch(()=>{}); }
+function cue(id){ setExp(id); if (auto && AUTO[id]) play(AUTO[id]); if (id === "breaking") lt("BREAKING NEWS", RELEASE); }
+SND.forEach(n => { const b = document.createElement("button"); b.textContent = n.toUpperCase(); b.onclick = () => play(n); $("sn").appendChild(b); });
+$("bAuto").onclick = e => { auto = !auto; e.target.classList.toggle("on", auto); e.target.textContent = "AUTO SOUNDS " + (auto ? "ON" : "OFF"); };
+document.querySelectorAll("#prod i").forEach((el,n) => { const im = new Image(); im.onload = () => { el.textContent = ""; el.appendChild(im); }; im.src = "producers/ep"+(n+1)+".jpg"; });
+EX.forEach(([id,label]) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => cue(id); $("ex").appendChild(b); btn[id] = b; });
 // ---- ACTIONS ----
-$("bStart").onclick = () => { seg = 0; setExp("welcome"); lt("PHARAOH &times; METATRON LIVE","Show starting"); log("START SHOW"); };
+$("bStart").onclick = () => { seg = 0; cue("welcome"); lt("PHARAOH &times; METATRON LIVE","Show starting"); log("START SHOW"); };
 $("bNext").onclick = () => { const s = SEGMENTS[seg++ % SEGMENTS.length]; setExp("nodding"); lt("NEXT SEGMENT", s); log("NEXT SEGMENT: " + s); };
-$("bOk").onclick = () => { setExp("nodding"); lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); };
+$("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
+$("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
+$("bStop").onclick = () => { AUDS.forEach(a => { try { a.pause(); } catch(e){} }); AUDS = []; proposal = ""; soundOn = false; $("bClip").classList.remove("on"); $("bClip").textContent = "CLIP SOUND OFF"; v.muted = true; setExp("idle"); lt("BE RIGHT BACK","Please stand by"); document.body.classList.add("open"); log("EMERGENCY STOP: sound off, idle clip, on-air text replaced"); };
 $("bAsk").onclick = async () => {
   const q = prompt("Ask Metatron:"); if (!q) return;
-  setExp("thinking", true); lt("METATRON","Thinking..."); log("ASK: " + q);
+  setExp("thinking", true); log("ASK: " + q);
   if (!METATRON_API) { log("No METATRON_API set - edit the CONFIG line in stage.html"); setTimeout(() => setExp("idle"), 2500); return; }
   try {
     const r = await fetch(METATRON_API, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({message:q})});
     const d = await r.json(); const a = d.reply || d.answer || d.response || JSON.stringify(d);
-    lt("METATRON", String(a).slice(0,160)); log("METATRON: " + a); setExp("neutral");
-  } catch(e){ lt("METATRON","Unavailable"); log("API error: " + e.message); setExp("idle"); }
+    proposal = String(a).slice(0,160); log("METATRON PROPOSES: " + proposal + "  [press APPROVE to show it on air]"); setExp("neutral");
+  } catch(e){ log("API error: " + e.message); setExp("idle"); }
 };
 // ---- STAGE MODE ----
 async function wake(){ try { wl = await navigator.wakeLock.request("screen"); log("wake lock ON"); } catch(e){ log("wake lock unavailable: " + e.message); } }
@@ -121,6 +135,10 @@ $("bStage").onclick = () => {
 };
 $("dot").onclick = () => document.body.classList.toggle("open");
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && wl && wl.released) wake(); });
+v.addEventListener("ended", () => { if (!keep) setExp("idle"); });
+addEventListener("pointerdown", () => { touched = true; v.muted = !soundOn; }, {once:true});
+$("vol").oninput = () => { v.volume = $("vol").value/100; };
+$("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
 // ---- INIT ----
 EX.forEach(([id]) => probe(id));
 setTimeout(() => setExp("idle"), 600);
