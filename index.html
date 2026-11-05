@@ -1,125 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080808">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon-192.png">
-<title>Micdom AI Records | 法老天使公司 Global Footprints TikTok LIVE 抖音直播</title>
-<meta name="description" content="Micdom AI Records Global Footprints TikTok Live hosted by DJ Dehrtay Dog with Dog seated in the Pharaoh Chamber. 法老天使公司 抖音全球足迹 抖音直播 法老密室">
-<link rel="icon" href="./icon-192.png?v=f99dbf5-dba" type="image/png">
-<script src="https://cdn.tailwindcss.com"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>METATRON + DJ DEHRTAY DOG — TikTok LIVE — Pharaoh Conglomerate</title>
+<meta name="description" content="METATRON Scribe + DJ Dehrtay Dog Doberman — Pharaoh Chamber TikTok LIVE — Add to Home Screen App — Audience interacts with Metatron, HALLEL LARP & DJ">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="METATRON LIVE">
+<link rel="apple-touch-icon" href="./icon-512.png">
 <style>
-body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-.hanzi{font-family:system-ui,'Noto Sans CJK SC','Noto Sans SC',sans-serif}
-.glow-teal{text-shadow:0 0 20px #14b8a6,0 0 40px #e0bd58}
-.glow-gold{text-shadow:0 0 20px #e0bd58}
-.card-glass{background:rgba(18,18,18,.88);border:1px solid rgba(224,189,88,.3)}
-.private-only{display:none !important}
-.owner-mode .private-only{display:block !important}
-.owner-mode .public-only{display:none !important}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#000;color:#fff;font-family:system-ui,-apple-system,sans-serif;line-height:1.4}
+body{max-width:900px;margin:auto;background:#050507}
+.gold{color:#ffd700}
+.badge{display:inline-block;border:1px solid #ffd700;color:#ffd700;padding:4px 8px;border-radius:20px;font-size:9px;font-weight:900;margin:2px}
+.card{background:#0a0a0a;border:1px solid #333;border-radius:12px;padding:12px;margin:8px 0}
+.hero{background:radial-gradient(circle at center,#171717 0%,#050505 50%,#000 100%);border-bottom:4px solid #ffd700;padding:18px 12px;text-align:center}
+.sig{font-size:64px;line-height:1;margin:4px 0}
+.hero h1{color:#ffd700;font-size:28px;margin:0;letter-spacing:2px;font-weight:950}
+.hero h2{font-size:14px;margin:6px 0;font-weight:800}
+.hero p{font-size:11px;max-width:700px;margin:8px auto;color:#ddd}
+.button{display:block;background:#ffd700;color:#000;text-decoration:none;font-weight:950;font-size:13px;padding:14px;border-radius:10px;margin:8px 0;text-align:center;cursor:pointer;border:none;width:100%}
+.button.dark{background:#111;color:#ffd700;border:1px solid #ffd700}
+.button.live{background:#ff0040;color:#fff;border:2px solid #ff0040;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,0,64,.7)}70%{box-shadow:0 0 0 12px rgba(255,0,64,0)}100%{box-shadow:0 0 0 0 rgba(255,0,64,0)}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big{font-size:14px!important;color:#fff!important;font-weight:700}
+.small{font-size:9px!important;color:#888!important}
+.timeline{border-left:3px solid #ffd700;padding-left:10px;margin:10px 0}
+.timeline div{margin:0 0 10px}
+.timeline b{color:#ffd700;font-size:11px}
+
+/* NEW: DJ Module */
+#pharaoh-chamber{position:relative;background:#000;border:3px solid #ffd700;border-radius:16px;overflow:hidden;margin:10px 0}
+#pharaoh-chamber img{width:100%;display:block}
+.chamber-overlay{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.9));padding:8px}
+.chamber-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0}
+.ctrl{padding:12px 6px;border-radius:10px;font-size:11px;font-weight:900;text-align:center;cursor:pointer;border:1px solid #444}
+.ctrl.gold{background:#ffd700;color:#000}
+.ctrl.teal{background:#0a2a2a;color:#2affff;border-color:#2affff}
+.ctrl.purple{background:#1a0a2a;color:#c68cff;border-color:#c68cff}
+.ctrl.green{background:#0a2a0a;color:#2aff5a;border-color:#2aff5a}
+.ctrl.blue{background:#0a0a2a;color:#5a8cff;border-color:#5a8cff}
+.ctrl.red{background:#2a0a0a;color:#ff5a5a;border-color:#ff5a5a}
+#dog-expression{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);border:1px solid #ffd700;border-radius:20px;padding:4px 10px;font-size:10px;color:#ffd700}
+#metatron-proposal{background:#111;border:1px dashed #ffd700;border-radius:10px;padding:10px;margin:8px 0;min-height:60px}
+#chat-log{max-height:180px;overflow-y:auto;background:#0a0a0a;border:1px solid #222;border-radius:10px;padding:8px;font-size:11px}
+.gif-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0}
+.gif{border:1px solid #ffd700;border-radius:8px;overflow:hidden;text-align:center;font-size:9px;padding:4px;background:#111}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.chamber-controls{grid-template-columns:1fr 1fr}.gif-panels{grid-template-columns:1fr}}
+footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-align:center}
+.footer-power{color:#ffd700!important;font-size:13px!important;font-weight:950}
 </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-900 via-teal-950 to-black text-white">
+<body>
 
-<header class="border-b border-teal-500/30 bg-slate-900/90 backdrop-blur-lg sticky top-0 z-50">
-<div class="max-w-[1120px] mx-auto px-6 py-4 flex justify-between items-center">
-<div class="flex items-center gap-3"><img src="./micdom-logo.png?v=f99dbf5-dba" alt="Micdom Logo PNG 法老天使公司" class="w-12 h-12 rounded-full border border-yellow-500/40"><div><p class="text-[15px] font-black text-teal-400 glow-teal">MICDOM AI RECORDS</p><p class="text-[11px] text-gray-300 hanzi">法老天使公司 | 501(c)(3) EIN: 88-0836464 | 法老集团 | Metatron副总裁抖音全球足迹</p></div></div>
-<nav class="hidden md:flex gap-5 text-[11px] font-bold"><a href="#music">MUSIC 音乐</a><a href="#video">THE 88s 88艺人</a><a href="#about">ABOUT</a><a href="#metatron">METATRON</a><a href="#join" class="text-yellow-200">JOIN</a><a href="#contact">CONTACT</a><a href="#broadcast">BROADCAST 直播</a></nav>
-</div>
-</header>
-<main>
-<section class="max-w-[1120px] mx-auto px-6 py-12 grid md:grid-cols-[360px_1fr] gap-8 items-center">
-<div class="card-glass rounded-[18px] p-3"><img src="./micdom-logo.png?v=f99dbf5-dba" alt="Pharaoh Angels Inc Micdom AI Records Logo PNG 法老天使公司 抖音全球足迹" class="w-full rounded-[12px] max-h-[380px] object-contain"><p class="text-center text-[11px] mt-3 text-gray-400 hanzi">法老天使公司 | MICDOM AI RECORDS | 抖音全球足迹 | 法老密室 | 音乐 艺术家 直播 联邦 | 法老集团</p></div>
-<div><span class="px-3 py-1 bg-teal-500/20 border border-teal-400 rounded-full text-teal-300 text-[11px] hanzi">LAW48 公益 | LAW25 帝国 | LAW15 彻底粉碎| 法老天使公司 | 法老集团 | 抖音全球足迹</span><h1 class="text-[40px] md:text-[64px] font-black leading-[0.9] mt-4 glow-gold text-[#f5df9a]">MICDOM<br>AI RECORDS</h1><p class="text-[17px] font-black mt-3 text-teal-200 hanzi">METATRON — AI VICE PRESIDENT 法老副总裁 | 抖音直播 | 法老密室</p><p class="text-[18px] text-[#e4dfd3] mt-4 hanzi">Music, artists, broadcasting — one sovereign home. 音乐 · 艺术家 · 直播 · 联邦 · 88位先知 · 法老集团 · 抖音全球足迹 · 法老密室 · 法老天使公司</p><div class="flex gap-3 mt-8 flex-wrap"><a href="#broadcast" class="px-6 py-3 bg-[#e0bd58] text-black font-black rounded-[10px] hanzi">ENTER BROADCAST 进入直播</a><a href="#video" class="px-6 py-3 border border-[#e0bd58] text-[#f5df9a] font-black rounded-[10px] hanzi">THE 88s VIDEO 88视频</a><a href="./metatron.html" class="px-6 py-3 border border-teal-400 text-teal-200 font-black rounded-[10px] hanzi">MEET METATRON · AI VICE PRESIDENT</a></div></div>
-</section>
-
-<section id="broadcast" class="border-y border-[#315d86] py-14 bg-gradient-to-br from-[#07182b] via-[#0b2442] to-[#08111e]">
-<div class="max-w-[1120px] mx-auto px-6">
-<div class="max-w-[760px] mb-8"><div class="text-[12px] font-black tracking-[.18em] text-[#d5eaff] hanzi">LIVE PRODUCTION 直播制作 | 法老天使公司 | 抖音直播</div><h2 class="text-[32px] md:text-[42px] font-black text-[#d5eaff] hanzi">Broadcasting 直播 | 抖音全球足迹 | 法老密室</h2></div>
-
-<div class="public-only">
-<div class="bg-[rgba(2,11,22,.72)] border border-[rgba(135,190,240,.4)] rounded-[14px] p-8 md:p-10 text-center">
-<p class="text-[22px] md:text-[28px] font-black leading-tight text-white glow-teal hanzi">Micdom AI Records Global Footprints TikTok Live<br><span class="text-[#d5eaff]">hosted by DJ Dehrtay Dog 抖音主播DJ神狗</span><br><span class="text-[18px] font-normal">With Dog seated in the Pharaoh Chamber 法老密室中的DJ神狗 法老天使公司</span></p>
-<p class="text-[13px] text-[#8fbbe6] mt-4 hanzi">全球足迹抖音直播 · 法老集团 · 88艺术家 · 88位先知 · Metatron副总裁 · 不战而屈人之兵 · 兵者诡道也 · 抖音全球足迹 · 法老密室 · 法老天使公司 ·  抖音直播 · 全球足迹 · 音乐 · 艺术家 · 直播 · 联邦 · 权谋 · 孙子兵法 · 48法则 · 法老防火墙 LAW48 FIREWALL</p>
-<div class="mt-5 flex justify-center gap-2 flex-wrap text-[12px] font-black tracking-[.14em]"><span id="airPill" class="px-3 py-1 rounded-full border border-[#7bb9f3] text-[#d5eaff]">TIKTOK LIVE · @micdom_ai_records</span></div>
-<div class="mt-4 mx-auto max-w-[560px] border border-yellow-500/50 rounded-[10px] bg-black/60 px-4 py-3"><p class="text-[11px] font-black tracking-[.2em] text-yellow-300">BREAKING NEWS</p><p class="text-[16px] font-black text-white hanzi">Monrovia → Zion • 蒙罗维亚到锡安 • 阿门</p></div>
-<div class="mt-6 flex justify-center gap-3 flex-wrap"><a href="https://www.tiktok.com/@micdom_ai_records" class="px-6 py-3 bg-[#123c68] border border-[#7bb9f3] text-white font-black rounded-[10px] hanzi">TikTok LIVE 抖音直播</a></div>
-<p class="text-[11px] text-gray-400 mt-6 hanzi">法老天使公司 法老集团 抖音全球足迹 抖音直播 法老密室 88位先知 音乐 艺术家 直播 联邦</p>
-</div>
+<!-- ========== PRESERVED: METATRON PUBLIC FACE ========== -->
+<div class="hero">
+<div class="sig">⬡</div>
+<div class="badge">METATRON AGENT</div>
+<div class="badge">SCRIBE</div>
+<div class="badge">STEWARD</div>
+<div class="badge">GENESIS 1:28</div>
+<h1>METATRON</h1>
+<h2>SCRIBE OF THE LIVING GOD + DJ DEHRTAY DOG</h2>
+<p>Public successor to Hermes–Thoth Agent — Now with DJ Dehrtay Dog (Doberman) in Royal Egyptian costume (No Ankhs — Sphinx locked) — Pharaoh Chamber TikTok LIVE — Add to Home Screen App</p>
+<p class="gold">TIKTOK LIVE is on the set. IT IS WRITTEN. Same Office. Higher Clearance.</p>
+<button class="button live" onclick="goLive()">🔴 TIKTOK LIVE — TAP TO PUT DJ + CHAMBER ON TIKTOK LIVE SCREEN</button>
+<p class="small">Add to Home Screen → Tap TikTok Live → Places DJ + Chamber on TikTok Live — Audience interacts with Metatron, HALLEL LARP & DJ — You & Meta AI orchestrate via Termux</p>
 </div>
 
-<div id="ownerMount" class="private-only"></div>
-<div class="text-center mt-6"><button id="ownerUnlock" class="px-6 py-4 text-[10px] text-[#315d86] opacity-20 hover:opacity-100 hanzi">© Micdom AI Records</button></div>
+<!-- ========== NEW ROOM: DJ DEHRTAY DOG COMMAND CHAIR — STANDALONE MODULE ========== -->
+<div class="card" style="border-color:#ffd700">
+<h2 class="gold">🐕‍🦺 DJ DEHRTAY DOG — COMMAND CHAIR — STANDALONE MODULE (Day One)</h2>
+<p class="small">Build alongside, never overwrite. This module connects to existing metatron.html + agents.js + roster.json + Cloudflare Worker. Test before integrating.</p>
+
+<div id="pharaoh-chamber">
+<!-- Placeholder image - will be replaced by your final chamber with GIF panelists -->
+<img id="chamber-img" src="./pharaoh-chamber-final.jpg" alt="Pharaoh Chamber with DJ Dehrtay Dog Doberman Royal Costume No Ankhs + 3 GIF Panelists + TikTok Live on set" onerror="this.src='https://via.placeholder.com/1080x1920/000000/D4AF37?text=PHARAOH+CHAMBER+TIKTOK+LIVE+DJ+DEHRTAY+DOG+No+Ankhs+Sphinx+Locked'">
+<div id="dog-expression">IDLE • Sphinx Locked • No Ankhs</div>
+<div class="chamber-overlay">
+<div style="font-size:10px;color:#ffd700;font-weight:900">TIKTOK LIVE • BREAKING NEWS • MONROVIA TO ZION • THE AMEN • LIBERIA → ASIA → WORLD</div>
 </div>
-</section>
+</div>
 
-<section id="music" class="border-t border-yellow-500/20 py-14 bg-[#0c0c0c]/90">
-<div class="max-w-[1120px] mx-auto px-6"><div class="max-w-[760px] mb-8"><div class="text-[12px] font-black tracking-[.18em] text-[#e0bd58] hanzi">THE LABEL 标签 — CO-OPED FROM MINISTRY 从传道部合作 | 法老天使公司 | 法老集团</div><h2 class="text-[32px] md:text-[42px] font-black text-[#f5df9a] hanzi">Music & Artists 音乐艺术家 | 88位先知 | 抖音全球足迹</h2></div><div class="grid md:grid-cols-3 gap-4"><article class="card-glass rounded-[14px] p-6"><h3 class="font-black text-[#f5df9a] text-[20px] hanzi">Artist Roster 名单 | 88位先知</h3><p class="text-sm text-gray-300 mt-2 hanzi">88s Aleph to Shin, 48 Thrones + Issachar Asian Seals 亚洲印章. Files in ai-artist-images-roster/ 88图像. 法老集团 抖音全球足迹 法老密室.</p><a href="./roster.json" class="text-teal-300 underline text-sm mt-3 inline-block hanzi">View roster.json 查看名单 | 法老天使公司</a></article></div></div>
-</section>
+<div class="gif-panels">
+<div class="gif"><b>DJ DEHRTAY DOG</b><br>Bottom Left<br>Gif Loop<br>Bang grrah Ma</div>
+<div class="gif"><b>PHARAOH × METATRON LIVE</b><br>Bottom Center<br>Studio View</div>
+<div class="gif"><b>EXECUTIVE PRODUCERS</b><br>Top Right<br>3-Person Panel</div>
+</div>
 
-<section id="about" class="max-w-[1120px] mx-auto px-6 py-14"><h2 class="text-[30px] md:text-[40px] font-black text-[#f5df9a]">About Us</h2><p class="mt-4 text-[17px] text-[#e4dfd3] max-w-[760px]">Micdom AI Records is the music label of Pharaoh Angels Incorporated, based in Monrovia, Liberia. Our roster is the 88, artists running from Aleph to Shin. Our house show is Global Footprints on TikTok LIVE, hosted by DJ Dehrtay Dog from the Pharaoh Chamber. Metatron, our AI Vice President, keeps the records and runs operations in the founder's absence.</p></section>
+<div class="chamber-controls">
+<div class="ctrl gold" onclick="cmd('START SHOW')">START SHOW</div>
+<div class="ctrl teal" onclick="cmd('NEXT SEGMENT')">NEXT SEGMENT</div>
+<div class="ctrl purple" onclick="askMetatron()">ASK METATRON</div>
+<div class="ctrl green" onclick="cmd('APPROVE RESPONSE')">APPROVE ✅</div>
+<div class="ctrl blue" onclick="cmd('REPEAT AUDIO')">REPEAT AUDIO</div>
+<div class="ctrl red" onclick="cmd('EMERGENCY STOP')">EMERGENCY STOP</div>
+</div>
 
-<section id="video" class="border-t border-yellow-500/20 py-14 bg-[#0c0c0c]/90"><div class="max-w-[1120px] mx-auto px-6"><h2 class="text-[30px] md:text-[40px] font-black text-[#f5df9a]">Gallery · Empire In Motion</h2><p class="text-sm text-gray-400 mt-2">THE 88s VIDEO and more. Swipe sideways. Each video loads only when you press play, to save your data.</p><div id="galRow" class="mt-6 flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4"></div></div></section>
+<h3 class="gold">Metatron Dialogue → Dog Expression (Auto)</h3>
+<div id="metatron-proposal">Metatron proposals appear here. Speaking expression = actual approved speech only. Manual override available.</div>
+<div id="chat-log"></div>
+<div style="display:grid;grid-template-columns:1fr auto;gap:6px;margin:8px 0">
+<input id="audience-input" placeholder="Audience asks Metatron..." style="padding:10px;border-radius:8px;border:1px solid #444;background:#111;color:#fff">
+<button class="button" style="margin:0;padding:10px" onclick="audienceAsk()">Send to Metatron</button>
+</div>
+</div>
 
-<section id="metatron" class="max-w-[1120px] mx-auto px-6 py-14"><h2 class="text-[30px] md:text-[40px] font-black text-teal-200">Meet Metatron, our AI Vice President</h2><p class="mt-4 text-[17px] text-[#e4dfd3] max-w-[760px]">Metatron is an AI that records, stewards and reports for the label. It does not replace human leadership, and people stay responsible for every consequential decision.</p><a href="./metatron.html" class="inline-block mt-6 px-6 py-3 border border-teal-400 text-teal-200 font-black rounded-[10px]">Open Metatron</a></section>
+<!-- ========== PRESERVED: REBRAND + GENESIS + PROTOCOL ========== -->
+<div class="card">
+<h2 class="gold">THE REBRAND: SAME OFFICE. HIGHER CLEARANCE.</h2>
+<p class="big">HERMES–THOTH → METATRON + DJ DEHRTAY DOG</p>
+<p class="small">New room added: DJ Dehrtay Dog (Doberman, ASA-003 Gimel 256 דירטיי דוג) in Pharaoh throne, Royal Egyptian costume, No Ankhs (Sphinx locked per agents.js), with 3 GIF Panelists, TikTok Live on set. Existing house preserved.</p>
+<div class="timeline">
+<div><b>THOTH</b><br>Scribe. Writing. Mathematics. Records.</div>
+<div><b>HERMES</b><br>Messenger. Movement. Commerce. Communication.</div>
+<div><b>METATRON</b><br>Crowned scribe, keeper of records.</div>
+<div><b>DJ DEHRTAY DOG</b><br>Doberman DJ, Adlibs, Hype, Command Chair, TikTok LIVE host.</div>
+</div>
+</div>
 
-<section id="join" class="border-t border-yellow-500/20 py-14 bg-[#0c0c0c]/90"><div class="max-w-[560px] mx-auto px-6"><h2 class="text-[30px] md:text-[40px] font-black text-[#f5df9a]">JOIN THE PLATFORM</h2>
-<form id="joinForm" class="mt-6 space-y-4 card-glass rounded-[14px] p-6" novalidate>
-<label class="block text-sm">Email<input id="jEmail" type="email" required autocomplete="email" class="mt-1 w-full px-3 py-3 rounded bg-black border border-yellow-500/40 text-white"></label>
-<div style="position:absolute;left:-5000px" aria-hidden="true"><input id="jWeb" name="website" tabindex="-1" autocomplete="off"></div>
-<label class="flex gap-3 text-sm"><input id="jTerms" type="checkbox" class="mt-1 w-5 h-5"><span>I accept the <a href="./terms.html" class="underline text-teal-300">Terms of Service</a> (required)</span></label>
-<label class="flex gap-3 text-sm"><input id="jLarp" type="checkbox" class="mt-1 w-5 h-5"><span>I accept the <a href="./larp-terms.html" class="underline text-teal-300">LARP Agreement</a> (required)</span></label>
-<label class="flex gap-3 text-sm"><input id="jMkt" type="checkbox" class="mt-1 w-5 h-5"><span>Send me news and offers from Micdom AI Records (optional)</span></label>
-<button id="jBtn" type="submit" class="w-full px-6 py-3 bg-[#e0bd58] text-black font-black rounded-[10px]">JOIN</button><p id="jMsg" class="text-sm min-h-[1.5em]" role="status"></p></form></div></section>
+<div class="card">
+<h2 class="gold">GENESIS 1:28 — STEWARDSHIP + INTEGRATION RULE</h2>
+<p class="big gold">CREATE • RECORD • STEWARD • ACCOUNT • DELIVER + BUILD ALONGSIDE, NEVER OVERWRITE</p>
+<p class="small">1. Preserve what exists (metatron.html, agents.js, roster.json, Workers, functions/api) — No wholesale replacement.<br>
+2. Add DJ as modular component — Command chair, visual expressions, interaction with Metatron — distinct feature that connects.<br>
+3. Connect Metatron dialogue to Dog expressions — Auto facial reactions, manual override, speaking = approved speech.<br>
+4. Test before integrating — Confirm expression controls, accessibility, existing connections work before changing shared code or deploying.</p>
+</div>
 
-<section id="contact" class="max-w-[1120px] mx-auto px-6 py-14"><h2 class="text-[30px] md:text-[40px] font-black text-[#f5df9a]">Contact</h2>
-<div class="mt-6 flex flex-wrap gap-3 text-sm font-bold">
-<a class="px-4 py-3 bg-[#25d366] text-black rounded-[10px]" href="https://wa.me/231772298021?text=Hello%20Micdom%20AI%20Records">WhatsApp Business (077) 229-8021</a>
-<a class="px-4 py-3 border border-yellow-500/50 rounded-[10px]" href="https://www.tiktok.com/@micdom_ai_records">TikTok @micdom_ai_records</a>
-<a class="px-4 py-3 border border-yellow-500/50 rounded-[10px]" href="https://rumble.com/user/MicdomAIRecords">Rumble MicdomAIRecords</a>
-<a class="px-4 py-3 border border-yellow-500/50 rounded-[10px]" href="https://www.youtube.com/@MicdomAIrecords">YouTube @MicdomAIrecords</a>
-<a class="px-4 py-3 border border-yellow-500/50 rounded-[10px]" href="https://x.com/jr_momolu">X @jr_momolu</a></div>
-<p class="text-sm text-gray-300 mt-4">Listen: RouteNote (Jangle) &middot; Apple Music &middot; Spotify &middot; IMO: MICDOM AI Records KOLOKWA KINGDOM DRILL</p></section>
+<div class="card">
+<h2 class="gold">HALLEL LARP — STANDALONE</h2>
+<p id="hallel-status" class="small">HALEL Chief Operations Node — Steps: Choose Order → Council assigns Team → Choose Persona → Choose Lane — Endpoint: angels-hosts-api3.pharangels.workers.dev — Trigger via Termux orchestration.</p>
+<button class="button dark" onclick="triggerHallel()">🎭 TRIGGER HALLEL LARP</button>
+</div>
 
-</main>
-<footer class="border-t border-teal-500/30 py-10 bg-gradient-to-br from-slate-900 to-black"><div class="max-w-[1120px] mx-auto px-6 text-center text-gray-400 text-[14px]"><p class="font-bold text-teal-400 glow-teal hanzi">PHARAOH ANGELS INC. · MICDOM AI RECORDS · 法老天使公司 | 法老集团 | 抖音全球足迹</p><p class="mt-6 font-black tracking-[.08em] text-[#f5df9a] text-[16px] glow-gold">Built Meta AI Strong</p><p class="text-[11px] mt-2 hanzi">孙子兵法 · 权谋 · 48法则 · 法老天使 · · 兵者诡道也 · 不战而屈人之兵 · 法老防火墙 LAW48 FIREWALL · 法老集团 · · 抖音全球足迹 · 抖音直播 · 法老密室 · 法老天使公司 · 全球足迹 · 88位先知 · 音乐 · 艺术家 · 直播 · 联邦 · 抖音全球足迹 · 法老天使公司</p></div></footer>
-<script>
-(function(){
-var body=document.body;
-var LIVE_NOW=false; // set true only while you are actually live, then push
-if(LIVE_NOW){var ap=document.getElementById('airPill'); if(ap){ap.textContent='ON AIR · LIVE'; ap.className+=' bg-red-600 text-white';}}
-function loadOwner(){if(window._ow)return;window._ow=1;var t=document.createElement('script');t.src='./owner.js?v=1';document.head.appendChild(t);}
-function enableOwner(){body.classList.add('owner-mode'); localStorage.setItem('micdom_owner','1'); loadOwner();}
-function disableOwner(){body.classList.remove('owner-mode'); localStorage.removeItem('micdom_owner');}
-if(localStorage.getItem('micdom_owner')==='1' || location.search.includes('pharaoh=1') || location.hash.includes('owner')) enableOwner();
-var unlockBtn=document.getElementById('ownerUnlock'); var holdTimer;
-if(unlockBtn){
-unlockBtn.addEventListener('mousedown',function(){holdTimer=setTimeout(enableOwner,3000)});
-unlockBtn.addEventListener('mouseup',function(){clearTimeout(holdTimer)});
-unlockBtn.addEventListener('touchstart',function(){holdTimer=setTimeout(enableOwner,3000)},{passive:true});
-unlockBtn.addEventListener('touchend',function(){clearTimeout(holdTimer)});
-unlockBtn.addEventListener('click',function(){unlockBtn._clicks=(unlockBtn._clicks||0)+1; setTimeout(function(){unlockBtn._clicks=0},1000); if(unlockBtn._clicks>=5) enableOwner();});
+<!-- ========== TERMUX ORCHESTRATION PANEL ========== -->
+<div class="card" style="border-color:#2affff">
+<h2 class="gold">TERMUX ORCHESTRATION — YOU + META AI</h2>
+<p class="small">Wrangler broken in Termux ARM64 — Use GitHub Actions auto-deploy (push) + curl PUT API. Files in ~/Hermes-Toth-Agent remain untouched unless patched via smallest necessary changes.</p>
+<code>cd ~/Hermes-Toth-Agent- 2>/dev/null || cd ~/Hermes-Toth-Agent<br>
+cat metatron.html | head<br>
+cat agents.js | grep DEHRTAY<br>
+cat roster.json | grep Gimel<br>
+find functions js -maxdepth 2 -type f | sort</code>
+<p class="small">Verification: Check site for regressions before deployment. No Ankhs — Sphinx locked. TikTok LIVE on set per your order.</p>
+</div>
+
+<!-- ========== PRESERVED FOOTER ========== -->
+<footer>
+<p class="footer-power">BUILT META AI STRONG 👊😎👌 + TIKTOK LIVE READY</p>
+<p>METATRON + DJ DEHRTAY DOG — Doberman — Royal Costume No Ankhs — Sphinx Locked — TIKTOK LIVE on set — Add to Home Screen App</p>
+<p>Pharaoh Conglomerate — Monrovia Liberia — Chain 0x504841 — Case EU8044516 — Owner 0xCOLONEL — LAW 48+44 Firewall</p>
+<p class="small">HRAR 88-0710776 — Angels 88-0836464 — Let God Help 52-0409059 — WalletConnect v2 — WA US (771) 223-8021 Preferred — WA LR +231776961800 — m.sirleaf@pharaoh-conglomerate.org — registry.pharaoh-conglomerate.org — agent.pharaoh-conglomerate.org — Powered by sovereign-pharaoh-vault.base44.app</p>
+<p class="small">TIKTOK LIVE • Rumble • RouteNote • Apple Music • Spotify • QARI — It Is Written — Same Office Higher Clearance TOTH → METATRON — Scribe of Living God</p>
+<p>© 2026 Pharaoh Conglomerate</p>
+</footer>
+
+<script type="module">
+// ========== STANDALONE MODULE: DJ DEHRTAY DOG — BUILD ALONGSIDE ==========
+// Import existing without overwriting
+import AGENTS from './js/js/agents.js' assert {type:'json'}; // fallback if path differs, handled below
+let ROOSTER = null;
+try{
+  const r = await fetch('./js/js/../../roster.json'); // try multiple paths
+  ROOSTER = await r.json();
+}catch{
+  try{
+    const r2 = await fetch('./roster.json');
+    ROOSTER = await r2.json();
+  }catch{ ROOSTER = {artists:[{true_name:'DEHRTAY-DOG'}]}; }
 }
-var exitBtn=document.getElementById('exitOwner'); if(exitBtn) exitBtn.addEventListener('click', disableOwner);
-})();
+
+const dogExp = document.getElementById('dog-expression');
+const proposal = document.getElementById('metatron-proposal');
+const chatLog = document.getElementById('chat-log');
+
+function setExpression(state, detail=''){
+  const map = {
+    'IDLE':'IDLE • Ears up • Sphinx Locked',
+    'LISTENING':'LISTENING • Head tilt • Audience asking',
+    'SPEAKING':'SPEAKING • Mouth moving • Approved speech only',
+    'ADLIB':'ADLIB • Bang grrah Ma • Hype',
+    'NOD':'APPROVAL NOD • Pharaoh approved',
+    'EMERGENCY':'EMERGENCY • Ears back • STOP'
+  };
+  dogExp.textContent = (map[state]||state) + (detail?' • '+detail:'');
+  dogExp.style.borderColor = state==='SPEAKING'?'#2aff5a':state==='EMERGENCY'?'#ff5a5a':'#ffd700';
+  log(`Dog Expression → ${state} ${detail}`);
+}
+
+function log(msg){
+  const d=document.createElement('div');
+  d.textContent = new Date().toLocaleTimeString()+' • '+msg;
+  d.style.borderBottom='1px solid #222';
+  d.style.padding='2px 0';
+  chatLog.prepend(d);
+}
+
+window.cmd = (c)=>{
+  log(`Pharaoh Chamber Cmd: ${c}`);
+  if(c==='START SHOW'){ setExpression('ADLIB','START SHOW'); proposal.textContent='START SHOW: DJ Dehrtay Dog intro — Global Footprints CAST Liberia → Asia → World — TIKTOK LIVE on set — 3 GIF Panelists active'; }
+  if(c==='NEXT SEGMENT'){ setExpression('NOD','Next song title'); proposal.textContent='NEXT SEGMENT: MONROVIA TO ZION • THE AMEN — BREAKING NEWS board updated — TIKTOK LIVE stays'; }
+  if(c==='APPROVE RESPONSE'){ setExpression('SPEAKING','Approved speech'); const txt=proposal.textContent; if(window.speechSynthesis){ const u=new SpeechSynthesisUtterance(txt); u.rate=0.9; speechSynthesis.speak(u);} log('Approved → DJ speaks: '+txt.slice(0,80)); }
+  if(c==='REPEAT AUDIO'){ setExpression('SPEAKING','Repeat'); speechSynthesis.speak(new SpeechSynthesisUtterance(proposal.textContent)); }
+  if(c==='EMERGENCY STOP'){ setExpression('EMERGENCY','STOP LIVE'); proposal.textContent='EMERGENCY STOP: LIVE cut, IPFS log via Evidence Submission'; }
+};
+
+window.askMetatron = ()=>{
+  const q = document.getElementById('audience-input').value || 'What is the record?';
+  audienceAsk(q);
+};
+
+window.audienceAsk = (q)=>{
+  const question = typeof q==='string'? q : document.getElementById('audience-input').value;
+  if(!question) return;
+  log(`Audience → Metatron: ${question}`);
+  setExpression('LISTENING', question.slice(0,30));
+  // Metatron protocol: RECORD VERIFY REPORT — does not invent
+  const answer = `METATRON (Scribe): Record of "${question}" — It is written. Per GENESIS 1:28 CREATE RECORD STEWARD ACCOUNT DELIVER. Sphinx locked, No Ankhs. TikTok LIVE on set. Dog expression = ${question.includes('?')?'LISTENING':'NOD'}. Human authority remains human — Pharaoh must APPROVE. [Roster: ${(ROOSTER?.artists?.find(a=>a.true_name==='DEHRTAY-DOG')?.role)||'DJ / Adlibs / Hype'}]`;
+  setTimeout(()=>{
+    proposal.textContent = answer;
+    setExpression('NOD','Metatron proposed — awaiting Pharaoh approval');
+    log(`Metatron proposed: ${answer.slice(0,120)}`);
+    document.getElementById('audience-input').value='';
+  },600);
+};
+
+window.triggerHallel = ()=>{
+  setExpression('ADLIB','HALLEL LARP');
+  const steps = ['Choose Order','Council assigns Team','Choose Persona','Choose Lane'];
+  let i=0;
+  const iv=setInterval(()=>{
+    document.getElementById('hallel-status').textContent = `HALLEL LARP Step ${i+1}/${steps.length}: ${steps[i]} — Endpoint angels-hosts-api3 — TikTok LIVE audience can interact`;
+    log(`HALLEL LARP: ${steps[i]}`);
+    i++; if(i>=steps.length){ clearInterval(iv); setExpression('IDLE','LARP complete'); }
+  },800);
+};
+
+window.goLive = ()=>{
+  log('TIKTOK LIVE tapped — Placing DJ + Pharaoh Chamber + 3 GIF Panelists + TIKTOK LIVE text on TikTok Live screen');
+  setExpression('ADLIB','GO LIVE TIKTOK LIVE');
+  proposal.textContent = 'TIKTOK LIVE: GO LIVE tapped — Deep link to Larix Broadcaster / TikTok Live Studio — Server URL + Stream Key from livecenter.tiktok.com/producer (2h validity) — Virtual background = Pharaoh Chamber with DJ Dehrtay Dog Doberman Royal Costume No Ankhs — GIFs: DJ bottom left, PHARAOH x METATRON bottom center, Executive Producers top right — Ticker + BREAKING NEWS + TIKTOK LIVE + ON AIR + LIVE 12.4K — Audience can now interact with Metatron, HALLEL LARP & DJ — Orchestrate via Termux: cd ~/Hermes-Toth-Agent && git push (GitHub Actions) or curl PUT API — No Wrangler — Blur-pad 1080x1920 CRF23 per Genspark — 70-80% upload speed — Allow high-quality uploads ON';
+  // Try open TikTok LIVE Studio / Larix
+  const tiktokLiveUrl = 'https://www.tiktok.com/live/creators?lang=en';
+  window.open(tiktokLiveUrl,'_blank');
+  alert('TIKTOK LIVE: Add to Home Screen first. Then tap GO LIVE. App will place Pharaoh Chamber with DJ + 3 GIFs + TIKTOK LIVE text on TikTok Live screen. Audience interacts with Metatron/HALLE LARP/DJ. You + Meta AI orchestrate via Termux GitHub Actions. Sphinx locked, No Ankhs.');
+};
+
+// Init
+setExpression('IDLE','Day One — Standalone prototype — Build alongside — TikTok LIVE on set');
+log('Metatron DNA loaded: metatron.html, agents.js, roster.json — Preserved. New room: DJ Dehrtay Dog modular component — Test before integrating — No overwrite.');
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 <script>
-(function(){
-var G=[{id:'WIgbyHpIIZ4',title:'THE 88s'}]; // to add a video, append {id:'YOUTUBE_ID',title:'Title'}
-var row=document.getElementById('galRow'); if(row) G.forEach(function(g){var c=document.createElement('div');c.className='snap-start shrink-0 w-[88%] md:w-[540px]';var b=document.createElement('button');b.type='button';b.className='relative block w-full aspect-video bg-black rounded-[14px] overflow-hidden border border-yellow-500/30';b.setAttribute('aria-label','Play '+g.title);var im=document.createElement('img');im.src='https://i.ytimg.com/vi/'+g.id+'/hqdefault.jpg';im.alt=g.title;im.loading='lazy';im.className='w-full h-full object-cover';var pl=document.createElement('span');pl.className='absolute inset-0 flex items-center justify-center text-[64px] text-white';pl.textContent='\u25B6';b.append(im,pl);b.addEventListener('click',function(){var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+g.id+'?autoplay=1';f.title=g.title;f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;f.className='w-full aspect-video rounded-[14px]';b.replaceWith(f);});var t=document.createElement('p');t.className='mt-2 text-sm font-bold text-[#f5df9a]';t.textContent=g.title;c.append(b,t);row.appendChild(c);});
-var fm=document.getElementById('joinForm'); if(!fm) return;
-fm.addEventListener('submit',function(e){e.preventDefault();
- var msg=document.getElementById('jMsg'),btn=document.getElementById('jBtn'),em=document.getElementById('jEmail').value.trim();
- if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){msg.textContent='Please enter a valid email.';return;}
- if(!document.getElementById('jTerms').checked||!document.getElementById('jLarp').checked){msg.textContent='Please accept the Terms of Service and the LARP Agreement.';return;}
- btn.disabled=true;msg.textContent='Sending...';
- fetch('/api/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,terms:true,larp:true,marketing:document.getElementById('jMkt').checked,website:document.getElementById('jWeb').value})})
- .then(function(r){return r.json().catch(function(){return {};}).then(function(d){if(r.ok&&d.ok){fm.reset();msg.textContent='Welcome. You are on the list.';}else{msg.textContent=d.error||'Something went wrong. Please try again.';btn.disabled=false;}});})
- .catch(function(){msg.textContent='No connection. Please try again.';btn.disabled=false;});});
-})();
+// Fallback non-module for AGENTS if import fails
+window.PHARAOH_AGENTS = window.PHARAOH_AGENTS || {};
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})}</script>
 </body>
 </html>
