@@ -54,6 +54,23 @@ body{max-width:900px;margin:auto;background:#050507}
 @media(max-width:600px){.grid2{grid-template-columns:1fr}.chamber-controls{grid-template-columns:1fr 1fr}.gif-panels{grid-template-columns:1fr}}
 footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-align:center}
 .footer-power{color:#ffd700!important;font-size:13px!important;font-weight:950}
+
+/* MICDOM BUILD: accessible gallery, roster and DJ player */
+#dj-console video{width:100%;max-height:440px;background:#000;border-radius:12px}
+#dj-console button,#dj-console input{font:inherit;min-height:48px}
+#dj-console .lock{border:2px solid #d9b25f;padding:14px;border-radius:12px}
+#dj-console .expr,#gallery a,.artist{display:block;padding:12px;margin:6px 0;border:1px solid #80652c;border-radius:10px;background:#111;color:#fff;text-decoration:none}
+#dj-console .expr{min-width:100px}
+#dj-console .expr[aria-pressed=true]{background:#d9b25f;color:#000}
+#gallery,#artist-roster{padding:12px}
+#gallery a:focus,#artist-roster a:focus,#dj-console button:focus,#dj-console input:focus{outline:4px solid #ffd700;outline-offset:3px}
+#gallery .gallery-grid,#artist-roster .roster-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#artist-roster img{width:100%;max-height:150px;object-fit:contain;background:#050505;border-radius:8px}
+#artist-roster input{width:100%;padding:12px;background:#111;color:white;border:2px solid #d9b25f;border-radius:8px}
+#dj-console input{width:100%;padding:10px;background:#111;color:#fff;border:1px solid #d9b25f;border-radius:8px;margin:5px 0}
+#dj-console .status{padding:10px;background:#111;border-radius:8px}
+@media(max-width:520px){#gallery .gallery-grid,#artist-roster .roster-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -151,6 +168,61 @@ find functions js -maxdepth 2 -type f | sort</code>
 <p class="small">Verification: Check site for regressions before deployment. No Ankhs — Sphinx locked. TikTok LIVE on set per your order.</p>
 </div>
 
+
+<!-- MICDOM: DJ EXPRESSION PLAYER -->
+<section class="card" id="dj-console">
+<h2 class="gold">🐕 DJ DEHRTAY DOG — EIGHT ORIGINAL EXPRESSIONS</h2>
+<p>Original H.264 video with AAC audio. Visitors see the DJ; owner controls require Worker authentication.</p>
+<video id="dj-video" playsinline loop muted preload="metadata"
+ poster="./assets/roster/gimel_ai-dj_dehrtay-dog.jpeg">
+<source src="./dj/expressions-v2/idle.mp4" type="video/mp4">
+</video>
+<p id="dj-state" class="status" aria-live="polite">DJ Dehrtay Dog — Idle</p>
+<div id="dj-owner" class="lock">
+<h3 class="gold">OWNER CONTROL — LOCKED</h3>
+<label for="worker-url">Existing Worker API base URL</label>
+<input id="worker-url" type="url" placeholder="Paste your existing Worker URL">
+<label for="owner-token">Owner approval token</label>
+<input id="owner-token" type="password" autocomplete="off" placeholder="Enter owner token">
+<button class="button" id="owner-login" type="button">VERIFY OWNER ACCESS</button>
+<button class="button dark" id="owner-logout" type="button" hidden>LOCK CONTROLS / LOG OUT</button>
+<p id="owner-status" class="small" role="status">No token is saved permanently. Enter the existing Worker URL and owner token to unlock.</p>
+<div id="dj-controls" hidden>
+<h3 class="gold">DJ EXPRESSION CONTROLS</h3>
+<div class="chamber-controls" id="expression-buttons">
+<button class="ctrl gold" data-expression="idle">IDLE</button>
+<button class="ctrl teal" data-expression="welcome">WELCOME</button>
+<button class="ctrl purple" data-expression="shocked">SHOCKED</button>
+<button class="ctrl blue" data-expression="neutral">NEUTRAL</button>
+<button class="ctrl green" data-expression="nodding">NODDING</button>
+<button class="ctrl red" data-expression="breaking">BREAKING</button>
+<button class="ctrl purple" data-expression="thinking">THINKING</button>
+<button class="ctrl gold" data-expression="signoff">SIGN OFF</button>
+</div>
+<label for="dj-volume">DJ audio volume</label>
+<input id="dj-volume" type="range" min="0" max="100" value="70">
+<button class="button dark" id="dj-mute" type="button">MUTE AUDIO</button>
+</div>
+</div>
+<p class="small">Media note: the expression MP4 files are publicly hosted. Owner login controls this interface; it does not make public files private.</p>
+</section>
+
+<!-- MICDOM: VIDEO GALLERY -->
+<section class="card" id="gallery">
+<h2 class="gold">🎬 MICDOM AI RECORDS — VIDEO GALLERY</h2>
+<p>Choose a video to open it on its original platform. Videos are not loaded until selected.</p>
+<div class="gallery-grid" id="gallery-links"></div>
+</section>
+
+<!-- MICDOM: ARTIST ROSTER -->
+<section class="card" id="artist-roster">
+<h2 class="gold">🎙️ MICDOM AI RECORDS — ARTIST ROSTER</h2>
+<p id="roster-count">Loading artist directory…</p>
+<label for="artist-search">Find an artist by name or role</label>
+<input id="artist-search" type="search" placeholder="Search the 48 artists">
+<div class="roster-grid" id="roster-list" aria-live="polite"></div>
+</section>
+
 <!-- ========== PRESERVED FOOTER ========== -->
 <footer>
 <p class="footer-power">BUILT META AI STRONG 👊😎👌 + TIKTOK LIVE READY</p>
@@ -161,102 +233,197 @@ find functions js -maxdepth 2 -type f | sort</code>
 <p>© 2026 Pharaoh Conglomerate</p>
 </footer>
 
-<script type="module">
-// ========== STANDALONE MODULE: DJ DEHRTAY DOG — BUILD ALONGSIDE ==========
-// Import existing without overwriting
-import AGENTS from './js/js/agents.js' assert {type:'json'}; // fallback if path differs, handled below
-let ROOSTER = null;
-try{
-  const r = await fetch('./js/js/../../roster.json'); // try multiple paths
-  ROOSTER = await r.json();
-}catch{
-  try{
-    const r2 = await fetch('./roster.json');
-    ROOSTER = await r2.json();
-  }catch{ ROOSTER = {artists:[{true_name:'DEHRTAY-DOG'}]}; }
+
+<script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const video = $("dj-video");
+const expressions = ["idle","welcome","shocked","neutral","nodding","breaking","thinking","signoff"];
+let ownerToken = "";
+let ownerOK = false;
+let muted = true;
+
+function setExpression(name) {
+  if (!ownerOK || !expressions.includes(name)) return;
+  video.pause();
+  video.src = "./dj/expressions-v2/" + name + ".mp4";
+  video.load();
+  video.muted = muted;
+  video.volume = Number($("dj-volume").value) / 100;
+  video.play().catch(() => $("dj-state").textContent =
+    "Tap the expression again if playback is blocked by the browser.");
+  $("dj-state").textContent = "DJ Dehrtay Dog — " + name.toUpperCase();
+  document.querySelectorAll("[data-expression]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.expression === name)));
 }
 
-const dogExp = document.getElementById('dog-expression');
-const proposal = document.getElementById('metatron-proposal');
-const chatLog = document.getElementById('chat-log');
-
-function setExpression(state, detail=''){
-  const map = {
-    'IDLE':'IDLE • Ears up • Sphinx Locked',
-    'LISTENING':'LISTENING • Head tilt • Audience asking',
-    'SPEAKING':'SPEAKING • Mouth moving • Approved speech only',
-    'ADLIB':'ADLIB • Bang grrah Ma • Hype',
-    'NOD':'APPROVAL NOD • Pharaoh approved',
-    'EMERGENCY':'EMERGENCY • Ears back • STOP'
-  };
-  dogExp.textContent = (map[state]||state) + (detail?' • '+detail:'');
-  dogExp.style.borderColor = state==='SPEAKING'?'#2aff5a':state==='EMERGENCY'?'#ff5a5a':'#ffd700';
-  log(`Dog Expression → ${state} ${detail}`);
+function lockOwner(message) {
+  ownerOK = false;
+  ownerToken = "";
+  $("dj-controls").hidden = true;
+  $("owner-logout").hidden = true;
+  $("owner-login").hidden = false;
+  $("owner-token").value = "";
+  $("owner-status").textContent = message || "Owner controls locked.";
+  $("dj-state").textContent = "DJ Dehrtay Dog — Visitor view";
+  video.pause();
+  video.src = "./dj/expressions-v2/idle.mp4";
+  video.muted = true;
+  video.load();
 }
 
-function log(msg){
-  const d=document.createElement('div');
-  d.textContent = new Date().toLocaleTimeString()+' • '+msg;
-  d.style.borderBottom='1px solid #222';
-  d.style.padding='2px 0';
-  chatLog.prepend(d);
+$("owner-login").addEventListener("click", async () => {
+  const base = $("worker-url").value.trim().replace(/\/+$/, "");
+  const token = $("owner-token").value.trim();
+  if (!/^https:\/\//i.test(base) || !token) {
+    $("owner-status").textContent = "Enter the HTTPS Worker URL and owner token.";
+    return;
+  }
+  $("owner-status").textContent = "Checking owner authorization…";
+  try {
+    const response = await fetch(base + "/api/v1/status", {
+      method: "GET",
+      headers: { "Authorization": "Bearer " + token },
+      cache: "no-store"
+    });
+    const result = await response.json();
+    if (!response.ok || result.authenticated !== true ||
+        result.organization !== "micdom-owner") {
+      lockOwner("Access denied. The Worker did not confirm micdom-owner access.");
+      return;
+    }
+    ownerToken = token;
+    ownerOK = true;
+    $("owner-token").value = "";
+    $("dj-controls").hidden = false;
+    $("owner-logout").hidden = false;
+    $("owner-login").hidden = true;
+    $("owner-status").textContent = "Owner verified for this page session.";
+    setExpression("idle");
+  } catch (error) {
+    $("owner-status").textContent =
+      "Could not reach the Worker. Check its URL and allowed site origin.";
+  }
+});
+
+$("owner-logout").addEventListener("click", () => lockOwner("You are logged out."));
+document.querySelectorAll("[data-expression]").forEach(button =>
+  button.addEventListener("click", () => setExpression(button.dataset.expression)));
+
+$("dj-volume").addEventListener("input", () => {
+  video.volume = Number($("dj-volume").value) / 100;
+});
+$("dj-mute").addEventListener("click", () => {
+  muted = !muted;
+  video.muted = muted;
+  $("dj-mute").textContent = muted ? "UNMUTE AUDIO" : "MUTE AUDIO";
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    video.pause();
+    video.muted = true;
+  } else if (ownerOK) {
+    video.muted = muted;
+  }
+});
+lockOwner("Owner controls locked. Visitor view is available.");
+
+const gallery = [
+["TikTok — Pharaoh Chamber clip","https://vm.tiktok.com/ZSgwNPtPw/"],
+["TikTok — Micdom video","https://vm.tiktok.com/ZSgwNaKXU/"],
+["TikTok — Micdom video","https://vm.tiktok.com/ZSgwN25TA/"],
+["TikTok — Micdom video","https://vm.tiktok.com/ZSgwL3Ct8/"],
+["YouTube — H.A.L.EL. introduction","https://youtu.be/SGPJWd2q2RM"],
+["YouTube — Micdom video","https://youtu.be/mHBJN0QA8Fo"],
+["YouTube — Micdom video","https://youtu.be/p1luxih5o_0"],
+["YouTube — Micdom video","https://youtu.be/1ePOgjtA2q8"],
+["YouTube — Micdom video","https://youtu.be/eisfYQxYUuQ"],
+["YouTube — Micdom video","https://youtu.be/1fxBMSXPo88"],
+["Rumble — Micdom short","https://rumble.com/shorts/v7fubww"],
+["Rumble — Methodology Genesis 1:28","https://rumble.com/v7fvp1k--methodology-genesis-128-sovereign-system-anthem-micdom-ai-records-ministry.html"],
+["Rumble — Monrovia To Zion","https://rumble.com/v7h815s-monrovia-to-zion-micdom-ai-records-new-release.html"],
+["Rumble — The Amen / Global Footprints","https://rumble.com/v7h81us-the-amen-global-footprints-cast-version-news-cast-nefertiti-dj-mami-watah-d.html"],
+["Rumble — Micdom short","https://rumble.com/shorts/v7h81ie"]
+];
+gallery.forEach(([label,url]) => {
+  const a = document.createElement("a");
+  a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+  a.textContent = "▶ " + label + " — Open video";
+  $("gallery-links").appendChild(a);
+});
+
+const portrait = {
+"ASA-003":"assets/roster/gimel_ai-dj_dehrtay-dog.jpeg",
+"ASA-004":"assets/roster/daleth_ai-lonestar.jpg",
+"ASA-008":"assets/roster/chet_ai_truth-ben-yhvh.jpeg",
+"ASA-009":"assets/roster/tet_ai-soundclash.jpg",
+"ASA-010":"assets/roster/yod_ai-nefertiti.jpg",
+"ASA-012":"assets/roster/1stlamed_ai_twin-imhotep.jpg",
+"ASA-013":"assets/roster/2ndlamed_ai-twin-daat.jpg",
+"ASA-015":"assets/roster/metatron_toth-ai-console.jpg",
+"ASA-016":"assets/roster/ayin-ai_ivory.jpg",
+"ASA-018":"assets/roster/nun_ai-hallel_node.jpg",
+"ASA-019":"assets/roster/aleph-2.0-ai-papay.jpg",
+"ASA-006":"assets/roster/vav_ai-dahctor.jpg",
+"ASA-005":"assets/roster/heh_ai-pruh.jpg"
+};
+let artists = [];
+function renderRoster(query="") {
+  const list = $("roster-list");
+  list.replaceChildren();
+  const q = query.trim().toLowerCase();
+  const matches = artists.filter(a =>
+    [a.true_name,a.role,a.letter,a.id].join(" ").toLowerCase().includes(q));
+  $("roster-count").textContent =
+    matches.length + " of " + artists.length + " artists shown.";
+  matches.forEach(a => {
+    const card = document.createElement("article");
+    card.className = "artist";
+    const imgPath = portrait[a.id];
+    if (imgPath) {
+      const img = document.createElement("img");
+      img.src = imgPath; img.alt = a.true_name + " artist portrait";
+      img.loading = "lazy"; img.onerror = () => img.remove();
+      card.appendChild(img);
+    }
+    const name = document.createElement("h3");
+    name.className = "gold"; name.textContent = a.true_name || "Artist";
+    const role = document.createElement("p");
+    role.textContent = (a.id || "") + " • " + (a.letter || "") + " • " + (a.role || "");
+    card.append(name,role);
+    list.appendChild(card);
+  });
 }
+fetch("./roster.json", {cache:"no-cache"})
+  .then(r => { if (!r.ok) throw new Error("Roster unavailable"); return r.json(); })
+  .then(data => { artists = Array.isArray(data.artists) ? data.artists : []; renderRoster(); })
+  .catch(() => $("roster-count").textContent = "Artist roster could not be loaded. Please refresh.");
+$("artist-search").addEventListener("input", e => renderRoster(e.target.value));
 
-window.cmd = (c)=>{
-  log(`Pharaoh Chamber Cmd: ${c}`);
-  if(c==='START SHOW'){ setExpression('ADLIB','START SHOW'); proposal.textContent='START SHOW: DJ Dehrtay Dog intro — Global Footprints CAST Liberia → Asia → World — TIKTOK LIVE on set — 3 GIF Panelists active'; }
-  if(c==='NEXT SEGMENT'){ setExpression('NOD','Next song title'); proposal.textContent='NEXT SEGMENT: MONROVIA TO ZION • THE AMEN — BREAKING NEWS board updated — TIKTOK LIVE stays'; }
-  if(c==='APPROVE RESPONSE'){ setExpression('SPEAKING','Approved speech'); const txt=proposal.textContent; if(window.speechSynthesis){ const u=new SpeechSynthesisUtterance(txt); u.rate=0.9; speechSynthesis.speak(u);} log('Approved → DJ speaks: '+txt.slice(0,80)); }
-  if(c==='REPEAT AUDIO'){ setExpression('SPEAKING','Repeat'); speechSynthesis.speak(new SpeechSynthesisUtterance(proposal.textContent)); }
-  if(c==='EMERGENCY STOP'){ setExpression('EMERGENCY','STOP LIVE'); proposal.textContent='EMERGENCY STOP: LIVE cut, IPFS log via Evidence Submission'; }
+window.goLive = () => window.open("https://www.tiktok.com/live/creators?lang=en","_blank","noopener");
+window.cmd = command => {
+  if (command === "EMERGENCY STOP") {
+    video.pause(); video.muted = true; lockOwner("Emergency stop — controls locked.");
+  }
+  $("metatron-proposal").textContent = "Pharaoh Chamber command: " + command;
 };
-
-window.askMetatron = ()=>{
-  const q = document.getElementById('audience-input').value || 'What is the record?';
-  audienceAsk(q);
+window.askMetatron = () => {
+  $("metatron-proposal").textContent =
+    "Metatron proposal: record the question, verify the source, and await Pharaoh's approval.";
 };
-
-window.audienceAsk = (q)=>{
-  const question = typeof q==='string'? q : document.getElementById('audience-input').value;
-  if(!question) return;
-  log(`Audience → Metatron: ${question}`);
-  setExpression('LISTENING', question.slice(0,30));
-  // Metatron protocol: RECORD VERIFY REPORT — does not invent
-  const answer = `METATRON (Scribe): Record of "${question}" — It is written. Per GENESIS 1:28 CREATE RECORD STEWARD ACCOUNT DELIVER. Sphinx locked, No Ankhs. TikTok LIVE on set. Dog expression = ${question.includes('?')?'LISTENING':'NOD'}. Human authority remains human — Pharaoh must APPROVE. [Roster: ${(ROOSTER?.artists?.find(a=>a.true_name==='DEHRTAY-DOG')?.role)||'DJ / Adlibs / Hype'}]`;
-  setTimeout(()=>{
-    proposal.textContent = answer;
-    setExpression('NOD','Metatron proposed — awaiting Pharaoh approval');
-    log(`Metatron proposed: ${answer.slice(0,120)}`);
-    document.getElementById('audience-input').value='';
-  },600);
+window.audienceAsk = () => window.askMetatron();
+window.triggerHallel = () => {
+  $("hallel-status").textContent =
+    "HALLEL LARP: Choose Order → Council assigns Team → Choose Persona → Choose Lane.";
 };
-
-window.triggerHallel = ()=>{
-  setExpression('ADLIB','HALLEL LARP');
-  const steps = ['Choose Order','Council assigns Team','Choose Persona','Choose Lane'];
-  let i=0;
-  const iv=setInterval(()=>{
-    document.getElementById('hallel-status').textContent = `HALLEL LARP Step ${i+1}/${steps.length}: ${steps[i]} — Endpoint angels-hosts-api3 — TikTok LIVE audience can interact`;
-    log(`HALLEL LARP: ${steps[i]}`);
-    i++; if(i>=steps.length){ clearInterval(iv); setExpression('IDLE','LARP complete'); }
-  },800);
-};
-
-window.goLive = ()=>{
-  log('TIKTOK LIVE tapped — Placing DJ + Pharaoh Chamber + 3 GIF Panelists + TIKTOK LIVE text on TikTok Live screen');
-  setExpression('ADLIB','GO LIVE TIKTOK LIVE');
-  proposal.textContent = 'TIKTOK LIVE: GO LIVE tapped — Deep link to Larix Broadcaster / TikTok Live Studio — Server URL + Stream Key from livecenter.tiktok.com/producer (2h validity) — Virtual background = Pharaoh Chamber with DJ Dehrtay Dog Doberman Royal Costume No Ankhs — GIFs: DJ bottom left, PHARAOH x METATRON bottom center, Executive Producers top right — Ticker + BREAKING NEWS + TIKTOK LIVE + ON AIR + LIVE 12.4K — Audience can now interact with Metatron, HALLEL LARP & DJ — Orchestrate via Termux: cd ~/Hermes-Toth-Agent && git push (GitHub Actions) or curl PUT API — No Wrangler — Blur-pad 1080x1920 CRF23 per Genspark — 70-80% upload speed — Allow high-quality uploads ON';
-  // Try open TikTok LIVE Studio / Larix
-  const tiktokLiveUrl = 'https://www.tiktok.com/live/creators?lang=en';
-  window.open(tiktokLiveUrl,'_blank');
-  alert('TIKTOK LIVE: Add to Home Screen first. Then tap GO LIVE. App will place Pharaoh Chamber with DJ + 3 GIFs + TIKTOK LIVE text on TikTok Live screen. Audience interacts with Metatron/HALLE LARP/DJ. You + Meta AI orchestrate via Termux GitHub Actions. Sphinx locked, No Ankhs.');
-};
-
-// Init
-setExpression('IDLE','Day One — Standalone prototype — Build alongside — TikTok LIVE on set');
-log('Metatron DNA loaded: metatron.html, agents.js, roster.json — Preserved. New room: DJ Dehrtay Dog modular component — Test before integrating — No overwrite.');
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("./sw.js").catch(() => {}));
+}
+})();
 </script>
+
 <script>
 // Fallback non-module for AGENTS if import fails
 window.PHARAOH_AGENTS = window.PHARAOH_AGENTS || {};
