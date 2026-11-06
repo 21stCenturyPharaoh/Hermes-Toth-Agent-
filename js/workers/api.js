@@ -360,6 +360,205 @@ async function publicMicdomRecords(env, type) {
   return records.filter(record => record.status === "approved");
 }
 
+
+async function sha256Hex(value) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256", new TextEncoder().encode(value)
+  );
+  return Array.from(new Uint8Array(digest))
+    .map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function randomHex(byteCount = 32) {
+  return Array.from(crypto.getRandomValues(new Uint8Array(byteCount)))
+    .map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function deviceKey(id) {
+  return "device:micdom:devices:" + id;
+}
+
+function taskPrefix(id) {
+  return "device:micdom:tasks:" + id + ":";
+}
+
+async function authenticateDevice(request, env, id) {
+  const token = bearerToken(request);
+  if (!token) return false;
+  const raw = await getEvidenceVault(env).get(deviceKey(id));
+  if (!raw) return false;
+  let device;
+  try { device = JSON.parse(raw); } catch { return false; }
+  if (!device || device.status !== "active" || !device.tokenHash) return false;
+  return safeEqual(await sha256Hex(token), device.tokenHash);
+}
+
+async function handleMicdomDeviceRoute(request, env, path, method, origin) {
+  const root = "/api/v1/micdom/device";
+  if (!path.startsWith(root)) return null;
+  if (!requireKV(env)) {
+    return jsonResponse({ ok: false, error: "Storage is not configured" }, 503, origin);
+  }
+  const kv = getEvidenceVault(env);
+
+  if (path === root + "/pairing") {
+    if (method !== "POST") {
+      return jsonResponse({ ok: false, error: "Method not allowed" }, 405, origin);
+    }
+    if (!authenticateOwner(request, env)) {
+      return jsonResponse({ ok: false, error: "Owner approval credential required" }, 403, origin);
+    }
+    const pairingToken = randomHex(32);
+    const pairingHash = await sha256Hex(pairingToken);
+    const expiresAt = new Date(Date.now() + 600000).toISOString();
+    await kv.put("device:micdom:pairing:" + pairingHash,
+      JSON.stringify({ organization: "micdom", expiresAt, used: false }),
+      { expirationTtl: 600 });
+    await writeAudit(env, "micdom-owner", "device.pairing.created", "device", "pending");
+    return jsonResponse({
+      ok: true, pairingToken, expiresAt,
+      instruction: "Use once to enroll the Micdom phone within 10 minutes."
+    }, 201, origin);
+  }
+
+  if (path === root + "/enroll") {
+    if (method !== "POST") {
+      return jsonResponse({ ok: false, error: "Method not allowed" }, 405, origin);
+    }
+    const body = await readJSONBody(request);
+    if (body.error) return jsonResponse({ ok: false, error: body.error }, 400, origin);
+    const pairingToken = cleanText(body.value.pairingToken, 128);
+    const deviceToken = cleanText(body.value.deviceToken, 128);
+    const name = cleanText(body.value.deviceName, 80) || "Micdom Android phone";
+    if (!/^[a-f0-9]{64}$/i.test(pairingToken) ||
+        !/^[a-f0-9]{64}$/i.test(deviceToken)) {
+      return jsonResponse({ ok: false, error: "Both tokens must be 64 hexadecimal characters" }, 400, origin);
+    }
+    const pairingKey = "device:micdom:pairing:" + await sha256Hex(pairingToken);
+    const pairingRaw = await kv.get(pairingKey);
+    if (!pairingRaw) {
+      return jsonResponse({ ok: false, error: "Pairing code is invalid or expired" }, 401, origin);
+    }
+    let pairing;
+    try { pairing = JSON.parse(pairingRaw); } catch {
+      return jsonResponse({ ok: false, error: "Pairing record is invalid" }, 401, origin);
+    }
+    if (pairing.organization !== "micdom" || pairing.used ||
+        !pairing.expiresAt || Date.parse(pairing.expiresAt) <= Date.now()) {
+      return jsonResponse({ ok: false, error: "Pairing code is invalid, expired, or already used" }, 401, origin);
+    }
+    // KV is eventually consistent; use this first-release pairing flow sequentially.
+    pairing.used = true;
+    pairing.usedAt = new Date().toISOString();
+    await kv.put(pairingKey, JSON.stringify(pairing), { expirationTtl: 600 });
+    const id = crypto.randomUUID();
+    await kv.put(deviceKey(id), JSON.stringify({
+      id, organization: "micdom", name, status: "active",
+      tokenHash: await sha256Hex(deviceToken),
+      enrolledAt: new Date().toISOString()
+    }));
+    await writeAudit(env, "micdom-device", "device.enrolled", "device", id);
+    return jsonResponse({
+      ok: true, deviceId: id, deviceName: name, organization: "micdom",
+      message: "Phone enrolled. Keep its device token private."
+    }, 201, origin);
+  }
+
+  const enqueue = path.match(/^\/api\/v1\/micdom\/device\/([a-f0-9-]+)\/tasks$/i);
+  if (enqueue && method === "POST") {
+    if (!authenticateOwner(request, env)) {
+      return jsonResponse({ ok: false, error: "Owner approval credential required" }, 403, origin);
+    }
+    const id = enqueue[1];
+    if (!await kv.get(deviceKey(id))) {
+      return jsonResponse({ ok: false, error: "Enrolled device not found" }, 404, origin);
+    }
+    const body = await readJSONBody(request);
+    if (body.error) return jsonResponse({ ok: false, error: body.error }, 400, origin);
+    const type = cleanText(body.value.type, 40);
+    if (!new Set(["device.status", "media.inventory"]).has(type)) {
+      return jsonResponse({ ok: false, error: "Task type is not allowlisted" }, 400, origin);
+    }
+    const task = {
+      id: crypto.randomUUID(), deviceId: id, organization: "micdom",
+      type, payload: {}, status: "queued",
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 86400000).toISOString()
+    };
+    await kv.put(taskPrefix(id) + task.id, JSON.stringify(task), { expirationTtl: 86400 });
+    await writeAudit(env, "micdom-owner", "device.task.queued", "device-task", task.id);
+    return jsonResponse({
+      ok: true, task: { id: task.id, type, status: task.status, expiresAt: task.expiresAt }
+    }, 201, origin);
+  }
+
+  const next = path.match(/^\/api\/v1\/micdom\/device\/([a-f0-9-]+)\/tasks\/next$/i);
+  if (next && method === "GET") {
+    const id = next[1];
+    if (!await authenticateDevice(request, env, id)) {
+      return jsonResponse({ ok: false, error: "Device authentication failed" }, 401, origin);
+    }
+    const listed = await kv.list({ prefix: taskPrefix(id), limit: 50 });
+    for (const item of listed.keys || []) {
+      const raw = await kv.get(item.name);
+      if (!raw) continue;
+      let task;
+      try { task = JSON.parse(raw); } catch { continue; }
+      if (task.deviceId !== id || task.organization !== "micdom" ||
+          task.status !== "queued") continue;
+      if (Date.parse(task.expiresAt) <= Date.now()) {
+        task.status = "expired";
+        await kv.put(item.name, JSON.stringify(task));
+        continue;
+      }
+      task.status = "processing";
+      task.claimedAt = new Date().toISOString();
+      await kv.put(item.name, JSON.stringify(task));
+      await writeAudit(env, "micdom-device", "device.task.claimed", "device-task", task.id);
+      return jsonResponse({
+        ok: true, task: { id: task.id, type: task.type, payload: task.payload, expiresAt: task.expiresAt }
+      }, 200, origin);
+    }
+    return jsonResponse({ ok: true, task: null }, 200, origin);
+  }
+
+  const resultRoute = path.match(/^\/api\/v1\/micdom\/device\/([a-f0-9-]+)\/tasks\/([a-f0-9-]+)\/result$/i);
+  if (resultRoute && method === "POST") {
+    const id = resultRoute[1];
+    const taskId = resultRoute[2];
+    if (!await authenticateDevice(request, env, id)) {
+      return jsonResponse({ ok: false, error: "Device authentication failed" }, 401, origin);
+    }
+    const body = await readJSONBody(request);
+    if (body.error) return jsonResponse({ ok: false, error: body.error }, 400, origin);
+    if (!body.value.result || typeof body.value.result !== "object" ||
+        Array.isArray(body.value.result)) {
+      return jsonResponse({ ok: false, error: "Result must be a JSON object" }, 400, origin);
+    }
+    const key = taskPrefix(id) + taskId;
+    const raw = await kv.get(key);
+    if (!raw) return jsonResponse({ ok: false, error: "Task not found" }, 404, origin);
+    let task;
+    try { task = JSON.parse(raw); } catch {
+      return jsonResponse({ ok: false, error: "Task record is invalid" }, 500, origin);
+    }
+    if (task.deviceId !== id || task.organization !== "micdom") {
+      return jsonResponse({ ok: false, error: "Task scope denied" }, 403, origin);
+    }
+    if (task.status !== "processing") {
+      return jsonResponse({ ok: false, error: "Task is not awaiting a result" }, 409, origin);
+    }
+    task.status = body.value.ok === false ? "failed" : "completed";
+    task.result = body.value.result;
+    task.completedAt = new Date().toISOString();
+    await kv.put(key, JSON.stringify(task), { expirationTtl: 604800 });
+    await writeAudit(env, "micdom-device", "device.task." + task.status, "device-task", taskId);
+    return jsonResponse({ ok: true, taskId, status: task.status }, 200, origin);
+  }
+
+  return jsonResponse({ ok: false, error: "Device route not found" }, 404, origin);
+}
+
 const REGISTRY_SERVICES = [
   {
     id: "corporate-documents",
@@ -460,6 +659,11 @@ export default {
           records: await publicMicdomRecords(env, "announcement")
         }, 200, origin);
       }
+
+      const deviceResponse = await handleMicdomDeviceRoute(
+        request, env, path, method, origin
+      );
+      if (deviceResponse) return deviceResponse;
 
       if (path.startsWith("/api/v1/")) {
         if (method !== "GET" && method !== "POST") {

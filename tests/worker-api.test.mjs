@@ -332,3 +332,98 @@ test("Unknown environment fails closed without using Production KV", async () =>
   assert.equal(response.status, 503);
   assert.equal(env.EVIDENCE_VAULT.data.size, 0);
 });
+
+
+test("device pairing requires the separate owner credential", async () => {
+  const response = await call(setup(), "/api/v1/micdom/device/pairing", {
+    method: "POST", headers: auth("micdom-test-token")
+  });
+  assert.equal(response.status, 403);
+});
+
+test("owner can pair a device, queue an allowlisted task, and receive its result", async () => {
+  const env = setup();
+  const pairResponse = await call(env, "/api/v1/micdom/device/pairing", {
+    method: "POST", headers: auth("owner-test-token")
+  });
+  const pair = await pairResponse.json();
+  assert.equal(pairResponse.status, 201);
+  assert.match(pair.pairingToken, /^[a-f0-9]{64}$/);
+
+  const deviceToken = "a".repeat(64);
+  const enrollResponse = await call(env, "/api/v1/micdom/device/enroll", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pairingToken: pair.pairingToken, deviceToken, deviceName: "Blackview A52 Pro" })
+  });
+  const enrolled = await enrollResponse.json();
+  assert.equal(enrollResponse.status, 201);
+
+  const stored = JSON.parse(await env.EVIDENCE_VAULT.get("device:micdom:devices:" + enrolled.deviceId));
+  assert.notEqual(stored.tokenHash, deviceToken);
+  assert.equal(stored.organization, "micdom");
+
+  const queueResponse = await call(env, `/api/v1/micdom/device/${enrolled.deviceId}/tasks`, {
+    method: "POST",
+    headers: { ...auth("owner-test-token"), "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "device.status" })
+  });
+  const queued = await queueResponse.json();
+  assert.equal(queueResponse.status, 201);
+
+  const pollResponse = await call(env, `/api/v1/micdom/device/${enrolled.deviceId}/tasks/next`, {
+    headers: auth(deviceToken)
+  });
+  const polled = await pollResponse.json();
+  assert.equal(pollResponse.status, 200);
+  assert.equal(polled.task.id, queued.task.id);
+
+  const resultResponse = await call(env,
+    `/api/v1/micdom/device/${enrolled.deviceId}/tasks/${queued.task.id}/result`, {
+      method: "POST",
+      headers: { ...auth(deviceToken), "Content-Type": "application/json" },
+      body: JSON.stringify({ ok: true, result: { architecture: "aarch64", mode: "READ_ONLY" } })
+    });
+  const result = await resultResponse.json();
+  assert.equal(resultResponse.status, 200);
+  assert.equal(result.status, "completed");
+});
+
+test("device task queue rejects arbitrary shell commands", async () => {
+  const env = setup();
+  const pairResponse = await call(env, "/api/v1/micdom/device/pairing", {
+    method: "POST", headers: auth("owner-test-token")
+  });
+  const pair = await pairResponse.json();
+  const token = "b".repeat(64);
+  const enrollResponse = await call(env, "/api/v1/micdom/device/enroll", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pairingToken: pair.pairingToken, deviceToken: token })
+  });
+  const enrolled = await enrollResponse.json();
+  const response = await call(env, `/api/v1/micdom/device/${enrolled.deviceId}/tasks`, {
+    method: "POST",
+    headers: { ...auth("owner-test-token"), "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "shell.exec", command: "rm -rf /" })
+  });
+  assert.equal(response.status, 400);
+});
+
+test("device polling rejects an incorrect device token", async () => {
+  const env = setup();
+  const pairResponse = await call(env, "/api/v1/micdom/device/pairing", {
+    method: "POST", headers: auth("owner-test-token")
+  });
+  const pair = await pairResponse.json();
+  const enrollResponse = await call(env, "/api/v1/micdom/device/enroll", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pairingToken: pair.pairingToken, deviceToken: "c".repeat(64) })
+  });
+  const enrolled = await enrollResponse.json();
+  const response = await call(env, `/api/v1/micdom/device/${enrolled.deviceId}/tasks/next`, {
+    headers: auth("wrong-device-token")
+  });
+  assert.equal(response.status, 401);
+});
