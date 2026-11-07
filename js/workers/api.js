@@ -1,3 +1,4 @@
+import { handleStageRoute } from "./stage-cue.js";
 /**
  * HERMES-TOTH AGENT
  * Hybrid Authority API — development release
@@ -659,6 +660,13 @@ export default {
           records: await publicMicdomRecords(env, "announcement")
         }, 200, origin);
       }
+
+      // stage-cue-applied
+      const stageResponse = await handleStageRoute(request, env, path, method, origin, {
+        jsonResponse, authenticateOwner, getEvidenceVault, requireKV,
+        readJSONBody, cleanText, writeAudit
+      });
+      if (stageResponse) return stageResponse;
 
       const deviceResponse = await handleMicdomDeviceRoute(
         request, env, path, method, origin

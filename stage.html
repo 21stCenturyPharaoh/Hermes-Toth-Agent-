@@ -61,6 +61,18 @@ button.stop{background:#a00;color:#fff;border-color:#f55}
 </div>
 <button id="dot" aria-label="Controls"></button>
 <div id="dr">
+ <section id="stage-owner-lock" aria-labelledby="stage-owner-title" style="border:2px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:10px">
+  <h2 id="stage-owner-title" style="font-size:16px;margin-bottom:8px">OWNER CONTROL — LOCKED</h2>
+  <p style="font-size:12px;margin-bottom:8px;color:#e9d9a0">Public visitors cannot operate the stage. Verify Micdom owner access to unlock controls.</p>
+  <label for="stage-worker-url">Existing Worker API URL</label>
+  <input id="stage-worker-url" type="url" autocomplete="url" placeholder="https://your-existing-worker.workers.dev" style="width:100%;padding:10px;margin:5px 0 10px;background:#000;color:#fff;border:1px solid var(--gold);border-radius:6px">
+  <label for="stage-owner-token">Owner approval token</label>
+  <input id="stage-owner-token" type="password" autocomplete="off" placeholder="Enter owner token" style="width:100%;padding:10px;margin:5px 0 10px;background:#000;color:#fff;border:1px solid var(--gold);border-radius:6px">
+  <button id="stage-owner-login" class="go" type="button">VERIFY OWNER ACCESS</button>
+  <p id="stage-owner-status" role="status" aria-live="polite" style="font-size:12px;margin-top:8px">Controls are locked. Token is not saved.</p>
+ </section>
+ <div id="stage-controls" hidden>
+ <button id="stage-owner-logout" type="button">LOCK CONTROLS / LOG OUT</button>
  <div class="row c4" id="ex"></div>
  <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button><button id="bRepeat">REPEAT</button><button class="stop" id="bStop">EMERGENCY STOP</button></div>
  <div class="row c4" id="sn"></div>
@@ -68,6 +80,7 @@ button.stop{background:#a00;color:#fff;border-color:#f55}
  <div class="row c2"><label>CROWD VOLUME<input type="range" id="vol" min="0" max="100" value="70"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
  <div class="row c2"><button id="bGuides">GUIDES ON/OFF</button><button class="go" id="bStage">STAGE MODE</button></div>
  <div id="log"></div>
+ </div>
 </div>
 <script>
 // ---- CONFIG ----
@@ -81,11 +94,82 @@ const AUTO = {welcome:"applause", signoff:"applause", shocked:"ooh", thinking:"w
 // ---- STATE ----
 const $ = id => document.getElementById(id), v = $("v"), P = {}, btn = {};
 let cur = "", last = "", proposal = "", AUDS = [], seg = 0, timer = 0, wl = null, auto = false, soundOn = true, touched = false, keep = true;
+let stageOwnerOK = false;
+let ownerAuthAttempt = 0;
 function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; }
 function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
+
+function lockStageOwner(message) {
+  ownerAuthAttempt++;
+  stageOwnerOK = false;
+  touched = false;
+  $("stage-controls").hidden = true;
+  $("stage-owner-lock").hidden = false;
+  $("stage-owner-token").value = "";
+  $("stage-owner-status").textContent = message || "Owner controls locked.";
+  AUDS.forEach(a => { try { a.pause(); } catch(e) {} });
+  AUDS = [];
+  v.muted = true;
+}
+
+$("stage-owner-login").addEventListener("click", async () => {
+  const attempt = ++ownerAuthAttempt;
+  const base = $("stage-worker-url").value.trim().replace(/\/+$/, "");
+  const token = $("stage-owner-token").value.trim();
+
+  if (!/^https:\/\//i.test(base) || !token) {
+    $("stage-owner-status").textContent = "Enter the HTTPS Worker URL and owner token.";
+    return;
+  }
+
+  $("stage-owner-status").textContent = "Checking owner authorization…";
+
+  try {
+    const response = await fetch(base + "/api/v1/status", {
+      method: "GET",
+      headers: { "Authorization": "Bearer " + token },
+      cache: "no-store"
+    });
+    const result = await response.json();
+    if (attempt !== ownerAuthAttempt) return;
+
+    if (!response.ok || result.authenticated !== true ||
+        result.organization !== "micdom-owner") {
+      lockStageOwner("Access denied. Worker did not confirm Micdom owner access.");
+      return;
+    }
+
+    stageOwnerOK = true;
+    $("stage-owner-token").value = "";
+    $("stage-owner-lock").hidden = true;
+    $("stage-controls").hidden = false;
+    log("Micdom owner access verified.");
+  } catch (error) {
+    if (attempt !== ownerAuthAttempt) return;
+    lockStageOwner("Worker connection failed. Check the URL and allowed site origin.");
+  }
+});
+
+$("stage-owner-logout").addEventListener("click", () => {
+  lockStageOwner("Logged out. Stage controls are locked.");
+});
+
+$("stage-controls").addEventListener("click", event => {
+  if (!stageOwnerOK) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+}, true);
+
+$("stage-controls").addEventListener("input", event => {
+  if (!stageOwnerOK) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+}, true);
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
-  const paths = ["dj/"+id+".mp4", id+".mp4"]; let i = 0;
+  const paths = ["dj/expressions-v2/"+id+".mp4", "dj/"+id+".mp4", id+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
   t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
   t.onerror = () => { if (++i < paths.length) t.src = paths[i]; else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
@@ -93,7 +177,7 @@ function probe(id){
 }
 function show(id){
   v.style.display = "block"; $("ph").style.display = "none";
-  if (P[id]) { v.loop = keep; v.muted = !(soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.play().catch(()=>{}); }
+  if (P[id]) { v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.play().catch(()=>{}); }
   else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
          $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
 }
@@ -136,10 +220,33 @@ $("bStage").onclick = () => {
 $("dot").onclick = () => document.body.classList.toggle("open");
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && wl && wl.released) wake(); });
 v.addEventListener("ended", () => { if (!keep) setExp("idle"); });
-addEventListener("pointerdown", () => { touched = true; v.muted = !soundOn; }, {once:true});
+addEventListener("pointerdown", () => { if (stageOwnerOK) { touched = true; v.muted = !soundOn; } });
 $("vol").oninput = () => { v.volume = $("vol").value/100; };
 $("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
+// stage-cue-applied
+// ---- METATRON AUTOMATION: public read-only poll; owner ARMS the session ----
+const WORKER_BASE = "";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
+let lastStageKey = "";
+async function pollStage() {
+  if (!WORKER_BASE || document.visibilityState !== "visible") return;
+  let s;
+  try {
+    const r = await fetch(WORKER_BASE.replace(/\/+$/, "") + "/api/v1/micdom/stage/state", { cache: "no-store" });
+    s = await r.json();
+    if (!r.ok || !s || s.ok !== true) throw new Error("bad state");
+  } catch (e) { s = { active: false, expression: "idle", audio: false, seq: 0 }; }   // safe visitor mode
+  const key = [s.active, s.expression, s.seq].join(":");
+  if (key === lastStageKey) return;
+  lastStageKey = key;
+  if (!EX.some(x => x[0] === s.expression)) return;
+  setExp(s.expression);
+  if (!(s.active && s.audio)) v.muted = true;   // sound only while the owner armed audio
+  log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
+}
+setInterval(pollStage, 4000);
+pollStage();
 // ---- INIT ----
+lockStageOwner("Owner controls locked. Verify access to operate the stage.");
 EX.forEach(([id]) => probe(id));
 setTimeout(() => setExp("idle"), 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
