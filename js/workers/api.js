@@ -21,7 +21,8 @@ const ALLOWED_ORIGINS = new Set([
   "https://micdom-records.pharaoh-conglomerate.org",
   "https://56df31dd.hermes-toth-agent.pages.dev",
   "https://275860d9.hermes-toth-agent.pages.dev",
-  "https://21stcenturypharaoh.github.io"
+  "https://21stcenturypharaoh.github.io",
+  "http://localhost:8080"
 ]);
 
 const MAX_BODY_BYTES = 16 * 1024;
