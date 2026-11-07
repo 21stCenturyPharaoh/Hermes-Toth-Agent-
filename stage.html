@@ -225,7 +225,7 @@ $("vol").oninput = () => { v.volume = $("vol").value/100; };
 $("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
 // stage-cue-applied
 // ---- METATRON AUTOMATION: public read-only poll; owner ARMS the session ----
-const WORKER_BASE = "";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
+const WORKER_BASE = "https://hermes-toth-agent-worker.pharangels.workers.dev";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
 let lastStageKey = "";
 async function pollStage() {
   if (!WORKER_BASE || document.visibilityState !== "visible") return;
