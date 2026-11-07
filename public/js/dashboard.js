@@ -1,4 +1,4 @@
-// DASHBOARD.JS V26.8 - H.A.L.EL COMMAND DASHBOARD
+// DASHBOARD.JS V26.8 - H.A.L.L.EL COMMAND DASHBOARD
 import AGENTS from "./agents.js";
 import BRIDGE from "./bridge.js";
 
@@ -14,7 +14,7 @@ export async function loadDashboard() {
   const dashboard = document.getElementById("dashboard");
   if (!dashboard) return;
 
-  dashboard.innerHTML = "<p>H.A.L.EL is connecting to the Worker...</p>";
+  dashboard.innerHTML = "<p>H.A.L.L.EL is connecting to the Worker...</p>";
 
   const [statusResult, affiliateResult] = await Promise.allSettled([
     BRIDGE.healthCheck(),

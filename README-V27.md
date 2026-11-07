@@ -22,7 +22,7 @@ This is an **additive patch** for the existing Hermes-Toth-Agent repository.
 
 Do **not** overwrite the existing root `index.html`, existing `missions.html`, existing `public/js/agents.js`, `dashboard.js`, `bridge.js`, `memory.js`, `routes.js`, or any production Worker source.
 
-The existing root `missions.html` is intentionally protected by placing the new H.A.L.EL page under `v27/halel/missions.html`.
+The existing root `missions.html` is intentionally protected by placing the new H.A.L.L.EL page under `v27/halel/missions.html`.
 
 ## Optional one-line integration
 
@@ -36,7 +36,7 @@ A copy of this insertion is in `index-v27.1-insertion.html`.
 
 ## What V27.1 adds
 
-1. REAL PLATFORM / H.A.L.EL LARP / HERMES-TOTH BRIDGE separation.
+1. REAL PLATFORM / H.A.L.L.EL LARP / HERMES-TOTH BRIDGE separation.
 2. Seven Node Teams: Aleph–Zayin.
 3. Thirteen Orders.
 4. Seven Consulate roles.

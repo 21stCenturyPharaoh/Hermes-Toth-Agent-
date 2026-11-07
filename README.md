@@ -1,4 +1,4 @@
-# HERMES-TOTH AGENT // V27.1.1 - H.A.L.EL PORTALS LIVE 🫡
+# HERMES-TOTH AGENT // V27.1.1 - H.A.L.L.EL PORTALS LIVE 🫡
 
 > 13 Orders // 9 Halel Portals // 4-Video Grid // 100% GitHub Pages
 
@@ -7,7 +7,7 @@
 ### 🚀 MAIN PORTAL
 - [ROOT INDEX - Video Wired](https://21stCenturyPharaoh.github.io/Hermes-Toth-Agent-/index.html)
 
-### ⚡ H.A.L.EL PORTALS - 9/9 WIRED + VIDEOS
+### ⚡ H.A.L.L.EL PORTALS - 9/9 WIRED + VIDEOS
 All portals include V27.1.1 4-video grid: `yKufPwpT4E4 | dhLboOnPljo | mHBJN0QA8Fo | SGPJWd2q2RM`
 
 | Portal | Link | Status |
