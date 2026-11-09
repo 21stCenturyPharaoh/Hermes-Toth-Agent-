@@ -73,6 +73,20 @@ button.stop{background:#a00;color:#fff;border-color:#f55}
  </section>
  <div id="stage-controls" hidden>
  <button id="stage-owner-logout" type="button">LOCK CONTROLS / LOG OUT</button>
+ <!-- stage-buttons-applied -->
+ <section id="stage-ctl" style="border:2px solid var(--gold);border-radius:10px;padding:12px;margin:10px 0">
+  <h2 style="font-size:16px;margin-bottom:6px">METATRON AUTOMATION</h2>
+  <p id="stage-ctl-state" role="status" aria-live="polite" style="font-size:13px;margin-bottom:8px">Checking…</p>
+  <label for="stage-ctl-token">Owner token (for these buttons)</label>
+  <input id="stage-ctl-token" type="password" autocomplete="off" placeholder="Owner token" style="width:100%;padding:10px;margin:5px 0 8px;background:#000;color:#fff;border:1px solid var(--gold);border-radius:6px">
+  <label style="font-size:12px;display:block;margin:0 0 8px"><input id="stage-ctl-keep" type="checkbox"> Keep token until I lock controls (memory only, never saved)</label>
+  <label for="stage-ctl-min">Session length</label>
+  <select id="stage-ctl-min" style="width:100%;padding:10px;margin:5px 0 8px;background:#000;color:#fff;border:1px solid var(--gold);border-radius:6px"><option value="5">5 minutes</option><option value="15" selected>15 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option></select>
+  <label style="font-size:12px;display:block;margin:0 0 8px"><input id="stage-ctl-audio" type="checkbox"> Allow sound (off = silent)</label>
+  <button id="stage-ctl-arm" class="go" type="button">ARM METATRON</button>
+  <button id="stage-ctl-halt" type="button" style="width:100%;margin-top:8px;padding:14px;font-size:16px;font-weight:bold;background:#b00020;color:#fff;border:2px solid #ff8080;border-radius:8px">HALT NOW</button>
+  <p id="stage-ctl-status" role="status" aria-live="polite" style="font-size:12px;margin-top:8px"></p>
+ </section>
  <div class="row c4" id="ex"></div>
  <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button><button id="bRepeat">REPEAT</button><button class="stop" id="bStop">EMERGENCY STOP</button></div>
  <div class="row c4" id="sn"></div>
@@ -224,6 +238,68 @@ addEventListener("pointerdown", () => { if (stageOwnerOK) { touched = true; v.mu
 $("vol").oninput = () => { v.volume = $("vol").value/100; };
 $("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
 // stage-cue-applied
+// stage-buttons-applied
+// ---- OWNER STAGE BUTTONS (arm / halt) - visible only after owner verification ----
+let ctlToken = "";
+function ctlBase() { return (WORKER_BASE || $("stage-worker-url").value.trim()).replace(/\/+$/, ""); }
+function ctlSay(t) { $("stage-ctl-status").textContent = t; }
+async function ctlCall(path, bodyObj) {
+  const base = ctlBase();
+  const token = ctlToken || $("stage-ctl-token").value.trim();
+  if (!/^https:\/\//i.test(base)) { ctlSay("Worker address is missing or not HTTPS."); return null; }
+  if (!token) { ctlSay("Type the owner token first."); return null; }
+  try {
+    const r = await fetch(base + "/api/v1/micdom/stage/" + path, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify(bodyObj || {})
+    });
+    const j = await r.json().catch(() => ({}));
+    ctlToken = ($("stage-ctl-keep").checked && r.ok) ? token : "";
+    $("stage-ctl-token").value = "";
+    return { ok: r.ok, j };
+  } catch (e) {
+    $("stage-ctl-token").value = "";
+    ctlSay("Could not reach the Worker.");
+    return null;
+  }
+}
+async function refreshCtl() {
+  if (!stageOwnerOK) { ctlToken = ""; return; }
+  const base = ctlBase();
+  if (!/^https:\/\//i.test(base)) return;
+  const el = $("stage-ctl-state");
+  try {
+    const r = await fetch(base + "/api/v1/micdom/stage/state", { cache: "no-store" });
+    const s = await r.json();
+    if (s.halted) { el.textContent = "HALTED - stage in safe idle"; el.style.color = "#ff8080"; }
+    else if (s.active) { el.textContent = "ARMED until " + new Date(s.sessionExpiresAt).toLocaleTimeString() + (s.audio ? " - sound on" : " - silent"); el.style.color = "#7dff9a"; }
+    else { el.textContent = "Not armed - visitors see idle"; el.style.color = "#e9d9a0"; }
+  } catch (e) { el.textContent = "Worker unreachable - stage in safe idle"; el.style.color = "#ff8080"; }
+}
+$("stage-ctl-arm").addEventListener("click", async () => {
+  if (!stageOwnerOK) return;
+  const audio = $("stage-ctl-audio").checked;
+  if (audio && !confirm("Arm WITH SOUND? Expressions may play audio on the stage device.")) return;
+  const minutes = parseInt($("stage-ctl-min").value, 10) || 15;
+  ctlSay("Arming...");
+  const res = await ctlCall("arm", { minutes, audio });
+  if (!res) return;
+  if (res.ok) { ctlSay("Armed for " + minutes + " min" + (audio ? " with sound." : ", silent.")); log("owner armed stage " + minutes + "m" + (audio ? " +sound" : "")); }
+  else { if (res.j && res.j.error) ctlSay(res.j.error); else ctlSay("Arm failed."); ctlToken = ""; }
+  refreshCtl();
+});
+$("stage-ctl-halt").addEventListener("click", async () => {
+  if (!stageOwnerOK) return;
+  ctlSay("Halting...");
+  const res = await ctlCall("halt", {});
+  if (!res) return;
+  if (res.ok) { ctlSay("Halted. Stage is in safe idle."); log("owner halted stage"); }
+  else { if (res.j && res.j.error) ctlSay(res.j.error); else ctlSay("Halt failed."); ctlToken = ""; }
+  refreshCtl();
+});
+$("stage-owner-logout").addEventListener("click", () => { ctlToken = ""; });
+setInterval(() => { if (document.visibilityState === "visible") refreshCtl(); }, 5000);
 // ---- METATRON AUTOMATION: public read-only poll; owner ARMS the session ----
 const WORKER_BASE = "https://hermes-toth-agent-worker.pharangels.workers.dev";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
 let lastStageKey = "";
