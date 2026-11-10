@@ -1,5 +1,5 @@
 // Micdom PWA shell cache. Large media and authenticated API traffic stay network-only.
-const CACHE = "micdom-shell-v2";
+const CACHE = "micdom-shell-v3";
 const SHELL = [
   "./",
   "./index.html",
