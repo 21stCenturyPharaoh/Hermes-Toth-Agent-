@@ -69,3 +69,20 @@ test("expired session falls back to idle", async () => {
   const r = await call(h, "GET", R + "/state");
   assert.equal(r.data.active, false); assert.equal(r.data.expression, "idle");
 });
+
+test("owner hold keeps an expression past the default 20s; visitors cannot extend it", async () => {
+  const h = makeDeps();
+  await call(h, "POST", R + "/arm", { minutes: 10 }, true);
+  await call(h, "POST", R + "/event", { command: "WELCOME", hold: 185 }, true);   // case-insensitive
+  const c = JSON.parse(h.store.get("stage:micdom:cue"));
+  const secs = (Date.parse(c.expiresAt) - Date.parse(c.at)) / 1000;
+  assert.ok(secs >= 184 && secs <= 186, "held ~185s, got " + secs);
+  assert.equal((await call(h, "GET", R + "/state")).data.expression, "welcome");
+  await call(h, "POST", R + "/event", { command: "idle", hold: 99999 }, true);
+  const c2 = JSON.parse(h.store.get("stage:micdom:cue"));
+  assert.ok((Date.parse(c2.expiresAt) - Date.parse(c2.at)) / 1000 <= 601, "hold is capped at 600s");
+  h.store.set("stage:micdom:cue", JSON.stringify({ ...c2, at: new Date(Date.now() - 5000).toISOString() }));
+  await call(h, "POST", R + "/event", { text: "hello", hold: 600 });   // visitor tries to hold
+  const c3 = JSON.parse(h.store.get("stage:micdom:cue"));
+  assert.ok((Date.parse(c3.expiresAt) - Date.parse(c3.at)) / 1000 <= 21, "visitor hold ignored");
+});

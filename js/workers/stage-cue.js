@@ -12,6 +12,7 @@ const K_HALT = "stage:micdom:halt";
 const K_CUE = "stage:micdom:cue";
 const MIN_GAP_MS = 3000;     // best-effort rate limit between cues
 const CUE_TTL_MS = 20000;    // a cue shows this long, then stage returns to idle
+const MAX_HOLD_S = 600;       // owner commands may hold an expression up to 10 minutes
 
 export function pickExpression(text) {
   const t = String(text || "").toLowerCase();
@@ -113,12 +114,14 @@ export async function handleStageRoute(request, env, path, method, origin, d) {
     if (body.error) return jsonResponse({ ok: false, error: body.error }, 400, origin);
 
     const isOwner = authenticateOwner(request, env);
-    let expression, source;
-    const command = cleanText(body.value.command, 20);
+    let expression, source, holdMs = CUE_TTL_MS;
+    const command = cleanText(body.value.command, 20).toLowerCase();
     if (command) {
       if (!isOwner) return jsonResponse({ ok: false, error: "Owner approval credential required" }, 403, origin);
       if (!EXPRESSIONS.includes(command)) return jsonResponse({ ok: false, error: "Expression is not allowlisted" }, 400, origin);
       expression = command; source = "owner";
+      const hold = Math.floor(Number(body.value.hold));   // owner-only: keep this expression on for N seconds
+      if (hold >= 5) holdMs = Math.min(MAX_HOLD_S, hold) * 1000;
     } else {
       const text = cleanText(body.value.text, 200);
       if (!text) return jsonResponse({ ok: false, error: "Provide text or an owner command" }, 400, origin);
@@ -133,7 +136,7 @@ export async function handleStageRoute(request, env, path, method, origin, d) {
     const cue = {
       seq: (prev ? prev.seq : 0) + 1, expression, source,
       at: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + CUE_TTL_MS).toISOString()
+      expiresAt: new Date(Date.now() + holdMs).toISOString()
     };
     await kv.put(K_CUE, JSON.stringify(cue), { expirationTtl: 3600 });
     await writeAudit(env, source === "owner" ? "micdom-owner" : "metatron", "stage.cue", "stage", expression + "#" + cue.seq);
