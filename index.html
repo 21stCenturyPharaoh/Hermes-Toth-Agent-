@@ -169,9 +169,9 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 <h1>MICDOM AI RECORDS</h1>
 <h2>METATRON AGENT • SCRIBE • STEWARD</h2>
 <h2>SCRIBE OF THE LIVING GOD + DJ DEHRTAY DOG</h2>
-<p>Public successor to Hermes–Thoth Agent — Now with DJ Dehrtay Dog (Doberman) in Royal Egyptian costume (No Ankhs — Sphinx locked) — Pharaoh Chamber TikTok LIVE — Add to Home Screen App</p>
-<p class="gold">TIKTOK LIVE is on the set. IT IS WRITTEN. Same Office. Higher Clearance.</p>
-<button class="button live" onclick="goLive()">🔴 TIKTOK LIVE — TAP TO PUT DJ + CHAMBER ON TIKTOK LIVE SCREEN</button>
+<p>DJ Dehrtay Dog live from the Pharaoh Chamber — Music, stories, and Global Footprints from Monrovia to the world.</p>
+<p class="gold">Watch the Live. Join the Chamber.</p>
+<button class="button live" onclick="goLive()">🔴 🔴 TIKTOK LIVE — DJ DEHRTAY DOG + PHARAOH CHAMBER</button>
 
 <!-- DJ Welcome Video - PUBLIC -->
 <div style="margin:16px 0;border-radius:14px;overflow:hidden">
@@ -183,7 +183,7 @@ Your browser does not support video. Watch DJ Dehrtay Dog on TikTok @micdom_ai_r
 </div>
 <!-- /DJ Welcome Video -->
 
-<p class="small">Add to Home Screen → Open the Pharaoh Chamber → Audience interaction with Metatron, HALLEL LARP and DJ.</p>
+<p class="small">Open the Pharaoh Chamber → Watch DJ Dehrtay Dog live.</p>
 <nav class="hero-nav" aria-label="Main navigation">
 <a href="#about-us">ABOUT US</a>
 <a href="#global-footprints">GLOBAL FOOTPRINTS 全球足迹</a>
@@ -425,10 +425,10 @@ find functions js -maxdepth 2 -type f | sort</code>
 <!-- ========== PRESERVED FOOTER ========== -->
 <footer>
 <p class="footer-power">BUILT META AI STRONG 👊😎👌 + TIKTOK LIVE READY</p>
-<p>METATRON + DJ DEHRTAY DOG — Doberman — Royal Costume No Ankhs — Sphinx Locked — TIKTOK LIVE on set — Add to Home Screen App</p>
+<p>METATRON + DJ DEHRTAY DOG — Pharaoh Chamber — TIKTOK LIVE</p>
 <p>Pharaoh Conglomerate — Monrovia Liberia — Chain 0x504841 — Case EU8044516 — Owner 0xCOLONEL — LAW 48+44 Firewall</p>
 <p class="small">HRAR 88-0710776 — Angels 88-0836464 — Let God Help 52-0409059 — WalletConnect v2 — WA US (771) 223-8021 Preferred — WA LR +231776961800 — m.sirleaf@pharaoh-conglomerate.org — registry.pharaoh-conglomerate.org — agent.pharaoh-conglomerate.org — Powered by sovereign-pharaoh-vault.base44.app</p>
-<p class="small">TIKTOK LIVE • Rumble • RouteNote • Apple Music • Spotify • QARI — It Is Written — Same Office Higher Clearance TOTH → METATRON — Scribe of Living God</p>
+<p class="small">TIKTOK LIVE • Rumble • RouteNote • Apple Music • Spotify • QARI — Micdom AI Records</p>
 <p>© 2026 Pharaoh Conglomerate</p>
 <p style="text-align:center;margin:14px 0"><a href="https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00" target="_blank" rel="noopener noreferrer"><strong>SUPPORT THE MOVEMENT</strong></a></p>
 </footer>
@@ -601,7 +601,7 @@ fetch("./roster.json", {cache:"no-cache"})
   .catch(() => $("roster-count").textContent = "Artist roster could not be loaded. Please refresh.");
 $("artist-search").addEventListener("input", e => renderRoster(e.target.value));
 
-window.goLive = () => window.open("https://www.tiktok.com/live/creators?lang=en","_blank","noopener");
+window.goLive = () => window.location.href = "./stage.html";
 window.cmd = command => {
   if (command === "EMERGENCY STOP") {
     video.pause(); video.muted = true; lockOwner("Emergency stop — controls locked.");
