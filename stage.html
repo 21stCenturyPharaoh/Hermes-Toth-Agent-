@@ -327,5 +327,62 @@ EX.forEach(([id]) => probe(id));
 setTimeout(() => setExp("idle"), 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 </script>
-</body>
+<!-- === owner-vs-public - FINAL === -->
+<section id="public-stage" style="text-align:center;padding:20px 0">
+<h2>DJ Dehrtay Dog + Pharaoh Chamber</h2>
+<p>Live from Micdom AI Records - Global Footprints Casts</p>
+<div id="public-live-indicator" role="status">LIVE</div>
+<p class="small">Audience view. No controls, no setup, no backstage.</p>
+</section>
+<section id="owner-panel" style="display:none;border:2px solid #d4af37;border-radius:14px;padding:16px;margin:16px 0">
+<h2>OWNER - Metatron Control</h2>
+<p class="small">Owner side only. On your phone only. Never shared to TikTok Live.</p>
+<p>Worker: https://hermes-toth-agent-worker.pharangels.workers.dev</p>
+<div id="owner-system-status" style="display:none">
+<p>Toth: <span id="status-toth">-</span></p>
+<p>H.A.L.L.EL: <span id="status-hallel">-</span></p>
+<p>Delivery: <span>INTERNAL - server-to-server only</span></p>
+</div>
+<button onclick="enterGameModeForShare()" style="padding:14px 20px;background:#ffe7a0;color:#111;font-weight:900;border-radius:10px">ENTER GAME MODE FOR SHARING</button>
+<p class="small">Hides ALL owner controls. Shows ONLY clean public stage. Metatron keeps running while you rest your eye.</p>
+</section>
+<script>
+const isOwnerView = new URLSearchParams(location.search).get("owner") === "1";
+if(isOwnerView){
+document.getElementById("owner-panel").style.display = "block";
+document.getElementById("owner-system-status").style.display = "block";
+checkOwnerHealth();
+}
+async function checkOwnerHealth(){
+try{
+const r = await fetch("https://hermes-toth-agent-worker.pharangels.workers.dev/api/health", {cache:"no-store"});
+const j = await r.json();
+document.getElementById("status-toth").textContent = (j.ok||j.status==="online") ? "LIVE" : "UNKNOWN";
+}catch(e){ document.getElementById("status-toth").textContent = "OFFLINE"; }
+try{
+const r2 = await fetch("https://angels-hosts-api3.pharangels.workers.dev/api/health", {cache:"no-store"});
+const j2 = await r2.json();
+document.getElementById("status-hallel").textContent = (j2.status==="alive") ? "LIVE v"+(j2.version||"28.0") : "UNKNOWN";
+}catch(e){ document.getElementById("status-hallel").textContent = "OFFLINE"; }
+}
+function enterGameModeForShare(){
+document.getElementById("owner-panel").style.display = "none";
+document.body.classList.add("game-mode-on");
+if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+alert("GAME MODE ON: Owner controls hidden. Sharing ONLY clean public stage.");
+document.body.addEventListener("click", function exitGame(e){
+if(e.detail===3){
+document.body.classList.remove("game-mode-on");
+if(isOwnerView) document.getElementById("owner-panel").style.display = "block";
+document.body.removeEventListener("click", exitGame);
+}
+});
+}
+</script>
+<style>
+body.game-mode-on nav, body.game-mode-on header nav, body.game-mode-on footer { display:none !important; }
+body.game-mode-on #owner-panel { display:none !important; }
+</style>
+<!-- === END owner-vs-public === -->
+\n</body>
 </html>
