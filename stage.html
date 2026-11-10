@@ -328,7 +328,12 @@ setTimeout(() => setExp("idle"), 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 </script>
 <!-- === owner-vs-public - FINAL === -->
-<section id="public-stage" style="text-align:center;padding:20px 0">
+<section id="public-stage"
+<!-- WELCOME VIDEO - plays on WELCOME cue, Episode 001 opener -->
+<video id="dj-welcome-video" playsinline preload="auto" style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
+  <source src="./welcome-dj-dehrtay-dog.mp4" type="video/mp4">
+</video>
+ style="text-align:center;padding:20px 0">
 <h2>DJ Dehrtay Dog + Pharaoh Chamber</h2>
 <p>Live from Micdom AI Records - Global Footprints Casts</p>
 <div id="public-live-indicator" role="status">LIVE</div>
@@ -384,5 +389,37 @@ body.game-mode-on nav, body.game-mode-on header nav, body.game-mode-on footer { 
 body.game-mode-on #owner-panel { display:none !important; }
 </style>
 <!-- === END owner-vs-public === -->
-\n</body>
+\n
+<script>
+(function(){
+  function handleWelcome(expr){
+    var v = document.getElementById('dj-welcome-video');
+    if(!v) return;
+    if(expr === 'welcome'){
+      v.style.display = 'block';
+      v.currentTime = 0;
+      v.play().catch(()=>{});
+      v.onended = function(){ v.style.display='none'; };
+    } else {
+      if(v.paused){ v.style.display='none'; }
+    }
+  }
+  var lastExpr = '';
+  setInterval(function(){
+    var el = document.querySelector('[data-expression]');
+    var expr = el ? el.getAttribute('data-expression') : '';
+    if(!expr){ expr = window.currentExpression || ''; }
+    if(expr && expr !== lastExpr){
+      lastExpr = expr;
+      handleWelcome(expr);
+    }
+  }, 500);
+  window.playWelcomeVideo = function(){
+    var v = document.getElementById('dj-welcome-video');
+    if(v){ v.style.display='block'; v.currentTime=0; v.play(); }
+  };
+})();
+</script>
+
+</body>
 </html>
