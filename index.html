@@ -269,6 +269,7 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 <p class="small">© 2026 Pharaoh Angels Inc dba Micdom AI Records</p>
 </section>
 
+<div class="owner-only">
 <!-- ========== NEW ROOM: DJ DEHRTAY DOG COMMAND CHAIR — STANDALONE MODULE ========== -->
 <div class="card" style="border-color:#ffd700">
 <h2 class="gold">🐕‍🦺 DJ DEHRTAY DOG — COMMAND CHAIR — STANDALONE MODULE (Day One)</h2>
@@ -335,6 +336,9 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 <button class="button dark" onclick="triggerHallel()">🎭 TRIGGER HALLEL LARP</button>
 </div>
 
+
+</div>
+<div class="owner-only">
 <!-- ========== TERMUX ORCHESTRATION PANEL ========== -->
 <div class="card" style="border-color:#2affff">
 <h2 class="gold">TERMUX ORCHESTRATION — YOU + META AI</h2>
@@ -358,6 +362,9 @@ find functions js -maxdepth 2 -type f | sort</code>
 </video>
 <p id="dj-state" class="status" aria-live="polite">DJ Dehrtay Dog — Idle</p>
 <div id="dj-owner" class="lock">
+
+</div>
+<div class="owner-only">
 <h3 class="gold">OWNER CONTROL — LOCKED</h3>
 <label for="worker-url">Existing Worker API base URL</label>
 <input id="worker-url" type="url" placeholder="Paste your existing Worker URL">
@@ -385,6 +392,8 @@ find functions js -maxdepth 2 -type f | sort</code>
 </div>
 <p class="small">Media note: the expression MP4 files are publicly hosted. Owner login controls this interface; it does not make public files private.</p>
 </section>
+
+</div>
 
 <!-- MICDOM: VIDEO GALLERY -->
 <section class="card" id="gallery">
@@ -608,5 +617,17 @@ if ("serviceWorker" in navigator) {
 // Fallback non-module for AGENTS if import fails
 window.PHARAOH_AGENTS = window.PHARAOH_AGENTS || {};
 </script>
+
+<!-- owner-only-gate -->
+<style>.owner-only{display:none !important} body.owner-view .owner-only{display:block !important}</style>
+<script>
+(function(){
+  if(new URLSearchParams(location.search).get("owner")==="1"){
+    document.body.classList.add("owner-view");
+  }
+})();
+</script>
+<!-- /owner-only-gate -->
+
 </body>
 </html>
