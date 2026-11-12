@@ -183,10 +183,10 @@ $("stage-controls").addEventListener("input", event => {
 }, true);
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
-  const paths = ["dj/expressions-v2/"+id+".mp4", "dj/"+id+".mp4", id+".mp4"]; let i = 0;
+  const paths = ["dj/"+id+".mp4", "dj/expressions-v2/"+id+".mp4", id+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
   t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
-  t.onerror = () => { if (++i < paths.length) t.src = paths[i]; else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
+  t.onerror = () => { if (++i < paths.length) { t.src = paths[i]; try{t.load();}catch(e){} } else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
   t.src = paths[0];
 }
 function show(id){
