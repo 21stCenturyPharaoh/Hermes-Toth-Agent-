@@ -183,6 +183,8 @@ $("stage-controls").addEventListener("input", event => {
 }, true);
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
+  P[id]="dj/"+id+".mp4";
+  return;
   const paths = ["dj/"+id+".mp4", "dj/expressions-v2/"+id+".mp4", id+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
   t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
