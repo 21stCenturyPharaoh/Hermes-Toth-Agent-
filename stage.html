@@ -330,7 +330,7 @@ if ("serviceWorker" in navigator) addEventListener("load", () => navigator.servi
 <!-- === owner-vs-public - FINAL === -->
 <section id="public-stage"
 <!-- WELCOME VIDEO - plays on WELCOME cue, Episode 001 opener -->
-<video id="dj-welcome-video" playsinline preload="auto" style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
+<video id="dj-welcome-video" playsinline preload="auto" muted style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
   <source src="./welcome-dj-dehrtay-dog.mp4" type="video/mp4">
 </video>
  style="text-align:center;padding:20px 0">
@@ -396,14 +396,21 @@ body.game-mode-on #owner-panel { display:none !important; }
     var v = document.getElementById('dj-welcome-video');
     if(!v) return;
     if(expr === 'welcome'){
+      if(!v.paused && v.style.display==='block'){ return; }
       v.style.display = 'block';
       v.currentTime = 0;
       v.play().catch(()=>{});
       v.onended = function(){ v.style.display='none'; };
     } else {
+      // Don't hide while video is still playing - let it finish
       if(v.paused){ v.style.display='none'; }
     }
   }
+  // Tap anywhere = unmute + play with sound (Chrome requires one tap)
+  document.addEventListener('click', function(){
+    var v = document.getElementById('dj-welcome-video');
+    if(v && v.style.display==='block' && v.muted){ v.muted=false; v.play().catch(()=>{}); }
+  });
   var lastExpr = '';
   setInterval(function(){
     var el = document.querySelector('[data-expression]');
