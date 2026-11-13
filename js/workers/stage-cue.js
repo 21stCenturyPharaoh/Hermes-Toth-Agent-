@@ -63,6 +63,8 @@ async function currentState(kv) {
       audio: active && !!session.audio,
       expression: live ? cue.expression : "idle",
       seq: cue ? cue.seq : 0,
+      title: (live && cue.source === "metatron" && cue.title) ? String(cue.title).slice(0, 100) : "",
+      text: (live && cue.source === "metatron" && cue.title) ? String(cue.text || "").slice(0, 1200) : "",
       sessionExpiresAt: active ? session.expiresAt : null
     }
   };

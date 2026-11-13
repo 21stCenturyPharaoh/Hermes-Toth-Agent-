@@ -114,7 +114,7 @@ function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent +=
 function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
 
 function lockStageOwner(message) {
-  ownerAuthAttempt++;
+  ownerAuthAttempt++; ctlToken = ""; clearTimeout(window.episodeAdvanceTimer);
   stageOwnerOK = false;
   touched = false;
   $("stage-controls").hidden = true;
@@ -128,7 +128,7 @@ function lockStageOwner(message) {
 
 $("stage-owner-login").addEventListener("click", async () => {
   const attempt = ++ownerAuthAttempt;
-  const base = $("stage-worker-url").value.trim().replace(/\/+$/, "");
+  const base = ($("stage-worker-url").value.trim() || WORKER_BASE).replace(/\/+$/, "");
   const token = $("stage-owner-token").value.trim();
 
   if (!/^https:\/\//i.test(base) || !token) {
@@ -153,7 +153,7 @@ $("stage-owner-login").addEventListener("click", async () => {
       return;
     }
 
-    stageOwnerOK = true;
+    stageOwnerOK = true; ctlToken = token;
     touched = true; window.__soundUnlocked = true;   // verify tap unlocks sound
     $("stage-owner-token").value = "";
     $("stage-owner-lock").hidden = true;
