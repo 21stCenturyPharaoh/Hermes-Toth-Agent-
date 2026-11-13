@@ -154,6 +154,7 @@ $("stage-owner-login").addEventListener("click", async () => {
     }
 
     stageOwnerOK = true;
+    touched = true; window.__soundUnlocked = true;   // verify tap unlocks sound
     $("stage-owner-token").value = "";
     $("stage-owner-lock").hidden = true;
     $("stage-controls").hidden = false;
@@ -198,7 +199,7 @@ function show(id){
          $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
 }
 function setExp(id, hold){
-  clearTimeout(timer); cur = id; if (id !== "idle") last = id; keep = (id === "idle" || !!hold); show(id);
+  clearTimeout(timer); cur = id; window.currentExpression = id;   // stage-fix-applied if (id !== "idle") last = id; keep = (id === "idle" || !!hold); show(id);
   for (const k in btn) btn[k].classList.toggle("on", k === id);
   log("expression: " + id);
   if (id !== "idle" && !hold) timer = setTimeout(() => setExp("idle"), HOLD_MS);
@@ -317,8 +318,10 @@ async function pollStage() {
   if (key === lastStageKey) return;
   lastStageKey = key;
   if (!EX.some(x => x[0] === s.expression)) return;
-  setExp(s.expression);
-  if (!(s.active && s.audio)) v.muted = true;   // sound only while the owner armed audio
+  window.__stageAudio = !!(s.active && s.audio);
+  setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
+  if (!(s.active && s.audio) || s.expression === "welcome") v.muted = true;   // Welcome sound comes from the overlay
+  if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
 }
 setInterval(pollStage, 4000);
@@ -330,12 +333,11 @@ setTimeout(() => setExp("idle"), 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 </script>
 <!-- === owner-vs-public - FINAL === -->
-<section id="public-stage"
+<section id="public-stage" style="text-align:center;padding:20px 0">
 <!-- WELCOME VIDEO - plays on WELCOME cue, Episode 001 opener -->
 <video id="dj-welcome-video" playsinline preload="auto" muted style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
   <source src="./welcome-dj-dehrtay-dog.mp4" type="video/mp4">
 </video>
- style="text-align:center;padding:20px 0">
 <h2>DJ Dehrtay Dog + Pharaoh Chamber</h2>
 <p>Live from Micdom AI Records - Global Footprints Casts</p>
 <div id="public-live-indicator" role="status">LIVE</div>
@@ -391,7 +393,6 @@ body.game-mode-on nav, body.game-mode-on header nav, body.game-mode-on footer { 
 body.game-mode-on #owner-panel { display:none !important; }
 </style>
 <!-- === END owner-vs-public === -->
-\n
 <script>
 (function(){
   function handleWelcome(expr){
@@ -399,7 +400,8 @@ body.game-mode-on #owner-panel { display:none !important; }
     if(!v) return;
     if(expr === 'welcome'){
       if(!v.paused && v.style.display==='block'){ return; }
-      v.style.display = 'block';
+      v.style.cssText = 'display:block;position:fixed;inset:0;width:100%;height:100%;max-width:none;margin:0;border:0;border-radius:0;object-fit:contain;background:#000;z-index:9999';
+      v.muted = !(window.__soundUnlocked && window.__stageAudio);
       v.currentTime = 0;
       v.play().catch(()=>{});
       v.onended = function(){ v.style.display='none'; };
@@ -423,6 +425,11 @@ body.game-mode-on #owner-panel { display:none !important; }
       handleWelcome(expr);
     }
   }, 500);
+  window.stopWelcomeVideo = function(){
+    var v = document.getElementById('dj-welcome-video');
+    if(v){ try{ v.pause(); }catch(e){} v.style.display='none'; }
+    lastExpr = '';
+  };
   window.playWelcomeVideo = function(){
     var v = document.getElementById('dj-welcome-video');
     if(v){ v.style.display='block'; v.currentTime=0; v.play(); }
