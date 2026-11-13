@@ -220,7 +220,9 @@ async function episodeCall(action) {
     return d;
   } catch (e) { ctlSay("Metatron connection failed."); return null; }
 }
-$("bStart").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("start"); if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
+let episodeTimer = 0;
+async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); } }, 50000); }
+$("bStart").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("start"); if (d) { episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
 $("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
