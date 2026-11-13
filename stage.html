@@ -56,7 +56,8 @@ button.stop{background:#a00;color:#fff;border-color:#f55}
  <div id="banner"><b>BREAKING NEWS</b><div id="tick"><span>TIKTOK LIVE &bull; MONROVIA TO ZION &bull; LIBERIA &rarr; ASIA &rarr; WORLD &bull; PHARAOH CHAMBER &bull; SPHINX LOCKED &bull; MICDOM AI RECORDS &bull; TIKTOK &bull; RUMBLE &bull; ROUTENOTE &bull; APPLE MUSIC &bull; SPOTIFY &bull;</span></div></div>
  <div id="prod"><i>EP1</i><i>EP2</i><i>EP3</i></div>
  <div id="chair"><video id="v" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
- <div id="lt"><h1>PHARAOH &times; METATRON LIVE</h1><p id="ltp">Chamber ready</p></div>
+ <div id="audienceFeed" style="margin:8px 0 0 0;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#111;font-size:14px;line-height:1.4;min-height:44px"></div>
+<div id="lt"><h1>PHARAOH &times; METATRON LIVE</h1><p id="ltp">Chamber ready</p></div>
  <div id="g"><span style="position:absolute;top:4px;left:8px;font-size:11px;color:#f88">profile + viewers</span></div>
 </div>
 <button id="dot" aria-label="Controls"></button>
@@ -220,9 +221,17 @@ async function episodeCall(action) {
     return d;
   } catch (e) { ctlSay("Metatron connection failed."); return null; }
 }
+const HALLEL_LINES = [
+"PHARAOH CHAMBER: Welcome back, Metatron. Chamber is ready.",
+"PHARAOH CHAMBER: Wait - king AND priest? That breaks the whole system.",
+"PHARAOH CHAMBER: Salem... peace... that name is doing a lot of work.",
+"PHARAOH CHAMBER: So Hebrews is using him as a pattern, not a biography?",
+"PHARAOH CHAMBER: The open question is the point. Read it for yourself."
+];
+function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
 let episodeTimer = 0;
-async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); } }, 50000); }
-$("bStart").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("start"); if (d) { episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
+async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); showHallel(d.currentSegment); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); } }, 50000); }
+$("bStart").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("start"); if (d) { showHallel(0); episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
 $("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
