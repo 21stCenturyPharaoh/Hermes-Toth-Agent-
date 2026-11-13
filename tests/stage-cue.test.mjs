@@ -86,3 +86,40 @@ test("owner hold keeps an expression past the default 20s; visitors cannot exten
   const c3 = JSON.parse(h.store.get("stage:micdom:cue"));
   assert.ok((Date.parse(c3.expiresAt) - Date.parse(c3.at)) / 1000 <= 21, "visitor hold ignored");
 });
+
+test("audience reactions play over the owner's segment, then the stage returns to it", async () => {
+  const h = makeDeps();
+  await call(h, "POST", R + "/arm", { minutes: 10 }, true);
+  await call(h, "POST", R + "/event", { command: "welcome", hold: 120 }, true);
+  const c0 = JSON.parse(h.store.get("stage:micdom:cue"));
+  h.store.set("stage:micdom:cue", JSON.stringify({ ...c0, at: new Date(Date.now() - 5000).toISOString() }));
+  await call(h, "POST", R + "/event", { text: "wow no way" });
+  assert.equal((await call(h, "GET", R + "/state")).data.expression, "shocked");
+  const c1 = JSON.parse(h.store.get("stage:micdom:cue"));
+  h.store.set("stage:micdom:cue", JSON.stringify({ ...c1, expiresAt: new Date(Date.now() - 1000).toISOString() }));
+  assert.equal((await call(h, "GET", R + "/state")).data.expression, "welcome");   // back to the owner's segment
+  await call(h, "POST", R + "/halt", {}, true);
+  assert.equal((await call(h, "GET", R + "/state")).data.expression, "idle");
+});
+test("Metatron reads emoji and Chinese comments", () => {
+  assert.equal(pickExpression("你好 DJ!"), "welcome");
+  assert.equal(pickExpression("👋👋"), "welcome");
+  assert.equal(pickExpression("哇！太棒了"), "shocked");
+  assert.equal(pickExpression("这是真的吗？"), "thinking");
+  assert.equal(pickExpression("👍🔥"), "nodding");
+  assert.equal(pickExpression("再见大家"), "signoff");
+  assert.equal(pickExpression("🚨 新歌"), "breaking");
+  assert.equal(pickExpression("follow me back lol"), "neutral");
+});
+
+test("state says whether the expression came from the owner or from an audience reaction", async () => {
+  const h = makeDeps();
+  await call(h, "POST", R + "/arm", { minutes: 10 }, true);
+  await call(h, "POST", R + "/event", { command: "welcome", hold: 60 }, true);
+  assert.equal((await call(h, "GET", R + "/state")).data.source, "owner");
+  const c = JSON.parse(h.store.get("stage:micdom:cue"));
+  h.store.set("stage:micdom:cue", JSON.stringify({ ...c, at: new Date(Date.now() - 5000).toISOString() }));
+  await call(h, "POST", R + "/event", { text: "hello everyone" });
+  const s = (await call(h, "GET", R + "/state")).data;
+  assert.equal(s.expression, "welcome"); assert.equal(s.source, "metatron");
+});
