@@ -41,6 +41,9 @@ button.go{background:var(--gold);color:#000}
 button.stop{background:#a00;color:#fff;border-color:#f55}
 #log{font:10px monospace;color:#b99a3a;height:64px;overflow:auto;background:#000;border:1px solid #2a2008;border-radius:6px;padding:4px;white-space:pre-wrap}
 @media (prefers-reduced-motion:reduce){#tick span{animation:none;padding-left:8px}}
+body:not(.open) #lt, body:not(.open) #audienceFeed { display:block !important; position:fixed; left:12px; right:12px; z-index:99; }
+body:not(.open) #lt { bottom:64px; }
+body:not(.open) #audienceFeed { bottom:12px; }
 </style>
 </head>
 <body class="guides open">
