@@ -10,22 +10,15 @@ DOCTRINE = "Melchizedek Order | Essene Discipline"
 binding = "EVIDENCE_VAULT"
 id = "08f64f613aac421e959e462badaafd48"
 
+[ai]
+binding = "AI"
+
 [previews.vars]
 ENVIRONMENT = "preview"
 
 [[previews.kv_namespaces]]
 binding = "EVIDENCE_PREVIEW_VAULT"
 id = "e22d5f7c6a244fc8a1500c0a8bfe07d1"
-cd ~/Hermes-Toth-Agent- && cp js/wrangler.toml js/wrangler.toml.bak.ai && python3 <<'PY'
-import pathlib
-p=pathlib.Path("js/wrangler.toml")
-t=p.read_text()
-if 'binding = "AI"' in t:
-    print("ALREADY HAS AI BINDING")
-else:
-    # Add AI binding after [vars] block, keep everything else
-    t=t.rstrip()+"\n\n# Workers AI - exposes env.AI for Metatron expression picker\n[ai]\nbinding = \"AI\"\n\n[previews.ai]\nbinding = \"AI\"\n"
-    p.write_text(t)
-    print("PATCHED - AI binding added")
-PY
-cat js/wrangler.toml
+
+[previews.ai]
+binding = "AI"
