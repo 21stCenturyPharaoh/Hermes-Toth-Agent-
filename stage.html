@@ -322,6 +322,7 @@ async function pollStage() {
   setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
   if (!(s.active && s.audio) || s.expression === "welcome") v.muted = true;   // Welcome sound comes from the overlay
   if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
+  if(s.text){var tick=document.querySelector("#ticker")||document.querySelector(".ticker");if(tick){tick.textContent=s.text;}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
 }
 setInterval(pollStage, 4000);
