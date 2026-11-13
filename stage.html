@@ -211,8 +211,17 @@ $("bAuto").onclick = e => { auto = !auto; e.target.classList.toggle("on", auto);
 document.querySelectorAll("#prod i").forEach((el,n) => { const im = new Image(); im.onload = () => { el.textContent = ""; el.appendChild(im); }; im.src = "producers/ep"+(n+1)+".jpg"; });
 EX.forEach(([id,label]) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => cue(id); $("ex").appendChild(b); btn[id] = b; });
 // ---- ACTIONS ----
-$("bStart").onclick = () => { seg = 0; cue("welcome"); lt("PHARAOH &times; METATRON LIVE","Show starting"); log("START SHOW"); };
-$("bNext").onclick = () => { const s = SEGMENTS[seg++ % SEGMENTS.length]; setExp("nodding"); lt("NEXT SEGMENT", s); log("NEXT SEGMENT: " + s); };
+async function episodeCall(action) {
+  if (!stageOwnerOK || !ctlToken) { ctlSay("Verify owner access before operating Metatron."); return null; }
+  try {
+    const r = await fetch(ctlBase() + "/api/v1/micdom/episode/" + action, { method: "POST", headers: { "Authorization": "Bearer " + ctlToken, "Content-Type": "application/json" }, body: JSON.stringify({}) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { ctlSay(d.error || ("Episode " + action + " failed")); return null; }
+    return d;
+  } catch (e) { ctlSay("Metatron connection failed."); return null; }
+}
+$("bStart").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("start"); if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
+$("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
 $("bStop").onclick = () => { AUDS.forEach(a => { try { a.pause(); } catch(e){} }); AUDS = []; proposal = ""; soundOn = false; $("bClip").classList.remove("on"); $("bClip").textContent = "CLIP SOUND OFF"; v.muted = true; setExp("idle"); lt("BE RIGHT BACK","Please stand by"); document.body.classList.add("open"); log("EMERGENCY STOP: sound off, idle clip, on-air text replaced"); };
