@@ -66,6 +66,8 @@ async function currentState(kv) {
       expression: live ? cue.expression : (baseLive ? base.expression : "idle"),
       source: live ? cue.source : (baseLive ? "owner" : "none"),   // lets the stage tell owner cues from audience reactions
       seq: cue ? cue.seq : 0,
+      title: (live && cue.source === "metatron" && cue.title) ? String(cue.title).slice(0, 100) : "",
+      text: (live && cue.source === "metatron" && cue.title) ? String(cue.text || "").slice(0, 1200) : "",
       sessionExpiresAt: active ? session.expiresAt : null
     }
   };
