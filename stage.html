@@ -322,7 +322,7 @@ async function pollStage() {
   setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
   if (!(s.active && s.audio) || s.expression === "welcome") v.muted = true;   // Welcome sound comes from the overlay
   if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
-  if(s.text){var tick=document.querySelector("#ticker")||document.querySelector(".ticker");if(tick){tick.textContent=s.text;}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
+  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("PHARAOH x METATRON LIVE", s.text);}}catch(e){}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
 }
 setInterval(pollStage, 4000);
@@ -438,6 +438,6 @@ body.game-mode-on #owner-panel { display:none !important; }
 })();
 </script>
 
-<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ticker")||document.querySelector(".ticker")||document.querySelector("[id*=tick]");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>

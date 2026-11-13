@@ -120,10 +120,12 @@ export async function handleStageRoute(request, env, path, method, origin, d) {
       if (!isOwner) return jsonResponse({ ok: false, error: "Owner approval credential required" }, 403, origin);
       if (!EXPRESSIONS.includes(command)) return jsonResponse({ ok: false, error: "Expression is not allowlisted" }, 400, origin);
       expression = command; source = "owner";
+      var ownerText = cleanText(body.value.text, 200);
       const hold = Math.floor(Number(body.value.hold));   // owner-only: keep this expression on for N seconds
       if (hold >= 5) holdMs = Math.min(MAX_HOLD_S, hold) * 1000;
     } else {
       const text = cleanText(body.value.text, 200);
+      var ownerText = text;
       if (!text) return jsonResponse({ ok: false, error: "Provide text or an owner command" }, 400, origin);
       expression = (await aiPick(env, text)) || pickExpression(text);
       source = "metatron";
@@ -134,13 +136,13 @@ export async function handleStageRoute(request, env, path, method, origin, d) {
       return jsonResponse({ ok: false, error: "Slow down: Metatron is mid-expression" }, 429, origin);
     }
     const cue = {
-      seq: (prev ? prev.seq : 0) + 1, expression, source,
+      seq: (prev ? prev.seq : 0) + 1, expression, source, text: (typeof ownerText !== "undefined" ? ownerText : ""),
       at: new Date().toISOString(),
       expiresAt: new Date(Date.now() + holdMs).toISOString()
     };
     await kv.put(K_CUE, JSON.stringify(cue), { expirationTtl: 3600 });
     await writeAudit(env, source === "owner" ? "micdom-owner" : "metatron", "stage.cue", "stage", expression + "#" + cue.seq);
-    return jsonResponse({ ok: true, expression, seq: cue.seq }, 200, origin);
+    return jsonResponse({ ok: true, expression, seq: cue.seq, text: cue.text }, 200, origin);
   }
 
   return jsonResponse({ ok: false, error: "Stage route not found" }, 404, origin);
