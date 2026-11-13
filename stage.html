@@ -437,5 +437,6 @@ body.game-mode-on #owner-panel { display:none !important; }
 })();
 </script>
 
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ticker")||document.querySelector(".ticker")||document.querySelector("[id*=tick]");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>
