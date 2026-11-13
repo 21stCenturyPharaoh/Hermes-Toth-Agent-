@@ -202,6 +202,8 @@ function show(id){
   else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
          $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
 }
+const DJ_MAP = { welcome:"welcome", scripture:"thinking", history:"neutral", hebrews:"breaking", signoff:"signoff", question:"thinking", open:"breaking", shocked:"shocked", neutral:"neutral", thinking:"thinking", breaking:"breaking", nodding:"nodding" };
+let lastDjExp = "";
 function setExp(id, hold){
   clearTimeout(timer); cur = id; window.currentExpression = id; if (id !== "idle") last = id; keep = (id === "idle" || !!hold); show(id);   // stage-fix-applied
   for (const k in btn) btn[k].classList.toggle("on", k === id);
@@ -233,8 +235,9 @@ const HALLEL_LINES = [
 ];
 function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
 let episodeTimer = 0;
-async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); showHallel(d.currentSegment); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); } }, 50000); }
-$("bStart").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("start"); if (d) { showHallel(0); episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
+async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); showHallel(d.currentSegment); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
+const outro=document.querySelector("video"); if(outro){ outro.src="welcome-new-1k.mp4"; outro.play().catch(()=>{}); } } }, 50000); }
+$("bStart").onclick = async () => { if (!stageOwnerOK) return; let d = await episodeCall("start"); if (!d) { const a = await episodeCall("advance"); if (a && a.completed) { d = await episodeCall("start"); } } if (d) { showHallel(0); episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
 $("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
