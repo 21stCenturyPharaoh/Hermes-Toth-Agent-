@@ -427,6 +427,7 @@ body.game-mode-on #owner-panel { display:none !important; }
 <script>
 (function(){
   function handleWelcome(expr){
+    return; // AUTO-INTRO DISABLED - Segment 1 short clip is the intro, long video is outro only
     var v = document.getElementById('dj-welcome-video');
     if(!v) return;
     if(expr === 'welcome' && !window.__introPlayed){ window.__introPlayed=true;
