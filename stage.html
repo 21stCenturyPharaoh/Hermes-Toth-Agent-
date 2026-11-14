@@ -192,7 +192,18 @@ function probe(id){
   P[id]="dj/"+clipId+".mp4";
   const paths = ["dj/"+clipId+".mp4", "dj/expressions-v2/"+clipId+".mp4", clipId+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
-  t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
+  t.onloadedmetadata = () => {
+    P[id] = paths[i];
+    btn[id].classList.remove("miss");
+    log("found "+paths[i]);
+
+    // Retry if Metatron selected this expression before its clip was found.
+    if (window.currentExpression === id &&
+        (id !== "welcome" || !window.__episodeIntroPlayed)) {
+      log("clip ready; retrying current expression: " + id);
+      show(id);
+    }
+  };
   t.onerror = () => { if (++i < paths.length) { t.src = paths[i]; try{t.load();}catch(e){} } else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
   t.src = paths[0];
 }
@@ -201,13 +212,42 @@ function show(id){
       window.__episodeIntroPlayed) return;
   v.style.display = "block"; $("ph").style.display = "none";
   if (P[id]) {
-    if (id === "welcome" && window.__episodeRunning) {
+    const episodeIntro = id === "welcome" && window.__episodeRunning;
+
+    v.pause();
+    v.loop = keep;
+    v.muted = !(stageOwnerOK && soundOn && touched);
+    v.volume = $("vol").value/100;
+    v.src = P[id];
+    v.load();
+
+    try { v.currentTime = 0; } catch(e) {}
+
+    const playRequest = v.play();
+
+    if (playRequest && typeof playRequest.then === "function") {
+      playRequest.then(() => {
+        if (episodeIntro) window.__episodeIntroPlayed = true;
+        log("DJ clip playing: " + id);
+      }).catch(error => {
+        log("DJ clip playback blocked: " + id + " (" +
+            (error && error.name ? error.name : "unknown") + ")");
+
+        if (!v.muted) {
+          v.muted = true;
+          v.play().then(() => {
+            if (episodeIntro) window.__episodeIntroPlayed = true;
+            log("DJ clip playing muted: " + id);
+          }).catch(fallbackError => {
+            log("DJ clip still failed: " + id + " (" +
+                (fallbackError && fallbackError.name
+                  ? fallbackError.name : "unknown") + ")");
+          });
+        }
+      });
+    } else if (episodeIntro) {
       window.__episodeIntroPlayed = true;
     }
-    v.pause(); v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched);
-    v.volume = $("vol").value/100; v.src = P[id]; v.load();
-    try{v.currentTime=0;}catch(e){}
-    v.play().catch(()=>{});
   }
   else {
     v.pause(); v.removeAttribute("src"); v.style.display = "none";
@@ -528,7 +568,12 @@ pollStage();
 if (WORKER_BASE && !$("stage-worker-url").value) $("stage-worker-url").value = WORKER_BASE;
 lockStageOwner("Owner controls locked. Verify access to operate the stage.");
 EX.forEach(([id]) => probe(id));
-setTimeout(() => setExp("idle"), 600);
+setTimeout(() => {
+  // Do not let startup idle overwrite an active Metatron cue.
+  if (!window.currentExpression || window.currentExpression === "idle") {
+    setExp("idle");
+  }
+}, 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 </script>
 <!-- === owner-vs-public - FINAL === -->
