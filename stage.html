@@ -188,9 +188,9 @@ $("stage-controls").addEventListener("input", event => {
 }, true);
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
-  P[id]="dj/"+id+".mp4";
-  return;
-  const paths = ["dj/"+id+".mp4", "dj/expressions-v2/"+id+".mp4", id+".mp4"]; let i = 0;
+  const clipId = DJ_MAP[id] || id;
+  P[id]="dj/"+clipId+".mp4";
+  const paths = ["dj/"+clipId+".mp4", "dj/expressions-v2/"+clipId+".mp4", clipId+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
   t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
   t.onerror = () => { if (++i < paths.length) { t.src = paths[i]; try{t.load();}catch(e){} } else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
@@ -198,7 +198,7 @@ function probe(id){
 }
 function show(id){
   v.style.display = "block"; $("ph").style.display = "none";
-  if (P[id]) { v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.play().catch(()=>{}); }
+  if (P[id]) { v.pause(); v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.load(); try{v.currentTime=0;}catch(e){} v.play().catch(()=>{}); }
   else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
          $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
 }
@@ -235,10 +235,11 @@ const HALLEL_LINES = [
 ];
 function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
 let episodeTimer = 0;
+function playEpisodeOutro(){ const ov=document.getElementById("dj-welcome-video"); if(!ov) return; ov.pause(); ov.loop=false; ov.muted=!(stageOwnerOK && soundOn && touched); ov.style.display="block"; ov.style.position="fixed"; ov.style.inset="0"; ov.style.width="100%"; ov.style.height="100%"; ov.style.maxWidth="none"; ov.style.objectFit="contain"; ov.style.background="#000"; ov.style.zIndex="9999"; ov.src="welcome-new-1k.mp4"; ov.load(); try{ov.currentTime=0;}catch(e){} ov.onended=()=>{ ov.style.display="none"; }; ov.play().catch(()=>{ ov.muted=true; ov.play().catch(()=>{}); }); }
 async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); showHallel(d.currentSegment); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
-const outro=document.querySelector("video"); if(outro){ outro.src="welcome-new-1k.mp4"; outro.play().catch(()=>{}); } } }, 50000); }
+playEpisodeOutro(); } }, 28000); }
 $("bStart").onclick = async () => { if (!stageOwnerOK) return; let d = await episodeCall("start"); if (!d) { const a = await episodeCall("advance"); if (a && a.completed) { d = await episodeCall("start"); } } if (d) { showHallel(0); episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
-$("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
+$("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); playEpisodeOutro(); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
 $("bStop").onclick = () => { AUDS.forEach(a => { try { a.pause(); } catch(e){} }); AUDS = []; proposal = ""; soundOn = false; $("bClip").classList.remove("on"); $("bClip").textContent = "CLIP SOUND OFF"; v.muted = true; setExp("idle"); lt("BE RIGHT BACK","Please stand by"); document.body.classList.add("open"); log("EMERGENCY STOP: sound off, idle clip, on-air text replaced"); };
