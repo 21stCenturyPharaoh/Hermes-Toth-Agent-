@@ -478,11 +478,23 @@ $("stage-ctl-arm").addEventListener("click", async () => {
 });
 $("stage-ctl-halt").addEventListener("click", async () => {
   if (!stageOwnerOK) return;
-  ctlSay("Halting...");
+  ctlSay("Halting episode and stage...");
+
+  // Stop the running episode record before disarming the stage.
+  const episodeResult = await episodeCall("stop");
+  if (episodeResult) log("owner halted episode");
+  else log("Episode stop failed: " + (lastEpisodeError || "unknown error"));
+
   const res = await ctlCall("halt", {});
   if (!res) return;
-  if (res.ok) { ctlSay("Halted. Stage is in safe idle."); log("owner halted stage"); }
-  else { if (res.j && res.j.error) ctlSay(res.j.error); else ctlSay("Halt failed."); ctlToken = ""; }
+  if (res.ok) {
+    ctlSay("Halted. Episode stopped; stage is in safe idle.");
+    log("owner halted stage");
+  } else {
+    if (res.j && res.j.error) ctlSay(res.j.error);
+    else ctlSay("Stage halt failed.");
+    ctlToken = "";
+  }
   refreshCtl();
 });
 $("stage-owner-logout").addEventListener("click", () => { ctlToken = ""; });

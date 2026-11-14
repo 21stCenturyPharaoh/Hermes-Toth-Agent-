@@ -261,6 +261,38 @@ export async function handleEpisodeRoute(request, env, path, method, origin, d) 
     }, 200, origin);
   }
 
+  if (path === ROOT + "/stop") {
+    if (method !== "POST") {
+      return jsonResponse({ ok: false, error: "Method not allowed" }, 405, origin);
+    }
+    if (!authenticateOwner(request, env)) {
+      return jsonResponse({ ok: false, error: "Owner authorization required to stop the episode" }, 403, origin);
+    }
+
+    const episode = await readJSON(kv, EPISODE);
+    if (!episode) {
+      await kv.delete(CUE);
+      return jsonResponse({ ok: true, stopped: false, status: "idle" }, 200, origin);
+    }
+
+    const wasRunning = episode.status === "running";
+    if (wasRunning) {
+      episode.status = "halted";
+      episode.haltedAt = new Date().toISOString();
+      episode.updatedAt = episode.haltedAt;
+      await kv.put(EPISODE, JSON.stringify(episode), { expirationTtl: 86400 });
+      await writeAudit(env, "micdom-owner", "episode.halted", "episode", episode.id || "current");
+    }
+
+    await kv.delete(CUE);
+
+    return jsonResponse({
+      ok: true,
+      stopped: wasRunning,
+      status: episode.status || "idle"
+    }, 200, origin);
+  }
+
   if (path === ROOT + "/state") {
     if (method !== "GET") {
       return jsonResponse({ ok: false, error: "Method not allowed" }, 405, origin);
