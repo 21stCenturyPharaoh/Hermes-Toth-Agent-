@@ -95,8 +95,7 @@ body:not(.open) #audienceFeed { bottom:12px; }
  <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button><button id="bRepeat">REPEAT</button><button class="stop" id="bStop">EMERGENCY STOP</button></div>
  <div class="row c4" id="sn"></div>
  <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><span></span></div>
- <div class="row c2"><label>DJ CLIP VOLUME<input type="range" id="vol" min="0" max="100" value="25"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
- <div class="row c2"><label>BREAKING NEWS AUDIO<input type="range" id="breakingVol" min="0" max="100" value="12"></label><label>OTHER SFX VOLUME<input type="range" id="sfxVol" min="0" max="100" value="30"></label></div>
+ <div class="row c2"><label>CROWD VOLUME<input type="range" id="vol" min="0" max="100" value="70"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
  <div class="row c2"><button id="bGuides">GUIDES ON/OFF</button><button class="go" id="bStage">STAGE MODE</button></div>
  <div id="log"></div>
  </div>
@@ -218,7 +217,7 @@ function show(id){
     v.pause();
     v.loop = keep;
     v.muted = !(stageOwnerOK && soundOn && touched);
-    v.volume = (id === "breaking" ? $("breakingVol").value : $("vol").value)/100;
+    v.volume = $("vol").value/100;
     v.src = P[id];
     v.load();
 
@@ -266,13 +265,7 @@ function setExp(id, hold){
   log("expression: " + id);
   if (id !== "idle" && !hold) timer = setTimeout(() => setExp("idle"), HOLD_MS);
 }
-function play(n){
-  const a = new Audio("snd/"+n+".mp3");
-  a.volume = (n === "sting" ? $("breakingVol").value : $("sfxVol").value)/100;
-  a.onerror = () => log("no snd/"+n+".mp3 yet");
-  AUDS.push(a);
-  a.play().catch(()=>{});
-}
+function play(n){ const a = new Audio("snd/"+n+".mp3"); a.volume = $("vol").value/100; a.onerror = () => log("no snd/"+n+".mp3 yet"); AUDS.push(a); a.play().catch(()=>{}); }
 function cue(id){ setExp(id); if (auto && AUTO[id]) play(AUTO[id]); if (id === "breaking") lt("BREAKING NEWS", RELEASE); }
 SND.forEach(n => { const b = document.createElement("button"); b.textContent = n.toUpperCase(); b.onclick = () => play(n); $("sn").appendChild(b); });
 $("bAuto").onclick = e => { auto = !auto; e.target.classList.toggle("on", auto); e.target.textContent = "AUTO SOUNDS " + (auto ? "ON" : "OFF"); };
@@ -469,12 +462,7 @@ $("dot").onclick = () => document.body.classList.toggle("open");
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && wl && wl.released) wake(); });
 v.addEventListener("ended", () => { if (!keep) setExp("idle"); });
 addEventListener("pointerdown", () => { if (stageOwnerOK) { touched = true; v.muted = !soundOn; } });
-$("vol").oninput = () => {
-  if (window.currentExpression !== "breaking") v.volume = $("vol").value/100;
-};
-$("breakingVol").oninput = () => {
-  if (window.currentExpression === "breaking") v.volume = $("breakingVol").value/100;
-};
+$("vol").oninput = () => { v.volume = $("vol").value/100; };
 $("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
 // stage-cue-applied
 // stage-buttons-applied
@@ -571,7 +559,7 @@ async function pollStage() {
   setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
   if (!(s.active && s.audio)) v.muted = true;   // Chair clip audio follows the armed stage audio setting
   if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
-  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("PHARAOH x METATRON LIVE", s.text);}}catch(e){}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.volume=1;u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
+  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("PHARAOH x METATRON LIVE", s.text);}}catch(e){}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
 }
 setInterval(pollStage, 4000);
@@ -701,6 +689,6 @@ body.game-mode-on #owner-panel { display:none !important; }
 })();
 </script>
 
-<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.volume=1;u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>
