@@ -197,10 +197,25 @@ function probe(id){
   t.src = paths[0];
 }
 function show(id){
+  if (id === "welcome" && window.__episodeRunning &&
+      window.__episodeIntroPlayed) return;
   v.style.display = "block"; $("ph").style.display = "none";
-  if (P[id]) { v.pause(); v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.load(); try{v.currentTime=0;}catch(e){} v.play().catch(()=>{}); }
-  else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
-         $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
+  if (P[id]) {
+    if (id === "welcome" && window.__episodeRunning) {
+      window.__episodeIntroPlayed = true;
+    }
+    v.pause(); v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched);
+    v.volume = $("vol").value/100; v.src = P[id]; v.load();
+    try{v.currentTime=0;}catch(e){}
+    v.play().catch(()=>{});
+  }
+  else {
+    v.pause(); v.removeAttribute("src"); v.style.display = "none";
+    const e = EX.find(x=>x[0]===id);
+    $("phE").textContent = e[2];
+    $("phT").textContent = e[1] + " - clip missing";
+    $("ph").style.display = "flex";
+  }
 }
 const DJ_MAP = { welcome:"welcome", scripture:"thinking", history:"neutral", hebrews:"breaking", signoff:"signoff", question:"thinking", open:"breaking", shocked:"shocked", neutral:"neutral", thinking:"thinking", breaking:"breaking", nodding:"nodding" };
 let lastDjExp = "";
@@ -218,13 +233,38 @@ document.querySelectorAll("#prod i").forEach((el,n) => { const im = new Image();
 EX.forEach(([id,label]) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => cue(id); $("ex").appendChild(b); btn[id] = b; });
 // ---- ACTIONS ----
 async function episodeCall(action) {
-  if (!stageOwnerOK || !ctlToken) { ctlSay("Verify owner access before operating Metatron."); return null; }
+  lastEpisodeHTTPStatus = 0;
+  lastEpisodeError = "";
+  if (!stageOwnerOK || !ctlToken) {
+    lastEpisodeError = "Verify owner access before operating Metatron.";
+    ctlSay(lastEpisodeError);
+    return null;
+  }
   try {
-    const r = await fetch(ctlBase() + "/api/v1/micdom/episode/" + action, { method: "POST", headers: { "Authorization": "Bearer " + ctlToken, "Content-Type": "application/json" }, body: JSON.stringify({}) });
+    const r = await fetch(
+      ctlBase() + "/api/v1/micdom/episode/" + action,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + ctlToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+      }
+    );
+    lastEpisodeHTTPStatus = r.status;
     const d = await r.json().catch(() => ({}));
-    if (!r.ok) { ctlSay(d.error || ("Episode " + action + " failed")); return null; }
+    if (!r.ok) {
+      lastEpisodeError = d.error || ("Episode " + action + " failed");
+      ctlSay(lastEpisodeError);
+      return null;
+    }
     return d;
-  } catch (e) { ctlSay("Metatron connection failed."); return null; }
+  } catch (e) {
+    lastEpisodeError = "Metatron connection failed.";
+    ctlSay(lastEpisodeError);
+    return null;
+  }
 }
 const HALLEL_LINES = [
 "PHARAOH CHAMBER: Welcome back, Metatron. Chamber is ready.",
@@ -235,12 +275,128 @@ const HALLEL_LINES = [
 ];
 function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
 let episodeTimer = 0;
+let isAdvancing = false;
+let lastEpisodeHTTPStatus = 0;
+let lastEpisodeError = "";
 function stopIntroLoop(){ const iv=document.getElementById("dj-welcome-video"); if(iv){ iv.loop=false; iv.onpause=null; iv.onended=()=>{ iv.style.display="none"; }; } }
-function playEpisodeOutro(){ const ov=document.getElementById("dj-welcome-video"); if(!ov) return; ov.pause(); ov.loop=false; ov.muted=!(stageOwnerOK && soundOn && touched); ov.style.display="block"; ov.style.position="fixed"; ov.style.inset="0"; ov.style.width="100%"; ov.style.height="100%"; ov.style.maxWidth="none"; ov.style.objectFit="contain"; ov.style.background="#000"; ov.style.zIndex="9999"; ov.src="welcome-new-1k.mp4"; ov.load(); try{ov.currentTime=0;}catch(e){} ov.onended=()=>{ ov.style.display="none"; }; ov.play().catch(()=>{ ov.muted=true; ov.play().catch(()=>{}); }); }
-async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); showHallel(d.currentSegment); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
-playEpisodeOutro(); } }, 10000); }
-$("bStart").onclick = async () => { if (!stageOwnerOK) return; window.__outroPlayed=false; window.__episodeIntroPlayed=false; let d = await episodeCall("start"); if (!d) { const a = await episodeCall("advance"); if (a && a.completed) { d = await episodeCall("start"); } } if (d) { showHallel(0); episodeAuto(); } if (d) { log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode")); await pollStage(); } };
-$("bNext").onclick = async () => { if (!stageOwnerOK) return; const d = await episodeCall("advance"); if (!d) return; if (d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments."); log("METATRON EPISODE COMPLETED"); playEpisodeOutro(); } else { log("METATRON ADVANCED TO SEGMENT " + d.currentSegment + " OF " + d.totalSegments); await pollStage(); } };
+function playEpisodeOutro(){
+  if (window.__outroPlayed) return;
+  window.__outroPlayed = true;
+
+  const ov = document.getElementById("dj-welcome-video");
+  if (!ov) return;
+
+  // This long file is the episode outro only. It never uses the chair video.
+  ov.pause();
+  ov.loop = false;
+  ov.muted = !(stageOwnerOK && soundOn && touched);
+  ov.style.display = "block";
+  ov.style.position = "fixed";
+  ov.style.inset = "0";
+  ov.style.width = "100%";
+  ov.style.height = "100%";
+  ov.style.maxWidth = "none";
+  ov.style.objectFit = "contain";
+  ov.style.background = "#000";
+  ov.style.zIndex = "9999";
+  ov.src = "welcome-new-1k.mp4";
+  ov.load();
+  try { ov.currentTime = 0; } catch(e) {}
+  ov.onended = () => { ov.style.display = "none"; };
+  ov.play().catch(() => {
+    ov.muted = true;
+    ov.play().catch(() => {});
+  });
+}
+function episodeAuto() {
+  clearTimeout(episodeTimer);
+  episodeTimer = setTimeout(() => {
+    advanceEpisode("automatic");
+  }, 15000);
+}
+
+async function advanceEpisode(source) {
+  if (isAdvancing || !stageOwnerOK) return;
+  isAdvancing = true;
+  clearTimeout(episodeTimer);
+
+  try {
+    let d = await episodeCall("advance");
+
+    // Worker enforces a 12-second minimum. Retry once after 3 seconds
+    // only when the Worker explicitly returns HTTP 429.
+    if (!d && lastEpisodeHTTPStatus === 429) {
+      log("Segment still playing - retrying once in 3 seconds.");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      d = await episodeCall("advance");
+    }
+
+    if (!d) {
+      log("Episode advance failed: " + (lastEpisodeError || "request failed"));
+      // Keep the running episode alive; retry on the next scheduled cycle.
+      if (window.__episodeRunning) episodeAuto();
+      return;
+    }
+
+    if (d.completed) {
+      clearTimeout(episodeTimer);
+      window.__episodeRunning = false;
+      lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
+      log("METATRON EPISODE COMPLETED");
+      playEpisodeOutro();
+      return;
+    }
+
+    log(
+      "METATRON ADVANCED TO SEGMENT " +
+      d.currentSegment + " OF " + d.totalSegments +
+      (source === "automatic" ? " (AUTO)" : " (MANUAL)")
+    );
+
+    await pollStage();
+    showHallel(d.currentSegment - 1);
+  } finally {
+    isAdvancing = false;
+  }
+
+  if (window.__episodeRunning) episodeAuto();
+}
+
+$("bStart").onclick = async () => {
+  if (!stageOwnerOK || isAdvancing) return;
+
+  clearTimeout(episodeTimer);
+  window.__outroPlayed = false;
+  window.__episodeIntroPlayed = false;
+  window.__episodeRunning = false;
+
+  const d = await episodeCall("start");
+
+  if (!d) {
+    if ((lastEpisodeError || "").includes("already running")) {
+      log("An episode is already running - HALT to start fresh");
+    } else {
+      log("START SHOW halted: " + (lastEpisodeError || "start failed"));
+    }
+    return;
+  }
+
+  window.__episodeRunning = true;
+  showHallel(0);
+  log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode"));
+
+  await pollStage();
+
+  // pollStage publishes Segment 1's welcome expression to the chair.
+  // The show() guard ensures the short welcome clip runs only once.
+  episodeAuto();
+};
+
+$("bNext").onclick = async () => {
+  if (!stageOwnerOK || isAdvancing) return;
+  clearTimeout(episodeTimer);
+  await advanceEpisode("manual");
+};
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
 $("bStop").onclick = () => { AUDS.forEach(a => { try { a.pause(); } catch(e){} }); AUDS = []; proposal = ""; soundOn = false; $("bClip").classList.remove("on"); $("bClip").textContent = "CLIP SOUND OFF"; v.muted = true; setExp("idle"); lt("BE RIGHT BACK","Please stand by"); document.body.classList.add("open"); log("EMERGENCY STOP: sound off, idle clip, on-air text replaced"); };
@@ -349,7 +505,7 @@ async function pollStage() {
   window.__stageAudio = !!(s.active && s.audio);
   window.__fromAudience = (s.source === "metatron");
   setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
-  if (!(s.active && s.audio) || s.expression === "welcome") v.muted = true;   // Welcome sound comes from the overlay
+  if (!(s.active && s.audio)) v.muted = true;   // Chair clip audio follows the armed stage audio setting
   if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
   if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("PHARAOH x METATRON LIVE", s.text);}}catch(e){}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
@@ -429,7 +585,7 @@ body.game-mode-on #owner-panel { display:none !important; }
   function handleWelcome(expr){
     var v = document.getElementById('dj-welcome-video');
     if(!v) return;
-    if(expr === 'welcome' && !window.__episodeIntroPlayed){ window.__episodeIntroPlayed=true;
+    if(false && expr === 'welcome' && !window.__episodeIntroPlayed){ window.__episodeIntroPlayed=true;
       if(!v.paused && v.style.display==='block'){ return; }
       if(window.__fromAudience){ return; }   // audience hellos get the short clip, not the 3-minute opener
       v.style.cssText = 'display:block;position:fixed;inset:0;width:100%;height:100%;max-width:none;margin:0;border:0;border-radius:0;object-fit:contain;background:#000;z-index:9999;pointer-events:none';   // stage-fix2-applied

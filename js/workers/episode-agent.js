@@ -19,26 +19,31 @@ const FALLBACK = {
   subtitle: "King of Salem • Priest of God Most High",
   segments: [
     {
+      role: "welcome",
       title: "THE QUESTION",
       expression: "welcome",
       dialogue: "Welcome to the Pharaoh Chamber. Tonight, Metatron and DJ Dehrtay Dog investigate a remarkable biblical figure: Melchizedek. Who was this king and priest, and why does his name appear in the story of Abraham?"
     },
     {
+      role: "scripture_question",
       title: "THE FIRST APPEARANCE",
       expression: "thinking",
       dialogue: "Genesis chapter 14, verses 18 to 20, introduces Melchizedek as king of Salem and priest of God Most High. He brings bread and wine, blesses Abram, and receives a tenth from him. That is what the passage explicitly tells us."
     },
     {
+      role: "history_context",
       title: "THE ROYAL PRIEST",
-      expression: "nodding",
+      expression: "neutral",
       dialogue: "Notice the combination: king and priest. Melchizedek blesses Abram in the name of God Most High, possessor of heaven and earth. The text presents him as a priest before the later account of the Levitical priesthood."
     },
     {
+      role: "hebrews_teaching",
       title: "THE ORDER",
       expression: "breaking",
       dialogue: "Psalm 110, verse 4, declares: You are a priest forever according to the order of Melchizedek. Hebrews chapter 7 develops this theme. It compares the priesthood of Melchizedek with the priesthood associated with Levi. We should distinguish what the scripture says from later interpretations about his identity."
     },
     {
+      role: "signoff",
       title: "THE OPEN QUESTION",
       expression: "signoff",
       dialogue: "So who is Melchizedek? The biblical text identifies him as king of Salem and priest of God Most High. Hebrews presents him as a significant figure in its teaching about priesthood. His identity has been interpreted in different ways. Read the passages, examine the evidence, and join the discussion. This is Metatron and DJ Dehrtay Dog, from Monrovia to Zion."
@@ -59,15 +64,26 @@ async function readJSON(kv, key) {
   }
 }
 
+const REQUIRED_ROLES = [
+  "welcome",
+  "scripture_question",
+  "history_context",
+  "hebrews_teaching",
+  "signoff"
+];
+
 function validEpisode(value) {
   if (!value || !Array.isArray(value.segments) ||
-      value.segments.length !== 5) return false;
+      value.segments.length !== REQUIRED_ROLES.length) return false;
 
-  return value.segments.every(segment =>
+  return value.segments.every((segment, index) =>
     segment &&
+    segment.role === REQUIRED_ROLES[index] &&
     clean(segment.title, 100) &&
     clean(segment.dialogue, 1200) &&
-    EXPRESSIONS.includes(segment.expression)
+    EXPRESSIONS.includes(segment.expression) &&
+    (index !== 0 || segment.expression === "welcome") &&
+    (index !== 4 || segment.expression === "signoff")
   );
 }
 
@@ -86,17 +102,32 @@ Do not invent historical facts, quotations, dates, or identities.
 Distinguish explicit biblical statements from interpretation.
 Do not claim certainty where the text leaves questions open.
 Write accessible spoken dialogue, 55-90 words per segment.
-Make the final segment a thoughtful signoff inviting discussion.
+Make the five narrative roles appear in this exact order:
+1. welcome — opening and welcome
+2. scripture_question — Scripture and the central question
+3. history_context — historical or textual context
+4. hebrews_teaching — Hebrews and the teaching
+5. signoff — thoughtful conclusion inviting discussion
+
+Do not omit, duplicate, or reorder roles.
+The first segment must use expression "welcome".
+The final segment must use expression "signoff".
+Choose suitable expressions for the middle segments.
+Keep the dialogue creative and natural while following the factual constraints.
 
 Return ONLY JSON:
 {
  "title":"WHO IS MELCHIZEDEK?",
  "subtitle":"short subtitle",
  "segments":[
-  {"title":"short heading","expression":"welcome","dialogue":"spoken words"}
+  {"role":"welcome","title":"short heading","expression":"welcome","dialogue":"spoken words"},
+  {"role":"scripture_question","title":"short heading","expression":"thinking","dialogue":"spoken words"},
+  {"role":"history_context","title":"short heading","expression":"neutral","dialogue":"spoken words"},
+  {"role":"hebrews_teaching","title":"short heading","expression":"breaking","dialogue":"spoken words"},
+  {"role":"signoff","title":"short heading","expression":"signoff","dialogue":"spoken words"}
  ]
 }
-Exactly five segments.
+Exactly five segments in exactly that order.
 Allowed expressions: welcome, thinking, neutral, nodding, shocked, breaking, signoff.
 `;
 
@@ -127,6 +158,7 @@ Allowed expressions: welcome, thinking, neutral, nodding, shocked, breaking, sig
       title: clean(parsed.title, 120) || FALLBACK.title,
       subtitle: clean(parsed.subtitle, 160) || FALLBACK.subtitle,
       segments: parsed.segments.map(segment => ({
+        role: segment.role,
         title: clean(segment.title, 100),
         expression: segment.expression,
         dialogue: clean(segment.dialogue, 1200)
