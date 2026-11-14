@@ -235,6 +235,7 @@ const HALLEL_LINES = [
 ];
 function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
 let episodeTimer = 0;
+function stopIntroLoop(){ const iv=document.getElementById("dj-welcome-video"); if(iv){ iv.loop=false; iv.onpause=null; iv.onended=()=>{ iv.style.display="none"; }; } }
 function playEpisodeOutro(){ const ov=document.getElementById("dj-welcome-video"); if(!ov) return; ov.pause(); ov.loop=false; ov.muted=!(stageOwnerOK && soundOn && touched); ov.style.display="block"; ov.style.position="fixed"; ov.style.inset="0"; ov.style.width="100%"; ov.style.height="100%"; ov.style.maxWidth="none"; ov.style.objectFit="contain"; ov.style.background="#000"; ov.style.zIndex="9999"; ov.src="welcome-new-1k.mp4"; ov.load(); try{ov.currentTime=0;}catch(e){} ov.onended=()=>{ ov.style.display="none"; }; ov.play().catch(()=>{ ov.muted=true; ov.play().catch(()=>{}); }); }
 async function episodeAuto() { clearTimeout(episodeTimer); episodeTimer = setTimeout(async () => { const d = await episodeCall("advance"); if (d && !d.completed) { await pollStage(); showHallel(d.currentSegment); episodeAuto(); } else if (d && d.completed) { lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
 playEpisodeOutro(); } }, 28000); }
@@ -365,7 +366,7 @@ if ("serviceWorker" in navigator) addEventListener("load", () => navigator.servi
 <!-- === owner-vs-public - FINAL === -->
 <section id="public-stage" style="text-align:center;padding:20px 0">
 <!-- WELCOME VIDEO - plays on WELCOME cue, Episode 001 opener -->
-<video id="dj-welcome-video" playsinline preload="auto" muted style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
+<video id="dj-welcome-video" data-intro="1" playsinline preload="auto" muted style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
   <source src="./welcome-new-1k.mp4" type="video/mp4">
 </video>
 <h2>DJ Dehrtay Dog + Pharaoh Chamber</h2>
@@ -428,16 +429,13 @@ body.game-mode-on #owner-panel { display:none !important; }
   function handleWelcome(expr){
     var v = document.getElementById('dj-welcome-video');
     if(!v) return;
-    if(expr === 'welcome'){
+    if(expr === 'welcome' && !window.__introPlayed){ window.__introPlayed=true;
       if(!v.paused && v.style.display==='block'){ return; }
       if(window.__fromAudience){ return; }   // audience hellos get the short clip, not the 3-minute opener
       v.style.cssText = 'display:block;position:fixed;inset:0;width:100%;height:100%;max-width:none;margin:0;border:0;border-radius:0;object-fit:contain;background:#000;z-index:9999;pointer-events:none';   // stage-fix2-applied
       v.muted = !(window.__soundUnlocked && window.__stageAudio);
       window.__welcomeStopped = false;
-      v.onpause = function(){
-        if(window.__welcomeStopped || v.ended || v.style.display !== 'block') return;
-        setTimeout(function(){ if(v.paused && !v.ended && !window.__welcomeStopped && v.style.display === 'block') v.play().catch(function(){}); }, 400);
-      };
+      v.onpause = null; // intro plays once, no pause-replay
       v.currentTime = 0;
       v.play().catch(()=>{});
       v.onended = function(){ v.style.display='none'; };
@@ -469,7 +467,7 @@ body.game-mode-on #owner-panel { display:none !important; }
   };
   document.addEventListener('visibilitychange', function(){
     var v = document.getElementById('dj-welcome-video');
-    if(document.visibilityState === 'visible' && v && v.style.display === 'block' && v.paused && !v.ended && !window.__welcomeStopped){ v.play().catch(function(){}); }
+    // intro does not auto-replay on tab return
   });
   window.playWelcomeVideo = function(){
     var v = document.getElementById('dj-welcome-video');
