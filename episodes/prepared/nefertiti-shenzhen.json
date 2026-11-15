@@ -1,0 +1,140 @@
+{
+  "title": "SHENZHEN SETS THE TABLE",
+  "subtitle": "Global Footprints | Nefertiti + DJ Dehrtay Dog",
+  "segments": [
+    {
+      "role": "welcome",
+      "title": "SHENZHEN SETS THE TABLE",
+      "expression": "welcome",
+      "volume": 70,
+      "dialogue": "Welcome to Global Footprints. I'm Nefertiti, with DJ Dehrtay Dog. Three world powers plan to meet in Shenzhen this week."
+    },
+    {
+      "role": "scripture_question",
+      "title": "COALITION INTERCEPTION REPORT",
+      "expression": "thinking",
+      "volume": 70,
+      "dialogue": "Saudi-led coalition says it intercepted two ballistic missiles toward Riyadh and three drones over the Eastern Province. This claim is not independently verified."
+    },
+    {
+      "role": "history_context",
+      "title": "LIBERIA TAKES THE PRESIDENCY",
+      "expression": "neutral",
+      "volume": 70,
+      "dialogue": "Liberia is scheduled to preside over the UN Security Council in December. The United Nations rotation calendar confirms the schedule."
+    },
+    {
+      "role": "hebrews_teaching",
+      "title": "DONBAS FOR NATO?",
+      "expression": "breaking",
+      "volume": 70,
+      "dialogue": "Zelenskyy says US negotiators raised Donbas withdrawal in connection with NATO membership. He calls it an idea, not agreed policy. What should Ukrainians decide?"
+    },
+    {
+      "role": "signoff",
+      "title": "HANDOFF TO THE MUSIC",
+      "expression": "signoff",
+      "volume": 70,
+      "dialogue": "That's Global Footprints. I'm Nefertiti. DJ Dehrtay Dog takes it from here. Stay with Micdom AI Records and enjoy the music."
+    }
+  ],
+  "larp_posts": {
+    "day": 1,
+    "episode": 0,
+    "title": "WELCOME TO HALLEL",
+    "opening_lines": "Travelers of the Chamber — tonight we step through a gate that isn’t made of stone. Beyond the missions you register and the hours you log, there is a story waiting to be worn. I’m Nefertiti, and I’ll be your storyteller through all thirteen chapters. Take my hand — but keep one foot in the real.",
+    "play_today": [
+      "Read all twelve Steps of the Hallel framework.",
+      "Choose your depth: observer, persona-light, or full immersion.",
+      "Shout out DJ Dehrtay Dog in chat to unlock your First Footprint welcome badge (in-game only)."
+    ],
+    "chat_poll": "Type: OBSERVER / LIGHT / FULL + your name",
+    "pinned_comment": "Day 1 – Episode 0: Welcome to Hallel. Choose OBSERVER, LIGHT, or FULL + your name. First Footprint badge is in-game only. Golden Rule: The Portal provides the structure. The LARP provides the story. You decide how deeply you enter.",
+    "closing_cta": "Choose your depth. Keep one foot in the real. Welcome to Hallel."
+  },
+  "live_ctas": [
+    {
+      "segment": 1,
+      "id": "follow",
+      "text": "Follow Micdom AI Records so you do not miss our next broadcast."
+    },
+    {
+      "segment": 2,
+      "id": "gift_rose",
+      "text": "Tap the screen, share the Live, and send DJ Dehrtay Dog a Rose if you would like. Gifts are always optional."
+    },
+    {
+      "segment": 3,
+      "id": "audience_registry",
+      "text": "Where are you watching from? Put your country in the chat. Explore the Human Rights Angels Registry and its affiliate programs at registry.pharaoh-conglomerate.org."
+    },
+    {
+      "segment": 4,
+      "id": "rumble_youtube",
+      "text": "Find Micdom AI Records on Rumble and YouTube at @MicdomAIRecords."
+    },
+    {
+      "segment": 5,
+      "id": "stripe_routenote",
+      "text": "Support our work voluntarily through our official Stripe link, and discover our music on RouteNote by searching MicdomAIRecords."
+    }
+  ],
+  "gift_ctas": [
+    {
+      "id": "rose",
+      "gift": "Rose",
+      "optional": true,
+      "text": "Send DJ Dehrtay Dog a Rose if you would like. Gifts are optional."
+    }
+  ],
+  "traffic_ctas": [
+    {
+      "id": "registry",
+      "platform": "Human Rights Angels Registry",
+      "url": "https://registry.pharaoh-conglomerate.org",
+      "text": "Explore the Registry and its affiliate programs."
+    },
+    {
+      "id": "rumble",
+      "platform": "Rumble",
+      "handle": "@MicdomAIRecords",
+      "text": "Find Micdom AI Records on Rumble at @MicdomAIRecords."
+    },
+    {
+      "id": "stripe",
+      "platform": "Stripe",
+      "url": "https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00",
+      "voluntary": true,
+      "text": "Support our work voluntarily through our official Stripe link."
+    },
+    {
+      "id": "routenote",
+      "platform": "RouteNote",
+      "artist": "MicdomAIRecords",
+      "text": "Discover Micdom AI Records music on RouteNote by searching MicdomAIRecords."
+    },
+    {
+      "id": "youtube",
+      "platform": "YouTube",
+      "handle": "@MicdomAIRecords",
+      "text": "Subscribe to Micdom AI Records on YouTube at @MicdomAIRecords."
+    }
+  ],
+  "closing_cta": "Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world.",
+  "pinned_comments": [
+    "Follow Micdom AI Records. Registry and affiliate programs: https://registry.pharaoh-conglomerate.org | Rumble + YouTube: @MicdomAIRecords | RouteNote: MicdomAIRecords",
+    "Optional support: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00. Gifts are voluntary; no Gift is required to participate."
+  ],
+  "cta_rotation": {
+    "strategy": "per-segment",
+    "repeat_consecutive": false,
+    "segment_order": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "standing_disclaimer": "The LARP is a game. The real Volunteer Exchange Portal remains the operational system for actual volunteer registration, missions, records, and recognition. The LARP adds the story; the Portal provides the structure. LARP points, badges, titles, and ranks are fictional heraldry — they carry no real-world authority, status, or guaranteed income. Actual volunteer activity and records remain subject to their actual terms, documentation, and responsible parties."
+}
