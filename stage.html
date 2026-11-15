@@ -266,7 +266,7 @@ $("bAuto").onclick = e => { auto = !auto; e.target.classList.toggle("on", auto);
 document.querySelectorAll("#prod i").forEach((el,n) => { const im = new Image(); im.onload = () => { el.textContent = ""; el.appendChild(im); }; im.src = "producers/ep"+(n+1)+".jpg"; });
 EX.forEach(([id,label]) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => cue(id); $("ex").appendChild(b); btn[id] = b; });
 // ---- ACTIONS ----
-async function episodeCall(action) {
+async function episodeCall(action, bodyPayload) {
   lastEpisodeHTTPStatus = 0;
   lastEpisodeError = "";
   if (!stageOwnerOK || !ctlToken) {
@@ -283,7 +283,7 @@ async function episodeCall(action) {
           "Authorization": "Bearer " + ctlToken,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({})
+        body: JSON.stringify(bodyPayload || {})
       }
     );
     lastEpisodeHTTPStatus = r.status;
@@ -404,7 +404,14 @@ $("bStart").onclick = async () => {
   window.__episodeIntroPlayed = false;
   window.__episodeRunning = false;
 
-  const d = await episodeCall("start");
+  let shenzhen = null;
+  try {
+    const r = await fetch("./episodes/prepared/nefertiti-shenzhen.json", { cache: "no-store" });
+    if (r.ok) shenzhen = await r.json();
+  } catch (e) { shenzhen = null; }
+  if (shenzhen) log("NEFERTITI EPISODE LOADED: " + (shenzhen.title || "Shenzhen"));
+  else log("Shenzhen file not found - falling back to Melchizedek");
+  const d = await episodeCall("start", shenzhen || {});
 
   if (!d) {
     if ((lastEpisodeError || "").includes("already running")) {
