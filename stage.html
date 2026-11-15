@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <link rel="manifest" href="/manifest.json">
-<title>Pharaoh Chamber - DJ Dehrtay Dog</title>
+<title>Nefertiti + DJ Dehrtay Dog | Pharaoh Chamber</title>
 <style>
 :root{--gold:#d4af37;--gold2:#ffd54a;--ink:#070604;--dim:#8c6a13}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
@@ -41,6 +41,9 @@ button.go{background:var(--gold);color:#000}
 button.stop{background:#a00;color:#fff;border-color:#f55}
 #log{font:10px monospace;color:#b99a3a;height:64px;overflow:auto;background:#000;border:1px solid #2a2008;border-radius:6px;padding:4px;white-space:pre-wrap}
 @media (prefers-reduced-motion:reduce){#tick span{animation:none;padding-left:8px}}
+body:not(.open) #lt, body:not(.open) #audienceFeed { display:block !important; position:fixed; left:12px; right:12px; z-index:99; }
+body:not(.open) #lt { bottom:64px; }
+body:not(.open) #audienceFeed { bottom:12px; }
 </style>
 </head>
 <body class="guides open">
@@ -56,7 +59,8 @@ button.stop{background:#a00;color:#fff;border-color:#f55}
  <div id="banner"><b>BREAKING NEWS</b><div id="tick"><span>TIKTOK LIVE &bull; MONROVIA TO ZION &bull; LIBERIA &rarr; ASIA &rarr; WORLD &bull; PHARAOH CHAMBER &bull; SPHINX LOCKED &bull; MICDOM AI RECORDS &bull; TIKTOK &bull; RUMBLE &bull; ROUTENOTE &bull; APPLE MUSIC &bull; SPOTIFY &bull;</span></div></div>
  <div id="prod"><i>EP1</i><i>EP2</i><i>EP3</i></div>
  <div id="chair"><video id="v" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
- <div id="lt"><h1>PHARAOH &times; METATRON LIVE</h1><p id="ltp">Chamber ready</p></div>
+ <div id="audienceFeed" style="margin:8px 0 0 0;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#111;font-size:14px;line-height:1.4;min-height:44px"></div>
+<div id="lt"><h1>NEFERTITI + DJ DEHRTAY DOG LIVE</h1><p id="ltp">Chamber ready</p></div>
  <div id="g"><span style="position:absolute;top:4px;left:8px;font-size:11px;color:#f88">profile + viewers</span></div>
 </div>
 <button id="dot" aria-label="Controls"></button>
@@ -73,10 +77,25 @@ button.stop{background:#a00;color:#fff;border-color:#f55}
  </section>
  <div id="stage-controls" hidden>
  <button id="stage-owner-logout" type="button">LOCK CONTROLS / LOG OUT</button>
+ <!-- stage-buttons-applied -->
+ <section id="stage-ctl" style="border:2px solid var(--gold);border-radius:10px;padding:12px;margin:10px 0">
+  <h2 style="font-size:16px;margin-bottom:6px">METATRON AUTOMATION</h2>
+  <p id="stage-ctl-state" role="status" aria-live="polite" style="font-size:13px;margin-bottom:8px">Checking…</p>
+  <label for="stage-ctl-token">Owner token (for these buttons)</label>
+  <input id="stage-ctl-token" type="password" autocomplete="off" placeholder="Owner token" style="width:100%;padding:10px;margin:5px 0 8px;background:#000;color:#fff;border:1px solid var(--gold);border-radius:6px">
+  <label style="font-size:12px;display:block;margin:0 0 8px"><input id="stage-ctl-keep" type="checkbox"> Keep token until I lock controls (memory only, never saved)</label>
+  <label for="stage-ctl-min">Session length</label>
+  <select id="stage-ctl-min" style="width:100%;padding:10px;margin:5px 0 8px;background:#000;color:#fff;border:1px solid var(--gold);border-radius:6px"><option value="5">5 minutes</option><option value="15" selected>15 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option></select>
+  <label style="font-size:12px;display:block;margin:0 0 8px"><input id="stage-ctl-audio" type="checkbox"> Allow sound (off = silent)</label>
+  <button id="stage-ctl-arm" class="go" type="button">ARM METATRON</button>
+  <button id="stage-ctl-halt" type="button" style="width:100%;margin-top:8px;padding:14px;font-size:16px;font-weight:bold;background:#b00020;color:#fff;border:2px solid #ff8080;border-radius:8px">HALT NOW</button>
+  <p id="stage-ctl-status" role="status" aria-live="polite" style="font-size:12px;margin-top:8px"></p>
+ </section>
  <div class="row c4" id="ex"></div>
+ <div class="row c2"><label style="display:block">PREVIEW FIXTURE ID (leave blank for normal episode)<input id="preview-fixture-id" type="text" autocomplete="off" placeholder="Paste Preview fixture ID here" style="width:100%;padding:10px"></label></div>
  <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button><button id="bRepeat">REPEAT</button><button class="stop" id="bStop">EMERGENCY STOP</button></div>
  <div class="row c4" id="sn"></div>
- <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><span></span></div>
+ <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><button class="go" id="bUnlockDjAudio" type="button">UNLOCK DJ AUDIO</button></div>
  <div class="row c2"><label>CROWD VOLUME<input type="range" id="vol" min="0" max="100" value="70"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
  <div class="row c2"><button id="bGuides">GUIDES ON/OFF</button><button class="go" id="bStage">STAGE MODE</button></div>
  <div id="log"></div>
@@ -94,13 +113,15 @@ const AUTO = {welcome:"applause", signoff:"applause", shocked:"ooh", thinking:"w
 // ---- STATE ----
 const $ = id => document.getElementById(id), v = $("v"), P = {}, btn = {};
 let cur = "", last = "", proposal = "", AUDS = [], seg = 0, timer = 0, wl = null, auto = false, soundOn = true, touched = false, keep = true;
+window.__metatronNarrationVolume = 0.7;
+let metatronBaseVolume = null;
 let stageOwnerOK = false;
 let ownerAuthAttempt = 0;
 function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; }
 function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
 
 function lockStageOwner(message) {
-  ownerAuthAttempt++;
+  ownerAuthAttempt++; ctlToken = ""; clearTimeout(window.episodeAdvanceTimer);
   stageOwnerOK = false;
   touched = false;
   $("stage-controls").hidden = true;
@@ -114,7 +135,7 @@ function lockStageOwner(message) {
 
 $("stage-owner-login").addEventListener("click", async () => {
   const attempt = ++ownerAuthAttempt;
-  const base = $("stage-worker-url").value.trim().replace(/\/+$/, "");
+  const base = ($("stage-worker-url").value.trim() || WORKER_BASE).replace(/\/+$/, "");
   const token = $("stage-owner-token").value.trim();
 
   if (!/^https:\/\//i.test(base) || !token) {
@@ -139,7 +160,8 @@ $("stage-owner-login").addEventListener("click", async () => {
       return;
     }
 
-    stageOwnerOK = true;
+    stageOwnerOK = true; ctlToken = token;
+    touched = true; window.__soundUnlocked = true;   // verify tap unlocks sound
     $("stage-owner-token").value = "";
     $("stage-owner-lock").hidden = true;
     $("stage-controls").hidden = false;
@@ -169,20 +191,71 @@ $("stage-controls").addEventListener("input", event => {
 }, true);
 // ---- CLIPS: find dj/<id>.mp4, then ./<id>.mp4 ----
 function probe(id){
-  const paths = ["dj/expressions-v2/"+id+".mp4", "dj/"+id+".mp4", id+".mp4"]; let i = 0;
+  const clipId = DJ_MAP[id] || id;
+  P[id]="dj/"+clipId+".mp4";
+  const paths = ["dj/"+clipId+".mp4", "dj/expressions-v2/"+clipId+".mp4", clipId+".mp4"]; let i = 0;
   const t = document.createElement("video"); t.preload = "metadata"; t.muted = true;
-  t.onloadedmetadata = () => { P[id] = paths[i]; btn[id].classList.remove("miss"); log("found "+paths[i]); };
-  t.onerror = () => { if (++i < paths.length) t.src = paths[i]; else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
+  t.onloadedmetadata = () => {
+    P[id] = paths[i];
+    btn[id].classList.remove("miss");
+    log("found "+paths[i]);
+
+    // Retry if Metatron selected this expression before its clip was found.
+    if (window.currentExpression === id &&
+        (id !== "welcome" || !window.__episodeIntroPlayed)) {
+      log("clip ready; retrying current expression: " + id);
+      show(id);
+    }
+  };
+  t.onerror = () => { if (++i < paths.length) { t.src = paths[i]; try{t.load();}catch(e){} } else { P[id] = null; btn[id].classList.add("miss"); log("MISSING "+id+".mp4"); } };
   t.src = paths[0];
 }
 function show(id){
+  if (id === "welcome" && window.__episodeRunning &&
+      window.__episodeIntroPlayed) return;
   v.style.display = "block"; $("ph").style.display = "none";
-  if (P[id]) { v.loop = keep; v.muted = !(stageOwnerOK && soundOn && touched); v.volume = $("vol").value/100; v.src = P[id]; v.play().catch(()=>{}); }
-  else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; const e = EX.find(x=>x[0]===id);
-         $("phE").textContent = e[2]; $("phT").textContent = e[1] + " - clip missing"; $("ph").style.display = "flex"; }
+  if (P[id]) {
+    const episodeIntro = id === "welcome" && window.__episodeRunning;
+
+    v.pause();
+    v.loop = keep;
+    v.muted = !(stageOwnerOK && soundOn && touched);
+    v.volume = $("vol").value/100;
+    v.src = P[id];
+    v.load();
+
+    try { v.currentTime = 0; } catch(e) {}
+
+    const playRequest = v.play();
+
+    if (playRequest && typeof playRequest.then === "function") {
+      playRequest.then(() => {
+        if (episodeIntro) window.__episodeIntroPlayed = true;
+        log("DJ clip playing: " + id);
+      }).catch(error => {
+        log("DJ clip playback blocked: " + id + " (" +
+            (error && error.name ? error.name : "unknown") + ")");
+
+        // Never silently downgrade DJ expression playback to muted.
+        // Keep the failure visible so the owner can unlock audio.
+        log("DJ AUDIO NEEDS OWNER UNLOCK: " + id);
+      });
+    } else if (episodeIntro) {
+      window.__episodeIntroPlayed = true;
+    }
+  }
+  else {
+    v.pause(); v.removeAttribute("src"); v.style.display = "none";
+    const e = EX.find(x=>x[0]===id);
+    $("phE").textContent = e[2];
+    $("phT").textContent = e[1] + " - clip missing";
+    $("ph").style.display = "flex";
+  }
 }
+const DJ_MAP = { welcome:"welcome", scripture:"thinking", history:"neutral", hebrews:"breaking", signoff:"signoff", question:"thinking", open:"breaking", shocked:"shocked", neutral:"neutral", thinking:"thinking", breaking:"breaking", nodding:"nodding" };
+let lastDjExp = "";
 function setExp(id, hold){
-  clearTimeout(timer); cur = id; if (id !== "idle") last = id; keep = (id === "idle" || !!hold); show(id);
+  clearTimeout(timer); cur = id; window.currentExpression = id; if (id !== "idle") last = id; keep = (id === "idle" || !!hold); show(id);   // stage-fix-applied
   for (const k in btn) btn[k].classList.toggle("on", k === id);
   log("expression: " + id);
   if (id !== "idle" && !hold) timer = setTimeout(() => setExp("idle"), HOLD_MS);
@@ -194,8 +267,172 @@ $("bAuto").onclick = e => { auto = !auto; e.target.classList.toggle("on", auto);
 document.querySelectorAll("#prod i").forEach((el,n) => { const im = new Image(); im.onload = () => { el.textContent = ""; el.appendChild(im); }; im.src = "producers/ep"+(n+1)+".jpg"; });
 EX.forEach(([id,label]) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => cue(id); $("ex").appendChild(b); btn[id] = b; });
 // ---- ACTIONS ----
-$("bStart").onclick = () => { seg = 0; cue("welcome"); lt("PHARAOH &times; METATRON LIVE","Show starting"); log("START SHOW"); };
-$("bNext").onclick = () => { const s = SEGMENTS[seg++ % SEGMENTS.length]; setExp("nodding"); lt("NEXT SEGMENT", s); log("NEXT SEGMENT: " + s); };
+async function episodeCall(action, payload) {
+  lastEpisodeHTTPStatus = 0;
+  lastEpisodeError = "";
+  if (!stageOwnerOK || !ctlToken) {
+    lastEpisodeError = "Verify owner access before operating Metatron.";
+    ctlSay(lastEpisodeError);
+    return null;
+  }
+  try {
+    const r = await fetch(
+      ctlBase() + "/api/v1/micdom/episode/" + action,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + ctlToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload || {})
+      }
+    );
+    lastEpisodeHTTPStatus = r.status;
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      lastEpisodeError = d.error || ("Episode " + action + " failed");
+      ctlSay(lastEpisodeError);
+      return null;
+    }
+    return d;
+  } catch (e) {
+    lastEpisodeError = "Metatron connection failed.";
+    ctlSay(lastEpisodeError);
+    return null;
+  }
+}
+const HALLEL_LINES = [
+"PHARAOH CHAMBER: Welcome back, Metatron. Chamber is ready.",
+"PHARAOH CHAMBER: Wait - king AND priest? That breaks the whole system.",
+"PHARAOH CHAMBER: Salem... peace... that name is doing a lot of work.",
+"PHARAOH CHAMBER: So Hebrews is using him as a pattern, not a biography?",
+"PHARAOH CHAMBER: The open question is the point. Read it for yourself."
+];
+function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
+let episodeTimer = 0;
+let isAdvancing = false;
+let lastEpisodeHTTPStatus = 0;
+let lastEpisodeError = "";
+function stopIntroLoop(){ const iv=document.getElementById("dj-welcome-video"); if(iv){ iv.loop=false; iv.onpause=null; iv.onended=()=>{ iv.style.display="none"; }; } }
+function playEpisodeOutro(){
+  if (window.__outroPlayed) return;
+  window.__outroPlayed = true;
+
+  const ov = document.getElementById("dj-welcome-video");
+  if (!ov) return;
+
+  // This long file is the episode outro only. It never uses the chair video.
+  ov.pause();
+  ov.loop = false;
+  ov.muted = !(stageOwnerOK && soundOn && touched);
+  ov.style.display = "block";
+  ov.style.position = "fixed";
+  ov.style.inset = "0";
+  ov.style.width = "100%";
+  ov.style.height = "100%";
+  ov.style.maxWidth = "none";
+  ov.style.objectFit = "contain";
+  ov.style.background = "#000";
+  ov.style.zIndex = "9999";
+  ov.src = "welcome-new-1k.mp4";
+  ov.load();
+  try { ov.currentTime = 0; } catch(e) {}
+  ov.onended = () => { ov.style.display = "none"; };
+  ov.play().catch(() => {
+    ov.muted = true;
+    ov.play().catch(() => {});
+  });
+}
+function episodeAuto() {
+  clearTimeout(episodeTimer);
+  episodeTimer = setTimeout(() => {
+    advanceEpisode("automatic");
+  }, 15000);
+}
+
+async function advanceEpisode(source) {
+  if (isAdvancing || !stageOwnerOK) return;
+  isAdvancing = true;
+  clearTimeout(episodeTimer);
+
+  try {
+    let d = await episodeCall("advance");
+
+    // Worker enforces a 12-second minimum. Retry once after 3 seconds
+    // only when the Worker explicitly returns HTTP 429.
+    if (!d && lastEpisodeHTTPStatus === 429) {
+      log("Segment still playing - retrying once in 3 seconds.");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      d = await episodeCall("advance");
+    }
+
+    if (!d) {
+      log("Episode advance failed: " + (lastEpisodeError || "request failed"));
+      // Keep the running episode alive; retry on the next scheduled cycle.
+      if (window.__episodeRunning) episodeAuto();
+      return;
+    }
+
+    if (d.completed) {
+      clearTimeout(episodeTimer);
+      window.__episodeRunning = false;
+      lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
+      log("METATRON EPISODE COMPLETED");
+      playEpisodeOutro();
+      return;
+    }
+
+    log(
+      "METATRON ADVANCED TO SEGMENT " +
+      d.currentSegment + " OF " + d.totalSegments +
+      (source === "automatic" ? " (AUTO)" : " (MANUAL)")
+    );
+
+    await pollStage();
+    showHallel(d.currentSegment - 1);
+  } finally {
+    isAdvancing = false;
+  }
+
+  if (window.__episodeRunning) episodeAuto();
+}
+
+$("bStart").onclick = async () => {
+  if (!stageOwnerOK || isAdvancing) return;
+
+  clearTimeout(episodeTimer);
+  window.__outroPlayed = false;
+  window.__episodeIntroPlayed = false;
+  window.__episodeRunning = false;
+
+  const fixtureId = ($("preview-fixture-id")?.value || "").trim();
+  const d = await episodeCall("start", fixtureId ? { fixtureId } : {});
+
+  if (!d) {
+    if ((lastEpisodeError || "").includes("already running")) {
+      log("An episode is already running - HALT to start fresh");
+    } else {
+      log("START SHOW halted: " + (lastEpisodeError || "start failed"));
+    }
+    return;
+  }
+
+  window.__episodeRunning = true;
+  showHallel(0);
+  log("METATRON EPISODE STARTED: " + (d.episode?.title || "Episode"));
+
+  await pollStage();
+
+  // pollStage publishes Segment 1's welcome expression to the chair.
+  // The show() guard ensures the short welcome clip runs only once.
+  episodeAuto();
+};
+
+$("bNext").onclick = async () => {
+  if (!stageOwnerOK || isAdvancing) return;
+  clearTimeout(episodeTimer);
+  await advanceEpisode("manual");
+};
 $("bOk").onclick = () => { if (proposal) { lt("METATRON", proposal); log("APPROVED: " + proposal); proposal = ""; } else { lt("APPROVED","\u2713 Approved by the chair"); log("APPROVE"); } setExp("nodding"); if (auto) play("applause"); };
 $("bRepeat").onclick = () => { if (last) { cue(last); log("REPEAT " + last); } else log("nothing to repeat yet"); };
 $("bStop").onclick = () => { AUDS.forEach(a => { try { a.pause(); } catch(e){} }); AUDS = []; proposal = ""; soundOn = false; $("bClip").classList.remove("on"); $("bClip").textContent = "CLIP SOUND OFF"; v.muted = true; setExp("idle"); lt("BE RIGHT BACK","Please stand by"); document.body.classList.add("open"); log("EMERGENCY STOP: sound off, idle clip, on-air text replaced"); };
@@ -221,35 +458,310 @@ $("dot").onclick = () => document.body.classList.toggle("open");
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && wl && wl.released) wake(); });
 v.addEventListener("ended", () => { if (!keep) setExp("idle"); });
 addEventListener("pointerdown", () => { if (stageOwnerOK) { touched = true; v.muted = !soundOn; } });
-$("vol").oninput = () => { v.volume = $("vol").value/100; };
+function applyMasterVolume(value) {
+  const raw = Number(value);
+  if (!Number.isFinite(raw)) return;
+
+  const level = Math.max(0, Math.min(100, Math.round(raw)));
+  const normalized = level / 100;
+
+  $("vol").value = String(level);
+  v.volume = normalized;
+  window.__metatronNarrationVolume = normalized;
+
+  AUDS.forEach(a => {
+    try { a.volume = normalized; } catch(e) {}
+  });
+
+  const outro = $("dj-welcome-video");
+  if (outro) outro.volume = normalized;
+}
+
+function setMetatronVolume(value) {
+  if (metatronBaseVolume === null) {
+    const current = Number($("vol").value);
+    metatronBaseVolume = Number.isFinite(current) ? current : 70;
+  }
+
+  applyMasterVolume(value);
+  log("Metatron master volume: " + $("vol").value + "%");
+}
+
+function restoreMetatronVolume() {
+  if (metatronBaseVolume === null) return;
+
+  const original = metatronBaseVolume;
+  metatronBaseVolume = null;
+  applyMasterVolume(original);
+  log("Owner volume restored: " + original + "%");
+}
+
+$("vol").oninput = () => applyMasterVolume($("vol").value);
 $("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
+$("bUnlockDjAudio").onclick = () => {
+  if (!stageOwnerOK) {
+    log("DJ audio unlock denied: verify owner access first.");
+    return;
+  }
+
+  // This click is the owner's direct browser audio gesture.
+  soundOn = true;
+  touched = true;
+  window.__soundUnlocked = true;
+  v.muted = false;
+
+  $("bClip").classList.add("on");
+  $("bClip").textContent = "CLIP SOUND ON";
+
+  if (!v.src) {
+    log("DJ audio unlocked. Select an expression to test sound.");
+    return;
+  }
+
+  const request = v.play();
+  if (request && typeof request.then === "function") {
+    request.then(() => {
+      log("OWNER UNLOCKED DJ AUDIO: " + (window.currentExpression || "current clip"));
+    }).catch(error => {
+      log("DJ AUDIO UNLOCK REJECTED: " +
+          (error && error.name ? error.name : "unknown") +
+          ". Tap UNLOCK DJ AUDIO again.");
+    });
+  } else {
+    log("DJ audio unlock requested for current clip.");
+  }
+};
 // stage-cue-applied
+// stage-buttons-applied
+// ---- OWNER STAGE BUTTONS (arm / halt) - visible only after owner verification ----
+let ctlToken = "";
+function ctlBase() { return ($("stage-worker-url").value.trim() || WORKER_BASE).replace(/\/+$/, ""); }
+function ctlSay(t) { $("stage-ctl-status").textContent = t; }
+async function ctlCall(path, bodyObj) {
+  const base = ctlBase();
+  const token = ctlToken || $("stage-ctl-token").value.trim();
+  if (!/^https:\/\//i.test(base)) { ctlSay("Worker address is missing or not HTTPS."); return null; }
+  if (!token) { ctlSay("Type the owner token first."); return null; }
+  try {
+    const r = await fetch(base + "/api/v1/micdom/stage/" + path, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify(bodyObj || {})
+    });
+    const j = await r.json().catch(() => ({}));
+    ctlToken = ($("stage-ctl-keep").checked && r.ok) ? token : "";
+    $("stage-ctl-token").value = "";
+    return { ok: r.ok, j };
+  } catch (e) {
+    $("stage-ctl-token").value = "";
+    ctlSay("Could not reach the Worker.");
+    return null;
+  }
+}
+async function refreshCtl() {
+  if (!stageOwnerOK) { ctlToken = ""; return; }
+  const base = ctlBase();
+  if (!/^https:\/\//i.test(base)) return;
+  const el = $("stage-ctl-state");
+  try {
+    const r = await fetch(base + "/api/v1/micdom/stage/state", { cache: "no-store" });
+    const s = await r.json();
+    if (s.halted) { el.textContent = "HALTED - stage in safe idle"; el.style.color = "#ff8080"; }
+    else if (s.active) { el.textContent = "ARMED until " + new Date(s.sessionExpiresAt).toLocaleTimeString() + (s.audio ? " - sound on" : " - silent"); el.style.color = "#7dff9a"; }
+    else { el.textContent = "Not armed - visitors see idle"; el.style.color = "#e9d9a0"; }
+  } catch (e) { el.textContent = "Worker unreachable - stage in safe idle"; el.style.color = "#ff8080"; }
+}
+$("stage-ctl-arm").addEventListener("click", async () => {
+  if (!stageOwnerOK) return;
+  const audio = $("stage-ctl-audio").checked;
+  if (audio && !confirm("Arm WITH SOUND? Expressions may play audio on the stage device.")) return;
+  const minutes = parseInt($("stage-ctl-min").value, 10) || 15;
+  ctlSay("Arming...");
+  const res = await ctlCall("arm", { minutes, audio });
+  if (!res) return;
+  if (res.ok) { ctlSay("Armed for " + minutes + " min" + (audio ? " with sound." : ", silent.")); log("owner armed stage " + minutes + "m" + (audio ? " +sound" : "")); }
+  else { if (res.j && res.j.error) ctlSay(res.j.error); else ctlSay("Arm failed."); ctlToken = ""; }
+  refreshCtl();
+});
+$("stage-ctl-halt").addEventListener("click", async () => {
+  if (!stageOwnerOK) return;
+  ctlSay("Halting episode and stage...");
+
+  // Stop the running episode record before disarming the stage.
+  const episodeResult = await episodeCall("stop");
+  if (episodeResult) log("owner halted episode");
+  else log("Episode stop failed: " + (lastEpisodeError || "unknown error"));
+
+  const res = await ctlCall("halt", {});
+  if (!res) return;
+  if (res.ok) {
+    ctlSay("Halted. Episode stopped; stage is in safe idle.");
+    log("owner halted stage");
+  } else {
+    if (res.j && res.j.error) ctlSay(res.j.error);
+    else ctlSay("Stage halt failed.");
+    ctlToken = "";
+  }
+  refreshCtl();
+});
+$("stage-owner-logout").addEventListener("click", () => { ctlToken = ""; });
+setInterval(() => { if (document.visibilityState === "visible") refreshCtl(); }, 5000);
 // ---- METATRON AUTOMATION: public read-only poll; owner ARMS the session ----
-const WORKER_BASE = "";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
+const WORKER_BASE = "https://hermes-toth-agent-worker.pharangels.workers.dev";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
 let lastStageKey = "";
 async function pollStage() {
-  if (!WORKER_BASE || document.visibilityState !== "visible") return;
+  const base = ctlBase();
+  if (!base || document.visibilityState !== "visible") return;
   let s;
   try {
-    const r = await fetch(WORKER_BASE.replace(/\/+$/, "") + "/api/v1/micdom/stage/state", { cache: "no-store" });
+    const r = await fetch(base + "/api/v1/micdom/stage/state", { cache: "no-store" });
     s = await r.json();
     if (!r.ok || !s || s.ok !== true) throw new Error("bad state");
   } catch (e) { s = { active: false, expression: "idle", audio: false, seq: 0 }; }   // safe visitor mode
-  const key = [s.active, s.expression, s.seq].join(":");
+  const key = [s.active, s.expression, s.seq, s.volume].join(":");
   if (key === lastStageKey) return;
   lastStageKey = key;
   if (!EX.some(x => x[0] === s.expression)) return;
-  setExp(s.expression);
-  if (!(s.active && s.audio)) v.muted = true;   // sound only while the owner armed audio
+  window.__stageAudio = !!(s.active && s.audio);
+  window.__fromAudience = (s.source === "metatron");
+  if (s.active && s.source === "metatron" && Number.isFinite(Number(s.volume))) {
+    setMetatronVolume(s.volume);
+  } else {
+    restoreMetatronVolume();
+  }
+  setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
+  if (!(s.active && s.audio)) v.muted = true;   // Chair clip audio follows the armed stage audio setting
+  if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
+  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("NEFERTITI + DJ DEHRTAY DOG LIVE", s.text);}}catch(e){}}
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
 }
 setInterval(pollStage, 4000);
 pollStage();
 // ---- INIT ----
+if (WORKER_BASE && !$("stage-worker-url").value) $("stage-worker-url").value = WORKER_BASE;
 lockStageOwner("Owner controls locked. Verify access to operate the stage.");
 EX.forEach(([id]) => probe(id));
-setTimeout(() => setExp("idle"), 600);
+setTimeout(() => {
+  // Do not let startup idle overwrite an active Metatron cue.
+  if (!window.currentExpression || window.currentExpression === "idle") {
+    setExp("idle");
+  }
+}, 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 </script>
+<!-- === owner-vs-public - FINAL === -->
+<section id="public-stage" style="text-align:center;padding:20px 0">
+<!-- WELCOME VIDEO - plays on WELCOME cue, Episode 001 opener -->
+<video id="dj-welcome-video" data-intro="1" playsinline preload="auto" muted style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
+  <source src="./welcome-new-1k.mp4" type="video/mp4">
+</video>
+<h2>H.A.L.L.EL Sorority LARPS:</h2>
+<p>Live from Micdom AI Records - Global Footprints Casts</p>
+<div id="public-live-indicator" role="status">LIVE</div>
+<p class="small">Audience view. No controls, no setup, no backstage.</p>
+</section>
+<section id="owner-panel" style="display:none;border:2px solid #d4af37;border-radius:14px;padding:16px;margin:16px 0">
+<h2>OWNER - Metatron Control</h2>
+<p class="small">Owner side only. On your phone only. Never shared to TikTok Live.</p>
+<p>Worker: https://hermes-toth-agent-worker.pharangels.workers.dev</p>
+<div id="owner-system-status" style="display:none">
+<p>Toth: <span id="status-toth">-</span></p>
+<p>H.A.L.L.EL: <span id="status-hallel">-</span></p>
+<p>Delivery: <span>INTERNAL - server-to-server only</span></p>
+</div>
+<button onclick="enterGameModeForShare()" style="padding:14px 20px;background:#ffe7a0;color:#111;font-weight:900;border-radius:10px">ENTER GAME MODE FOR SHARING</button>
+<p class="small">Hides ALL owner controls. Shows ONLY clean public stage. Metatron keeps running while you rest your eye.</p>
+</section>
+<script>
+const isOwnerView = new URLSearchParams(location.search).get("owner") === "1";
+if(isOwnerView){
+document.getElementById("owner-panel").style.display = "block";
+document.getElementById("owner-system-status").style.display = "block";
+checkOwnerHealth();
+}
+async function checkOwnerHealth(){
+try{
+const r = await fetch("https://hermes-toth-agent-worker.pharangels.workers.dev/api/health", {cache:"no-store"});
+const j = await r.json();
+document.getElementById("status-toth").textContent = (j.ok||j.status==="online") ? "LIVE" : "UNKNOWN";
+}catch(e){ document.getElementById("status-toth").textContent = "OFFLINE"; }
+try{
+const r2 = await fetch("https://angels-hosts-api3.pharangels.workers.dev/api/health", {cache:"no-store"});
+const j2 = await r2.json();
+document.getElementById("status-hallel").textContent = (j2.status==="alive") ? "LIVE v"+(j2.version||"28.0") : "UNKNOWN";
+}catch(e){ document.getElementById("status-hallel").textContent = "OFFLINE"; }
+}
+function enterGameModeForShare(){
+document.getElementById("owner-panel").style.display = "none";
+document.body.classList.add("game-mode-on");
+if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+alert("GAME MODE ON: Owner controls hidden. Sharing ONLY clean public stage.");
+document.body.addEventListener("click", function exitGame(e){
+if(e.detail===3){
+document.body.classList.remove("game-mode-on");
+if(isOwnerView) document.getElementById("owner-panel").style.display = "block";
+document.body.removeEventListener("click", exitGame);
+}
+});
+}
+</script>
+<style>
+body.game-mode-on nav, body.game-mode-on header nav, body.game-mode-on footer { display:none !important; }
+body.game-mode-on #owner-panel { display:none !important; }
+</style>
+<!-- === END owner-vs-public === -->
+<script>
+(function(){
+  function handleWelcome(expr){
+    var v = document.getElementById('dj-welcome-video');
+    if(!v) return;
+    if(false && expr === 'welcome' && !window.__episodeIntroPlayed){ window.__episodeIntroPlayed=true;
+      if(!v.paused && v.style.display==='block'){ return; }
+      if(window.__fromAudience){ return; }   // audience hellos get the short clip, not the 3-minute opener
+      v.style.cssText = 'display:block;position:fixed;inset:0;width:100%;height:100%;max-width:none;margin:0;border:0;border-radius:0;object-fit:contain;background:#000;z-index:9999;pointer-events:none';   // stage-fix2-applied
+      v.muted = !(window.__soundUnlocked && window.__stageAudio);
+      window.__welcomeStopped = false;
+      v.onpause = null; // intro plays once, no pause-replay
+      v.currentTime = 0;
+      v.play().catch(()=>{});
+      v.onended = function(){ v.style.display='none'; };
+    } else {
+      // Don't hide while video is still playing - let it finish
+      if(v.paused){ v.style.display='none'; }
+    }
+  }
+  // Tap anywhere = unmute + play with sound (Chrome requires one tap)
+  document.addEventListener('click', function(){
+    var v = document.getElementById('dj-welcome-video');
+    if(v && v.style.display==='block' && v.muted){ v.muted=false; v.play().catch(()=>{}); }
+  });
+  var lastExpr = '';
+  setInterval(function(){
+    var el = document.querySelector('[data-expression]');
+    var expr = el ? el.getAttribute('data-expression') : '';
+    if(!expr){ expr = window.currentExpression || ''; }
+    if(expr && expr !== lastExpr){
+      lastExpr = expr;
+      handleWelcome(expr);
+    }
+  }, 500);
+  window.stopWelcomeVideo = function(){
+    var v = document.getElementById('dj-welcome-video');
+    window.__welcomeStopped = true;
+    if(v){ try{ v.pause(); }catch(e){} v.style.display='none'; }
+    lastExpr = '';
+  };
+  document.addEventListener('visibilitychange', function(){
+    var v = document.getElementById('dj-welcome-video');
+    // intro does not auto-replay on tab return
+  });
+  window.playWelcomeVideo = function(){
+    var v = document.getElementById('dj-welcome-video');
+    if(v){ v.style.display='block'; v.currentTime=0; v.play(); }
+  };
+})();
+</script>
+
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=0.7;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>

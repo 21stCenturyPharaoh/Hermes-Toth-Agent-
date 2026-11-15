@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import api from "../js/workers/api.js";
+import { DEFAULT_CTA_FIELDS } from "../js/workers/episode-agent.js";
 
 class MockKV {
   constructor() {
@@ -426,4 +427,121 @@ test("device polling rejects an incorrect device token", async () => {
     headers: auth("wrong-device-token")
   });
   assert.equal(response.status, 401);
+});
+
+
+function previewFixture() {
+  return {
+    title: "CTA Preview Test",
+    subtitle: "Nefertiti + DJ Dehrtay Dog",
+    segments: [
+      { role: "welcome", title: "Welcome", expression: "welcome", volume: 70, dialogue: "Welcome to the Chamber." },
+      { role: "scripture_question", title: "Question", expression: "thinking", volume: 70, dialogue: "What does the passage say?" },
+      { role: "history_context", title: "Context", expression: "neutral", volume: 70, dialogue: "Here is the verified context." },
+      { role: "hebrews_teaching", title: "Teaching", expression: "breaking", volume: 70, dialogue: "Let us examine the teaching." },
+      { role: "signoff", title: "Signoff", expression: "signoff", volume: 70, dialogue: "Thank you for joining us." }
+    ],
+    ...DEFAULT_CTA_FIELDS,
+    standing_disclaimer: "The LARP is a game. The real Volunteer Exchange Portal remains the operational system.",
+    larp_posts: { day:1, episode:0, title:"WELCOME TO HALLEL", opening_lines:"Travelers of the Chamber.",
+      play_today:["Read all twelve Steps of the Hallel framework."], chat_poll:"OBSERVER / LIGHT / FULL + your name",
+      pinned_comment:"Choose your depth. The LARP is a game.", closing_cta:"Choose your depth. Keep one foot in the real." }
+  };
+}
+test("preview fixture endpoint stores only an isolated preview fixture and accepts LARP Episode 0", async () => {
+  const env=setup(); env.ENVIRONMENT="preview";
+  const response=await call(env,"/api/v1/micdom/episode/fixture-test",{method:"POST",
+    headers:{...auth("owner-test-token"),"Content-Type":"application/json"},body:JSON.stringify(previewFixture())});
+  const data=await response.json();
+  assert.equal(response.status,201); assert.equal(data.previewOnly,true); assert.equal(data.totalSegments,5);
+  assert.equal(data.larpPosts.episode,0);
+  assert.deepEqual(data.ctaDestinations.sort(),["registry","rumble","stripe","routenote","youtube"].sort());
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.size,1); assert.equal(env.EVIDENCE_VAULT.data.size,0);
+  const key=[...env.EVIDENCE_PREVIEW_VAULT.data.keys()][0];
+  assert.match(key,/^episode:micdom:fixture:/);
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.has("episode:micdom:current"),false);
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.has("stage:micdom:cue"),false);
+});
+test("production cannot access the preview fixture endpoint", async () => {
+  const env=setup();
+  const response=await call(env,"/api/v1/micdom/episode/fixture-test",{method:"POST",
+    headers:{...auth("owner-test-token"),"Content-Type":"application/json"},body:JSON.stringify(previewFixture())});
+  assert.equal(response.status,404); assert.equal(env.EVIDENCE_VAULT.data.size,0);
+  assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.size,0);
+});
+test("preview fixture rejects negative LARP episode numbers without writing", async () => {
+  const env=setup(); env.ENVIRONMENT="preview"; const fixture=previewFixture(); fixture.larp_posts.episode=-1;
+  const response=await call(env,"/api/v1/micdom/episode/fixture-test",{method:"POST",
+    headers:{...auth("owner-test-token"),"Content-Type":"application/json"},body:JSON.stringify(fixture)});
+  assert.equal(response.status,400); assert.equal(env.EVIDENCE_PREVIEW_VAULT.data.size,0);
+});
+
+
+test("Preview fixture handoff loads in Preview and is rejected in Production", async () => {
+  const fixtureId = "123e4567-e89b-42d3-a456-426614174000";
+  const fixture = {
+    title: "PREVIEW HANDOFF TEST",
+    subtitle: "Isolated fixture playback",
+    ...DEFAULT_CTA_FIELDS,
+    segments: [
+      { role: "welcome", volume: 70, title: "WELCOME", expression: "welcome", dialogue: "Preview welcome." },
+      { role: "scripture_question", volume: 70, title: "QUESTION", expression: "thinking", dialogue: "Preview question." },
+      { role: "history_context", volume: 70, title: "CONTEXT", expression: "neutral", dialogue: "Preview context." },
+      { role: "hebrews_teaching", volume: 70, title: "TEACHING", expression: "breaking", dialogue: "Preview teaching." },
+      { role: "signoff", volume: 70, title: "SIGNOFF", expression: "signoff", dialogue: "Preview signoff." }
+    ],
+    fixtureId,
+    previewOnly: true,
+    validatedAt: new Date().toISOString()
+  };
+
+  const preview = setup();
+  preview.ENVIRONMENT = "preview";
+  await preview.EVIDENCE_PREVIEW_VAULT.put(
+    "episode:micdom:fixture:" + fixtureId,
+    JSON.stringify(fixture)
+  );
+  await preview.EVIDENCE_PREVIEW_VAULT.put(
+    "stage:micdom:session",
+    JSON.stringify({
+      armedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 600000).toISOString(),
+      audio: false
+    })
+  );
+
+  const previewResponse = await call(preview, "/api/v1/micdom/episode/start", {
+    method: "POST",
+    headers: { ...auth("owner-test-token"), "Content-Type": "application/json" },
+    body: JSON.stringify({ fixtureId })
+  });
+  const previewData = await previewResponse.json();
+
+  assert.equal(previewResponse.status, 200, JSON.stringify(previewData));
+  assert.equal(previewData.ok, true);
+  assert.equal(previewData.episode.title, "PREVIEW HANDOFF TEST");
+  assert.equal(previewData.episode.currentSegment, 1);
+  assert.equal(previewData.cue.text.includes("Preview welcome."), true);
+
+  const production = setup();
+  await production.EVIDENCE_VAULT.put(
+    "stage:micdom:session",
+    JSON.stringify({
+      armedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 600000).toISOString(),
+      audio: false
+    })
+  );
+
+  const productionResponse = await call(production, "/api/v1/micdom/episode/start", {
+    method: "POST",
+    headers: { ...auth("owner-test-token"), "Content-Type": "application/json" },
+    body: JSON.stringify({ fixtureId })
+  });
+  const productionData = await productionResponse.json();
+
+  assert.equal(productionResponse.status, 404);
+  assert.equal(productionData.ok, false);
+  assert.equal(production.EVIDENCE_VAULT.data.has("episode:micdom:current"), false);
+  assert.equal(production.EVIDENCE_PREVIEW_VAULT.data.size, 0);
 });
