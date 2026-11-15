@@ -247,7 +247,33 @@ export async function handleEpisodeRoute(request, env, path, method, origin, d) 
       return jsonResponse({ ok: false, error: body.error }, 400, origin);
     }
 
-    const episode = await createEpisode(env);
+    // Production: if caller sends a validated prepared episode (e.g. Shenzhen / Nefertiti Global Footprints), use it.
+    // Otherwise fall back to AI-generated Melchizedek Episode 001.
+    let episode = null;
+    const candidate = body?.episode || body;
+    if (candidate && Array.isArray(candidate.segments)) {
+      const prepared = {
+        title: candidate.title,
+        subtitle: candidate.subtitle || "",
+        segments: candidate.segments
+      };
+      if (validEpisode(prepared)) {
+        episode = {
+          title: prepared.title,
+          subtitle: prepared.subtitle,
+          segments: prepared.segments.map(seg => ({
+            role: seg.role,
+            title: clean(seg.title, 100),
+            expression: seg.expression,
+            volume: Number.isFinite(Number(seg.volume)) ? Number(seg.volume) : 70,
+            dialogue: clean(seg.dialogue, 1200)
+          }))
+        };
+      } else if (body?.episode || body?.segments) {
+        return jsonResponse({ ok: false, error: "Prepared episode failed validation" }, 400, origin);
+      }
+    }
+    if (!episode) episode = await createEpisode(env);
     episode.id = "MICDOM-EP001";
     episode.organization = "micdom";
     episode.status = "ready";
