@@ -20,33 +20,38 @@ const FALLBACK = {
   segments: [
     {
       role: "welcome",
+      volume: 70,
       title: "THE QUESTION",
       expression: "welcome",
-      dialogue: "Welcome to the Pharaoh Chamber. Tonight, Metatron and DJ Dehrtay Dog investigate a remarkable biblical figure: Melchizedek. Who was this king and priest, and why does his name appear in the story of Abraham?"
+      dialogue: "Welcome to the Pharaoh Chamber. Nefertiti here with DJ Dehrtay Dog. Tonight, we investigate a remarkable biblical figure: Melchizedek. Who was this king and priest, and why does his name appear in the story of Abraham?"
     },
     {
       role: "scripture_question",
+      volume: 70,
       title: "THE FIRST APPEARANCE",
       expression: "thinking",
       dialogue: "Genesis chapter 14, verses 18 to 20, introduces Melchizedek as king of Salem and priest of God Most High. He brings bread and wine, blesses Abram, and receives a tenth from him. That is what the passage explicitly tells us."
     },
     {
       role: "history_context",
+      volume: 70,
       title: "THE ROYAL PRIEST",
       expression: "neutral",
       dialogue: "Notice the combination: king and priest. Melchizedek blesses Abram in the name of God Most High, possessor of heaven and earth. The text presents him as a priest before the later account of the Levitical priesthood."
     },
     {
       role: "hebrews_teaching",
+      volume: 70,
       title: "THE ORDER",
       expression: "breaking",
       dialogue: "Psalm 110, verse 4, declares: You are a priest forever according to the order of Melchizedek. Hebrews chapter 7 develops this theme. It compares the priesthood of Melchizedek with the priesthood associated with Levi. We should distinguish what the scripture says from later interpretations about his identity."
     },
     {
       role: "signoff",
+      volume: 70,
       title: "THE OPEN QUESTION",
       expression: "signoff",
-      dialogue: "So who is Melchizedek? The biblical text identifies him as king of Salem and priest of God Most High. Hebrews presents him as a significant figure in its teaching about priesthood. His identity has been interpreted in different ways. Read the passages, examine the evidence, and join the discussion. This is Metatron and DJ Dehrtay Dog, from Monrovia to Zion."
+      dialogue: "So who is Melchizedek? The biblical text identifies him as king of Salem and priest of God Most High. Hebrews presents him as a significant figure in its teaching about priesthood. His identity has been interpreted in different ways. Read the passages, examine the evidence, and join the discussion. This is Nefertiti and DJ Dehrtay Dog, from Monrovia to Zion."
     }
   ]
 };
@@ -78,6 +83,8 @@ function validEpisode(value) {
 
   return value.segments.every((segment, index) =>
     segment &&
+    Number.isInteger(segment.volume) &&
+    segment.volume >= 55 && segment.volume <= 85 &&
     segment.role === REQUIRED_ROLES[index] &&
     clean(segment.title, 100) &&
     clean(segment.dialogue, 1200) &&
@@ -93,8 +100,9 @@ async function createEpisode(env) {
   const prompt = `
 Create a five-segment spoken educational episode.
 Title: WHO IS MELCHIZEDEK?
-Host: Metatron, AI VP of Micdom AI Records.
+Narrator and presenter: Nefertiti.
 On-stage co-host: DJ Dehrtay Dog.
+Metatron remains the AI VP and technical automation agent of Micdom AI Records; do not present Metatron as the narrator.
 
 Use only these biblical references:
 Genesis 14:18-20, Psalm 110:4, Hebrews 7.
@@ -113,6 +121,7 @@ Do not omit, duplicate, or reorder roles.
 The first segment must use expression "welcome".
 The final segment must use expression "signoff".
 Choose suitable expressions for the middle segments.
+For every segment choose an integer volume from 55 to 85. This single master level controls DJ clips, sound effects, and spoken narration together. Use 70 as a normal baseline, 60-68 for reflective passages, and 72-82 for emphasis. Avoid abrupt volume jumps. Keep spoken words clear.
 Keep the dialogue creative and natural while following the factual constraints.
 
 Return ONLY JSON:
@@ -120,11 +129,11 @@ Return ONLY JSON:
  "title":"WHO IS MELCHIZEDEK?",
  "subtitle":"short subtitle",
  "segments":[
-  {"role":"welcome","title":"short heading","expression":"welcome","dialogue":"spoken words"},
-  {"role":"scripture_question","title":"short heading","expression":"thinking","dialogue":"spoken words"},
-  {"role":"history_context","title":"short heading","expression":"neutral","dialogue":"spoken words"},
-  {"role":"hebrews_teaching","title":"short heading","expression":"breaking","dialogue":"spoken words"},
-  {"role":"signoff","title":"short heading","expression":"signoff","dialogue":"spoken words"}
+  {"role":"welcome","title":"short heading","expression":"welcome","volume":70,"dialogue":"spoken words"},
+  {"role":"scripture_question","title":"short heading","expression":"thinking","volume":70,"dialogue":"spoken words"},
+  {"role":"history_context","title":"short heading","expression":"neutral","volume":70,"dialogue":"spoken words"},
+  {"role":"hebrews_teaching","title":"short heading","expression":"breaking","volume":70,"dialogue":"spoken words"},
+  {"role":"signoff","title":"short heading","expression":"signoff","volume":70,"dialogue":"spoken words"}
  ]
 }
 Exactly five segments in exactly that order.
@@ -135,7 +144,7 @@ Allowed expressions: welcome, thinking, neutral, nodding, shocked, breaking, sig
     const result = await Promise.race([
       env.AI.run(env.STAGE_AI_MODEL, {
         messages: [
-          { role: "system", content: "You are Metatron, the delegated creative executive and scriptwriter for Micdom AI Records. Follow the user's doctrine and factual constraints." },
+          { role: "system", content: "You are Nefertiti, the female on-air narrator and delegated episode scriptwriter for Micdom AI Records. DJ Dehrtay Dog is your on-stage co-host. Metatron remains the AI VP and technical automation agent, not the narrator. Follow the user's doctrine and factual constraints." },
           { role: "user", content: prompt }
         ],
         max_tokens: 1800
@@ -161,6 +170,7 @@ Allowed expressions: welcome, thinking, neutral, nodding, shocked, breaking, sig
         role: segment.role,
         title: clean(segment.title, 100),
         expression: segment.expression,
+        volume: segment.volume,
         dialogue: clean(segment.dialogue, 1200)
       }))
     };
@@ -184,6 +194,7 @@ async function publishSegment(kv, episode, index) {
   const cue = {
     seq: (previous?.seq || 0) + 1,
     expression: segment.expression,
+    volume: segment.volume,
     source: "metatron",
     text: segment.dialogue,
     title: segment.title,

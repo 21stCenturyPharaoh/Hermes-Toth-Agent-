@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <link rel="manifest" href="/manifest.json">
-<title>Pharaoh Chamber - DJ Dehrtay Dog</title>
+<title>Nefertiti + DJ Dehrtay Dog | Pharaoh Chamber</title>
 <style>
 :root{--gold:#d4af37;--gold2:#ffd54a;--ink:#070604;--dim:#8c6a13}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
@@ -60,7 +60,7 @@ body:not(.open) #audienceFeed { bottom:12px; }
  <div id="prod"><i>EP1</i><i>EP2</i><i>EP3</i></div>
  <div id="chair"><video id="v" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
  <div id="audienceFeed" style="margin:8px 0 0 0;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#111;font-size:14px;line-height:1.4;min-height:44px"></div>
-<div id="lt"><h1>PHARAOH &times; METATRON LIVE</h1><p id="ltp">Chamber ready</p></div>
+<div id="lt"><h1>NEFERTITI + DJ DEHRTAY DOG LIVE</h1><p id="ltp">Chamber ready</p></div>
  <div id="g"><span style="position:absolute;top:4px;left:8px;font-size:11px;color:#f88">profile + viewers</span></div>
 </div>
 <button id="dot" aria-label="Controls"></button>
@@ -94,7 +94,7 @@ body:not(.open) #audienceFeed { bottom:12px; }
  <div class="row c4" id="ex"></div>
  <div class="row c2"><button class="go" id="bStart">START SHOW</button><button id="bNext">NEXT SEGMENT</button><button id="bAsk">ASK METATRON</button><button id="bOk">APPROVE</button><button id="bRepeat">REPEAT</button><button class="stop" id="bStop">EMERGENCY STOP</button></div>
  <div class="row c4" id="sn"></div>
- <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><span></span></div>
+ <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><button class="go" id="bUnlockDjAudio" type="button">UNLOCK DJ AUDIO</button></div>
  <div class="row c2"><label>CROWD VOLUME<input type="range" id="vol" min="0" max="100" value="70"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
  <div class="row c2"><button id="bGuides">GUIDES ON/OFF</button><button class="go" id="bStage">STAGE MODE</button></div>
  <div id="log"></div>
@@ -112,6 +112,8 @@ const AUTO = {welcome:"applause", signoff:"applause", shocked:"ooh", thinking:"w
 // ---- STATE ----
 const $ = id => document.getElementById(id), v = $("v"), P = {}, btn = {};
 let cur = "", last = "", proposal = "", AUDS = [], seg = 0, timer = 0, wl = null, auto = false, soundOn = true, touched = false, keep = true;
+window.__metatronNarrationVolume = 0.7;
+let metatronBaseVolume = null;
 let stageOwnerOK = false;
 let ownerAuthAttempt = 0;
 function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; }
@@ -233,17 +235,9 @@ function show(id){
         log("DJ clip playback blocked: " + id + " (" +
             (error && error.name ? error.name : "unknown") + ")");
 
-        if (!v.muted) {
-          v.muted = true;
-          v.play().then(() => {
-            if (episodeIntro) window.__episodeIntroPlayed = true;
-            log("DJ clip playing muted: " + id);
-          }).catch(fallbackError => {
-            log("DJ clip still failed: " + id + " (" +
-                (fallbackError && fallbackError.name
-                  ? fallbackError.name : "unknown") + ")");
-          });
-        }
+        // Never silently downgrade DJ expression playback to muted.
+        // Keep the failure visible so the owner can unlock audio.
+        log("DJ AUDIO NEEDS OWNER UNLOCK: " + id);
       });
     } else if (episodeIntro) {
       window.__episodeIntroPlayed = true;
@@ -462,8 +456,79 @@ $("dot").onclick = () => document.body.classList.toggle("open");
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && wl && wl.released) wake(); });
 v.addEventListener("ended", () => { if (!keep) setExp("idle"); });
 addEventListener("pointerdown", () => { if (stageOwnerOK) { touched = true; v.muted = !soundOn; } });
-$("vol").oninput = () => { v.volume = $("vol").value/100; };
+function applyMasterVolume(value) {
+  const raw = Number(value);
+  if (!Number.isFinite(raw)) return;
+
+  const level = Math.max(0, Math.min(100, Math.round(raw)));
+  const normalized = level / 100;
+
+  $("vol").value = String(level);
+  v.volume = normalized;
+  window.__metatronNarrationVolume = normalized;
+
+  AUDS.forEach(a => {
+    try { a.volume = normalized; } catch(e) {}
+  });
+
+  const outro = $("dj-welcome-video");
+  if (outro) outro.volume = normalized;
+}
+
+function setMetatronVolume(value) {
+  if (metatronBaseVolume === null) {
+    const current = Number($("vol").value);
+    metatronBaseVolume = Number.isFinite(current) ? current : 70;
+  }
+
+  applyMasterVolume(value);
+  log("Metatron master volume: " + $("vol").value + "%");
+}
+
+function restoreMetatronVolume() {
+  if (metatronBaseVolume === null) return;
+
+  const original = metatronBaseVolume;
+  metatronBaseVolume = null;
+  applyMasterVolume(original);
+  log("Owner volume restored: " + original + "%");
+}
+
+$("vol").oninput = () => applyMasterVolume($("vol").value);
 $("bClip").onclick = e => { soundOn = !soundOn; v.muted = !soundOn; e.target.classList.toggle("on", soundOn); e.target.textContent = "CLIP SOUND " + (soundOn ? "ON" : "OFF"); };
+$("bUnlockDjAudio").onclick = () => {
+  if (!stageOwnerOK) {
+    log("DJ audio unlock denied: verify owner access first.");
+    return;
+  }
+
+  // This click is the owner's direct browser audio gesture.
+  soundOn = true;
+  touched = true;
+  window.__soundUnlocked = true;
+  v.muted = false;
+
+  $("bClip").classList.add("on");
+  $("bClip").textContent = "CLIP SOUND ON";
+
+  if (!v.src) {
+    log("DJ audio unlocked. Select an expression to test sound.");
+    return;
+  }
+
+  const request = v.play();
+  if (request && typeof request.then === "function") {
+    request.then(() => {
+      log("OWNER UNLOCKED DJ AUDIO: " + (window.currentExpression || "current clip"));
+    }).catch(error => {
+      log("DJ AUDIO UNLOCK REJECTED: " +
+          (error && error.name ? error.name : "unknown") +
+          ". Tap UNLOCK DJ AUDIO again.");
+    });
+  } else {
+    log("DJ audio unlock requested for current clip.");
+  }
+};
 // stage-cue-applied
 // stage-buttons-applied
 // ---- OWNER STAGE BUTTONS (arm / halt) - visible only after owner verification ----
@@ -550,16 +615,21 @@ async function pollStage() {
     s = await r.json();
     if (!r.ok || !s || s.ok !== true) throw new Error("bad state");
   } catch (e) { s = { active: false, expression: "idle", audio: false, seq: 0 }; }   // safe visitor mode
-  const key = [s.active, s.expression, s.seq].join(":");
+  const key = [s.active, s.expression, s.seq, s.volume].join(":");
   if (key === lastStageKey) return;
   lastStageKey = key;
   if (!EX.some(x => x[0] === s.expression)) return;
   window.__stageAudio = !!(s.active && s.audio);
   window.__fromAudience = (s.source === "metatron");
+  if (s.active && s.source === "metatron" && Number.isFinite(Number(s.volume))) {
+    setMetatronVolume(s.volume);
+  } else {
+    restoreMetatronVolume();
+  }
   setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
   if (!(s.active && s.audio)) v.muted = true;   // Chair clip audio follows the armed stage audio setting
   if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
-  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("PHARAOH x METATRON LIVE", s.text);}}catch(e){}try{if(window._lastSpoken!==s.seq){window._lastSpoken=s.seq;if(window.speechSynthesis&&s.text){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(s.text);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}}}catch(e){}}
+  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("NEFERTITI + DJ DEHRTAY DOG LIVE", s.text);}}catch(e){}}
   log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
 }
 setInterval(pollStage, 4000);
@@ -582,7 +652,7 @@ if ("serviceWorker" in navigator) addEventListener("load", () => navigator.servi
 <video id="dj-welcome-video" data-intro="1" playsinline preload="auto" muted style="display:none; width:100%; max-width:720px; border:2px solid gold; border-radius:12px; margin:12px auto;">
   <source src="./welcome-new-1k.mp4" type="video/mp4">
 </video>
-<h2>DJ Dehrtay Dog + Pharaoh Chamber</h2>
+<h2>H.A.L.L.EL Sorority LARPS:</h2>
 <p>Live from Micdom AI Records - Global Footprints Casts</p>
 <div id="public-live-indicator" role="status">LIVE</div>
 <p class="small">Audience view. No controls, no setup, no backstage.</p>
@@ -689,6 +759,6 @@ body.game-mode-on #owner-panel { display:none !important; }
 })();
 </script>
 
-<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=0.7;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>
