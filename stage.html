@@ -134,7 +134,7 @@ function lockStageOwner(message) {
 
 $("stage-owner-login").addEventListener("click", async () => {
   const attempt = ++ownerAuthAttempt;
-  const base = ($("stage-worker-url").value.trim() || WORKER_BASE).replace(/\/+$/, "");
+  const base = (WORKER_BASE || $("stage-worker-url").value.trim()).replace(/\/+$/, "");
   const token = $("stage-owner-token").value.trim();
 
   if (!/^https:\/\//i.test(base) || !token) {
