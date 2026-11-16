@@ -415,7 +415,7 @@ $("bStart").onclick = async () => {
   window.__episodeLines = (shenzhen && Array.isArray(shenzhen.segments)) ? shenzhen.segments.map(s => "PHARAOH CHAMBER: " + (s.title || "")) : null;
   if (shenzhen) log("NEFERTITI EPISODE LOADED: " + (shenzhen.title || "Shenzhen") + " [" + shenzhenFetchStatus + "]");
   else { log("Shenzhen file not found - NOT starting fallback. [" + shenzhenFetchStatus + "]"); return; }
-  const d = await episodeCall("start", shenzhen || {});
+  const d = (log("SHENZHEN SEGMENTS: " + (shenzhen && Array.isArray(shenzhen.segments) ? shenzhen.segments.length : "none")), await episodeCall("start", { title: shenzhen.title, subtitle: shenzhen.subtitle || "", segments: shenzhen.segments }));
 
   if (!d) {
     if ((lastEpisodeError || "").includes("already running")) {
