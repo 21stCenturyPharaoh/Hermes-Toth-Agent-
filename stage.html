@@ -400,6 +400,16 @@ async function advanceEpisode(source) {
 }
 
 // ---- H.A.L.L.EL LARP + CTA lanes (Stage only, from full Shenzhen JSON) ----
+function larpTickerText(segIdx) {
+  const full = window.__shenzhenFull || null;
+  if (!full) return null;
+  const larp = full.larp_posts || null;
+  const ctas = Array.isArray(full.live_ctas) ? full.live_ctas : [];
+  const cta = ctas[Math.min(segIdx, ctas.length - 1)] || "";
+  const poll = larp && larp.chat_poll ? " | POLL: " + larp.chat_poll : "";
+  const title = larp ? "H.A.L.L.EL LARP Day " + (larp.day || "1") + " Ep " + (larp.episode || "0") + ": " + (larp.title || "WELCOME TO HALLEL") : "";
+  return title + (cta ? " | " + cta : "") + poll + " | TIKTOK LIVE - MONROVIA TO ZION - PHARAOH CHAMBER";
+}
 function renderLarpCtas(segIdx) {
   const full = window.__shenzhenFull || null;
   if (!full) return;
@@ -424,6 +434,11 @@ function renderLarpCtas(segIdx) {
     ctaEl.innerHTML = (cta ? "<b>LIVE CTA:</b> " + cta : "") + (closing ? "<br><b>CLOSING:</b> " + closing : "");
   }
   if (disEl && full.standing_disclaimer) disEl.textContent = full.standing_disclaimer;
+  try {
+    const tick = larpTickerText(segIdx);
+    const tickSpan = document.querySelector("#tick span");
+    if (tick && tickSpan) tickSpan.textContent = tick;
+  } catch (e) {}
 }
 function duckDjForNarration(on) {
   try {
