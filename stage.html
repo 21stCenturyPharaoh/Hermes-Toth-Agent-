@@ -97,7 +97,10 @@ body:not(.open) #audienceFeed { bottom:12px; }
  <div class="row c2"><button class="on" id="bClip">CLIP SOUND ON</button><button class="go" id="bUnlockDjAudio" type="button">UNLOCK DJ AUDIO</button></div>
  <div class="row c2"><label>CROWD VOLUME<input type="range" id="vol" min="0" max="100" value="70"></label><button id="bAuto">AUTO SOUNDS OFF</button></div>
  <div class="row c2"><button id="bGuides">GUIDES ON/OFF</button><button class="go" id="bStage">STAGE MODE</button></div>
- <div id="log"></div>
+ <div id="larpPanel" style="margin-top:10px;padding:10px;border:1px solid #d4af37;border-radius:8px"></div>
+<div id="ctaPanel" style="margin-top:8px;padding:10px;border:1px solid #888;border-radius:8px"></div>
+<div id="disclaimerPanel" style="margin-top:8px;font-size:11px;opacity:0.8"></div>
+<div id="log"></div>
  </div>
 </div>
 <script>
@@ -307,7 +310,7 @@ const HALLEL_LINES = [
 "PHARAOH CHAMBER: So Hebrews is using him as a pattern, not a biography?",
 "PHARAOH CHAMBER: The open question is the point. Read it for yourself."
 ];
-function showHallel(i){ const el=document.getElementById("audienceFeed"); const L = window.__episodeLines || HALLEL_LINES; if(el) el.textContent = L[i] || L[0]; }
+function showHallel(i){ const el=document.getElementById("audienceFeed"); const L = window.__episodeLines || HALLEL_LINES; if(el) el.textContent = L[i] || L[0]; renderLarpCtas(i); duckDjForNarration(true); }
 let episodeTimer = 0;
 let isAdvancing = false;
 let lastEpisodeHTTPStatus = 0;
@@ -396,6 +399,41 @@ async function advanceEpisode(source) {
   if (window.__episodeRunning) episodeAuto();
 }
 
+// ---- H.A.L.L.EL LARP + CTA lanes (Stage only, from full Shenzhen JSON) ----
+function renderLarpCtas(segIdx) {
+  const full = window.__shenzhenFull || null;
+  if (!full) return;
+  const larp = full.larp_posts || null;
+  const ctas = Array.isArray(full.live_ctas) ? full.live_ctas : [];
+  const larpEl = document.getElementById("larpPanel");
+  const ctaEl = document.getElementById("ctaPanel");
+  const disEl = document.getElementById("disclaimerPanel");
+  if (larpEl && larp) {
+    const acts = Array.isArray(larp.play_today) ? larp.play_today.map(a => "<li>" + a + "</li>").join("") : "";
+    const opening = Array.isArray(larp.opening_lines) ? larp.opening_lines.join(" ") : (larp.opening_lines || "");
+    larpEl.innerHTML = "<b>H.A.L.L.EL SORORITY LARP — Day " + (larp.day || "1") + ", Episode " + (larp.episode || "0") + "</b><br>"
+      + "<i>" + (larp.title || "") + "</i><br>"
+      + "<p>" + opening + "</p>"
+      + (acts ? "<ol>" + acts + "</ol>" : "")
+      + (larp.chat_poll ? "<p><b>POLL:</b> " + larp.chat_poll + "</p>" : "")
+      + (larp.pinned_comment ? "<p><b>PINNED:</b> " + larp.pinned_comment + "</p>" : "");
+  }
+  if (ctaEl) {
+    const cta = ctas[Math.min(segIdx, ctas.length - 1)] || null;
+    const closing = (segIdx >= 4 && larp && larp.closing_cta) ? larp.closing_cta : "";
+    ctaEl.innerHTML = (cta ? "<b>LIVE CTA:</b> " + cta : "") + (closing ? "<br><b>CLOSING:</b> " + closing : "");
+  }
+  if (disEl && full.standing_disclaimer) disEl.textContent = full.standing_disclaimer;
+}
+function duckDjForNarration(on) {
+  try {
+    const v = document.querySelector("video");
+    if (v) v.volume = on ? 0.25 : 0.25; // DJ MP4 always capped at 25%, narration is separate lane at 100%
+    // Narration lane (speechSynthesis / narration audio) stays at full volume
+    if (window.__narrationAudio) window.__narrationAudio.volume = 1.0;
+  } catch (e) {}
+}
+
 $("bStart").onclick = async () => {
   if (!stageOwnerOK) { log("START SHOW blocked: owner not verified - tap VERIFY OWNER ACCESS first"); return; }
   if (isAdvancing) { log("START SHOW blocked: segment still advancing - wait 3s and tap again"); return; }
@@ -412,7 +450,9 @@ $("bStart").onclick = async () => {
     shenzhenFetchStatus = "HTTP " + r.status;
     if (r.ok) shenzhen = await r.json();
   } catch (e) { shenzhen = null; shenzhenFetchStatus = "fetch threw: " + (e && e.message ? e.message : String(e)); }
+  window.__shenzhenFull = shenzhen;
   window.__episodeLines = (shenzhen && Array.isArray(shenzhen.segments)) ? shenzhen.segments.map(s => "PHARAOH CHAMBER: " + (s.title || "")) : null;
+  if (window.__shenzhenFull) renderLarpCtas(0);
   if (shenzhen) log("NEFERTITI EPISODE LOADED: " + (shenzhen.title || "Shenzhen") + " [" + shenzhenFetchStatus + "]");
   else { log("Shenzhen file not found - NOT starting fallback. [" + shenzhenFetchStatus + "]"); return; }
   const d = (log("SHENZHEN SEGMENTS: " + (shenzhen && Array.isArray(shenzhen.segments) ? shenzhen.segments.length : "none")), await episodeCall("start", { title: shenzhen.title, subtitle: shenzhen.subtitle || "", segments: shenzhen.segments }));
