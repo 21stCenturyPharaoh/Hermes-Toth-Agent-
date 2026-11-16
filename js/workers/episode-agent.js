@@ -250,7 +250,9 @@ export async function handleEpisodeRoute(request, env, path, method, origin, d) 
     // Production: if caller sends a validated prepared episode (e.g. Shenzhen / Nefertiti Global Footprints), use it.
     // Otherwise fall back to AI-generated Melchizedek Episode 001.
     let episode = null;
-    const candidate = body?.episode || body;
+    // readJSONBody returns { value: <parsed JSON> }, so unwrap it
+    const payload = (body && body.value && typeof body.value === "object") ? body.value : body;
+    const candidate = payload?.episode || payload;
     if (candidate && Array.isArray(candidate.segments)) {
       const prepared = {
         title: candidate.title,
@@ -269,13 +271,13 @@ export async function handleEpisodeRoute(request, env, path, method, origin, d) 
             dialogue: clean(seg.dialogue, 1200)
           }))
         };
-      } else if (body?.episode || body?.segments) {
+      } else if (payload?.episode || payload?.segments) {
         return jsonResponse({ ok: false, error: "Prepared episode failed validation" }, 400, origin);
       }
     }
     if (!episode) {
       // Fail closed: Stage must send a prepared episode. Never silently make Melchizedek.
-      return jsonResponse({ ok: false, error: "No prepared episode sent - received keys: [" + Object.keys(body || {}).join(",") + "] content-length: " + (request.headers.get("content-length") || "?") }, 400, origin);
+      return jsonResponse({ ok: false, error: "No prepared episode sent - received keys: [" + Object.keys(payload || {}).join(",") + "] content-length: " + (request.headers.get("content-length") || "?") }, 400, origin);
     }
     episode.id = "MICDOM-EP001";
     episode.organization = "micdom";
