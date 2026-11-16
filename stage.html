@@ -397,7 +397,8 @@ async function advanceEpisode(source) {
 }
 
 $("bStart").onclick = async () => {
-  if (!stageOwnerOK || isAdvancing) return;
+  if (!stageOwnerOK) { log("START SHOW blocked: owner not verified - tap VERIFY OWNER ACCESS first"); return; }
+  if (isAdvancing) { log("START SHOW blocked: segment still advancing - wait 3s and tap again"); return; }
 
   clearTimeout(episodeTimer);
   window.__outroPlayed = false;
