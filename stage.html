@@ -307,7 +307,7 @@ const HALLEL_LINES = [
 "PHARAOH CHAMBER: So Hebrews is using him as a pattern, not a biography?",
 "PHARAOH CHAMBER: The open question is the point. Read it for yourself."
 ];
-function showHallel(i){ const el=document.getElementById("audienceFeed"); if(el) el.textContent = HALLEL_LINES[i] || HALLEL_LINES[0]; }
+function showHallel(i){ const el=document.getElementById("audienceFeed"); const L = window.__episodeLines || HALLEL_LINES; if(el) el.textContent = L[i] || L[0]; }
 let episodeTimer = 0;
 let isAdvancing = false;
 let lastEpisodeHTTPStatus = 0;
@@ -410,6 +410,7 @@ $("bStart").onclick = async () => {
     const r = await fetch("./episodes/prepared/nefertiti-shenzhen.json", { cache: "no-store" });
     if (r.ok) shenzhen = await r.json();
   } catch (e) { shenzhen = null; }
+  window.__episodeLines = (shenzhen && Array.isArray(shenzhen.segments)) ? shenzhen.segments.map(s => "PHARAOH CHAMBER: " + (s.title || "")) : null;
   if (shenzhen) log("NEFERTITI EPISODE LOADED: " + (shenzhen.title || "Shenzhen"));
   else log("Shenzhen file not found - falling back to Melchizedek");
   const d = await episodeCall("start", shenzhen || {});
