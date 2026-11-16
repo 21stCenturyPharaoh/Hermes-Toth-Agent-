@@ -273,7 +273,10 @@ export async function handleEpisodeRoute(request, env, path, method, origin, d) 
         return jsonResponse({ ok: false, error: "Prepared episode failed validation" }, 400, origin);
       }
     }
-    if (!episode) episode = await createEpisode(env);
+    if (!episode) {
+      // Fail closed: Stage must send a prepared episode. Never silently make Melchizedek.
+      return jsonResponse({ ok: false, error: "No prepared episode sent - Stage must fetch Shenzhen JSON first" }, 400, origin);
+    }
     episode.id = "MICDOM-EP001";
     episode.organization = "micdom";
     episode.status = "ready";
