@@ -406,13 +406,15 @@ $("bStart").onclick = async () => {
   window.__episodeRunning = false;
 
   let shenzhen = null;
+  let shenzhenFetchStatus = "not attempted";
   try {
-    const r = await fetch("./episodes/prepared/nefertiti-shenzhen.json", { cache: "no-store" });
+    const r = await fetch("https://micdom-records.pharaoh-conglomerate.org/episodes/prepared/nefertiti-shenzhen.json", { cache: "no-store" });
+    shenzhenFetchStatus = "HTTP " + r.status;
     if (r.ok) shenzhen = await r.json();
-  } catch (e) { shenzhen = null; }
+  } catch (e) { shenzhen = null; shenzhenFetchStatus = "fetch threw: " + (e && e.message ? e.message : String(e)); }
   window.__episodeLines = (shenzhen && Array.isArray(shenzhen.segments)) ? shenzhen.segments.map(s => "PHARAOH CHAMBER: " + (s.title || "")) : null;
-  if (shenzhen) log("NEFERTITI EPISODE LOADED: " + (shenzhen.title || "Shenzhen"));
-  else log("Shenzhen file not found - falling back to Melchizedek");
+  if (shenzhen) log("NEFERTITI EPISODE LOADED: " + (shenzhen.title || "Shenzhen") + " [" + shenzhenFetchStatus + "]");
+  else { log("Shenzhen file not found - NOT starting fallback. [" + shenzhenFetchStatus + "]"); return; }
   const d = await episodeCall("start", shenzhen || {});
 
   if (!d) {
