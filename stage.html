@@ -121,7 +121,8 @@ let stageOwnerOK = false;
 let ownerAuthAttempt = 0;
 function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; }
 function lt_setNarration(txt){ window.__currentNarration = txt; window.__currentSegmentText = txt; }
-function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
+function lt(h,p){
+  try{ var _args=[].slice.call(arguments); var _n=_args[1]||_args[0]||""; if(typeof _n==="string" && _n){ window.__currentNarration=_n; window.__currentSegmentText=_n; } }catch(e){} $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
 
 function lockStageOwner(message) {
   ownerAuthAttempt++; ctlToken = ""; clearTimeout(window.episodeAdvanceTimer);
@@ -480,11 +481,11 @@ function renderLarpCtas(segIdx) {
   if (ctaEl) {
     const cta = ctas[Math.min(segIdx, ctas.length - 1)] || null;
     const closing = (segIdx >= 4 && larp && larp.closing_cta) ? larp.closing_cta : "";
-    ctaEl.innerHTML = (cta ? "<b>LIVE CTA:</b> " + cta : "") + (closing ? "<br><b>CLOSING:</b> " + closing : "");
+    var ctaText = (typeof cta === "object" && cta) ? (cta.text || cta.title || cta.label || JSON.stringify(cta)) : cta; ctaEl.innerHTML = (ctaText ? "<b>LIVE CTA:</b> " + ctaText : "") + (closing ? "<br><b>CLOSING:</b> " + closing : "");
   }
   if (disEl && full.standing_disclaimer) disEl.textContent = full.standing_disclaimer;
   try {
-    const tick = larpTickerText(segIdx);
+    const tick = (window.__currentNarration || window.__currentSegmentText || ''); // TICKER = Nefertiti narration, NOT LARP
     const tickSpan = document.querySelector("#tick span");
     if (tick && tickSpan) tickSpan.textContent = tick;
   } catch (e) {}
