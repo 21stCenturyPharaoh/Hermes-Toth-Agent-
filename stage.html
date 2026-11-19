@@ -446,6 +446,13 @@ function renderLarpEp1() {
   } catch (e) {}
 }
 
+
+function stripEntityTags(txt) {
+  if (!txt) return txt;
+  return String(txt).replace(/【entity-[^¦]+¦canonical_name=([^】]+)】/g, "$1").replace(/【[^】]*】/g, "").replace(/¦/g, "").replace(/canonical_name=/g, "");
+}
+function nefertitiVoiceFor(seg) { return "Nefertiti"; }
+
 function renderLarpCtas(segIdx) {
   const full = window.__shenzhenFull || null;
   if (!full) return;
