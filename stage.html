@@ -349,7 +349,7 @@ function episodeAuto() {
   clearTimeout(episodeTimer);
   episodeTimer = setTimeout(() => {
     advanceEpisode("automatic");
-  }, 15000);
+  }, 60000);
 }
 
 async function advanceEpisode(source) {
@@ -410,6 +410,42 @@ function larpTickerText(segIdx) {
   const title = larp ? "H.A.L.L.EL LARP Day " + (larp.day || "1") + " Ep " + (larp.episode || "0") + ": " + (larp.title || "WELCOME TO HALLEL") : "";
   return title + (cta ? " | " + cta : "") + poll + " | TIKTOK LIVE - MONROVIA TO ZION - PHARAOH CHAMBER";
 }
+
+// --- H.A.L.L.EL LARP EP 1: CHOOSE YOUR PERSONA (19 Nov 2026) ---
+const LARP_EP1 = {
+  day: 2, episode: 1, title: "CHOOSE YOUR PERSONA",
+  standing_disclaimer: "The LARP is a game. The real Volunteer Exchange Portal remains the operational system for actual volunteer registration, missions, records, and recognition. The LARP adds the story; the Portal provides the structure. LARP points, badges, titles, and ranks are fictional heraldry — they carry no real-world authority, status, or guaranteed income. Actual volunteer activity and records remain subject to their actual terms, documentation, and responsible parties.",
+  opening: "Every legend starts with a name that someone chose on purpose. Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords. Tonight, stand before the Mirror of First Names. You may enter as yourself — the bravest persona of all — or personify a Humanitarian Angel or Lady inspired by the Autonomous Synthetic Assets, the seven Angel Specialists, or the creative identities connected to Micdom Records and its 88s.",
+  play_today: ["1. Choose your name, emblem, Order, and Consulate.", "2. Write a 3-line persona creed: why does your character serve?", "3. Pick one of DJ Dehrtay Dog's expression reactions as your signature look."],
+  synthetic_on_duty: "Raguel — profile verification and compliance. Your persona is verified in-story by Raguel's seal.",
+  badge: "The Named (in-game only)",
+  golden_rule: "This isn't about pretending to have powers you don't have. It's about imagination, teamwork, leadership, creativity, and service.",
+  chat_poll: "Drop your PERSONA NAME + 3-LINE CREED. Best creed gets pinned.",
+  pinned_comment: "Day 2 – Episode 1: Choose Your Persona. Drop PERSONA NAME + 3-LINE CREED. Badge: The Named (in-game). Follow • Share • Registry: registry.pharaoh-conglomerate.org • Stripe (optional) • YouTube & Rumble @MicdomAIRecords",
+  mid_cta: "Visit the Human Rights Angels Registry and Affiliate Programs at registry.pharaoh-conglomerate.org. Extended content on Rumble @MicdomAIRecords and YouTube @MicdomAIRecords. Music on RouteNote under MicdomAIRecords. Optional support: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00.",
+  closing: "Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world. The Mirror remains open."
+};
+function renderLarpEp1() {
+  const el = document.getElementById("larpPanel");
+  if (!el) return;
+  el.innerHTML = ""
+    + "<b>H.A.L.L.EL LARP Day " + LARP_EP1.day + " Ep " + LARP_EP1.episode + ": " + LARP_EP1.title + "</b><br>"
+    + "<i>" + LARP_EP1.standing_disclaimer + "</i><br><br>"
+    + "<b>OPENING:</b> " + LARP_EP1.opening + "<br><br>"
+    + "<b>PLAY TODAY:</b><br>" + LARP_EP1.play_today.join("<br>") + "<br><br>"
+    + "<b>SYNTHETIC ON DUTY:</b> " + LARP_EP1.synthetic_on_duty + "<br>"
+    + "<b>BADGE:</b> " + LARP_EP1.badge + "<br>"
+    + "<b>GOLDEN RULE:</b> " + LARP_EP1.golden_rule + "<br><br>"
+    + "<b>CHAT POLL:</b> " + LARP_EP1.chat_poll + "<br><br>"
+    + "<b>MID-SHOW:</b> " + LARP_EP1.mid_cta + "<br><br>"
+    + "<b>CLOSING:</b> " + LARP_EP1.closing + "<br><br>"
+    + "<b>PINNED:</b> " + LARP_EP1.pinned_comment;
+  try {
+    const tickSpan = document.querySelector("#tick span");
+    if (tickSpan) tickSpan.textContent = "H.A.L.L.EL LARP Day 2 Ep 1: CHOOSE YOUR PERSONA | Drop PERSONA NAME + 3-LINE CREED | " + LARP_EP1.mid_cta + " | TIKTOK LIVE - MONROVIA TO ZION - PHARAOH CHAMBER";
+  } catch (e) {}
+}
+
 function renderLarpCtas(segIdx) {
   const full = window.__shenzhenFull || null;
   if (!full) return;
