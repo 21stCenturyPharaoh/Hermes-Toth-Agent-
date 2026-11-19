@@ -1,140 +1,73 @@
 {
-  "title": "SHENZHEN SETS THE TABLE",
-  "subtitle": "Global Footprints | Nefertiti + DJ Dehrtay Dog",
+  "title": "Global Footprints — 19 November 2026: Shenzhen Summit, Liberia's Maritime Voice & a Changing American Landscape",
+  "date": "2026-11-19",
+  "narrator": "Nefertiti",
+  "dj": "DJ Dehrtay Dog",
+  "segment_seconds": 60,
+  "standing_disclaimer": "The LARP is a game. The real Volunteer Exchange Portal remains the operational system for actual volunteer registration, missions, records, and recognition. The LARP adds the story; the Portal provides the structure. LARP points, badges, titles, and ranks are fictional heraldry — they carry no real-world authority, status, or guaranteed income. Actual volunteer activity and records remain subject to their actual terms, documentation, and responsible parties.",
   "segments": [
     {
-      "role": "welcome",
-      "title": "SHENZHEN SETS THE TABLE",
-      "expression": "welcome",
-      "volume": 70,
-      "dialogue": "Welcome to Global Footprints. I'm Nefertiti, with DJ Dehrtay Dog. Three world powers plan to meet in Shenzhen this week."
+      "idx": 0,
+      "title": "Opening & Date",
+      "narration": "Good day from the Pharaoh Chamber. This is Global Footprints, Micdom AI Records, 19 November 2026. We examine verified developments, reported proposals, and the questions they raise for Africa and the wider world. DJ Dehrtay Dog — set the tone.",
+      "dj_cue": "Measured, resonant instrumental intro — steady pulse, lights rising.",
+      "cta": "Welcome to the Pharaoh Chamber. Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords so you never miss the next broadcast."
     },
     {
-      "role": "scripture_question",
-      "title": "COALITION INTERCEPTION REPORT",
-      "expression": "thinking",
-      "volume": 70,
-      "dialogue": "Saudi-led coalition says it intercepted two ballistic missiles toward Riyadh and three drones over the Eastern Province. This claim is not independently verified."
+      "idx": 1,
+      "title": "Lead Story: Historic Trilateral in Shenzhen",
+      "classification": "VERIFIED (arrivals, greetings, scheduled talks) / REPORTED (specific agenda outcomes still developing)",
+      "sources": "【entity-Reuters¦canonical_name=Reuters】, 【entity-The Guardian¦canonical_name=The Guardian】, 【entity-PBS NewsHour¦canonical_name=PBS NewsHour】, multiple wire reports 18-19 November 2026.",
+      "narration": "In Shenzhen, Chinese President Xi Jinping personally greeted U.S. President 【entity-Donald Trump¦canonical_name=Donald Trump】 on the tarmac — a rare gesture. Russian President Vladimir Putin joined them for handshakes, a group photo, and a banquet on the sidelines of the APEC summit. Formal trilateral talks are the focus of today. Reported topics include the war in Ukraine, the situation involving Iran, nuclear arms control, trade, and artificial intelligence. Xi and Putin earlier delivered speeches criticizing protectionism and sanctions. This is the first time these three leaders have sat down together in this format.",
+      "discussion": "What does a first-ever formal trilateral among these three powers mean for African nations that have long navigated multipolar diplomacy?",
+      "cta": "If you're following the summit coverage, tap the screen, share the Live, and send DJ Dehrtay Dog a Rose if you'd like — optional."
     },
     {
-      "role": "history_context",
-      "title": "LIBERIA TAKES THE PRESIDENCY",
-      "expression": "neutral",
-      "volume": 70,
-      "dialogue": "Liberia is scheduled to preside over the UN Security Council in December. The United Nations rotation calendar confirms the schedule."
+      "idx": 2,
+      "title": "Liberia Maritime Dialogue & UNSC Path",
+      "classification": "VERIFIED",
+      "sources": "Liberia Maritime Authority announcements, The New Dawn, GNN Liberia, Ministry of Information briefings, 17-18 November 2026.",
+      "narration": "Today in Marshall, Margibi County, Liberia hosts a high-level Global Maritime Security Dialogue under the theme of enhancing safety, security, and the welfare of seafarers. The gathering comes as Liberia prepares to assume the rotating presidency of the United Nations Security Council in December — the first time in 65 years. President Joseph Nyuma Boakai is expected to deliver a keynote. The dialogue addresses piracy, cyber threats, illegal fishing, and the responsibilities that come with Liberia's position as a major flag state. This builds on the recent adoption of Liberia's Feminist Foreign Policy.",
+      "hesed_note": "Maritime insecurity directly affects African coastal economies, food supply chains, and the safety of seafarers from the continent.",
+      "discussion": "How can Liberia use its upcoming Security Council presidency and maritime leadership to elevate African priorities on the global stage?",
+      "cta": "Where are you watching from? Drop your country in the chat."
     },
     {
-      "role": "hebrews_teaching",
-      "title": "DONBAS FOR NATO?",
-      "expression": "breaking",
-      "volume": 70,
-      "dialogue": "Zelenskyy says US negotiators raised Donbas withdrawal in connection with NATO membership. He calls it an idea, not agreed policy. What should Ukrainians decide?"
+      "idx": 3,
+      "title": "Additional Story: U.S. Political Shift",
+      "classification": "VERIFIED (election outcomes and nomination)",
+      "sources": "AP, 【entity-NPR¦canonical_name=NPR】, multiple U.S. reports 18 November 2026.",
+      "narration": "In the United States, Democrat Mary Peltola has won the Alaska Senate race, contributing to a projected 56-seat Democratic majority in the new Senate. 【entity-House Democrats¦canonical_name=House Democrats】 have formally nominated 【entity-Hakeem Jeffries¦canonical_name=Hakeem Jeffries】 for Speaker of the House, positioning him to become the first Black lawmaker to hold that role. These developments follow the recent midterm elections and will shape the legislative landscape the incoming Congress inherits.",
+      "discussion": "How might shifts in U.S. congressional leadership affect African policy priorities, trade, and diplomatic engagement?",
+      "cta": "Visit the Human Rights Angels Registry and Affiliate Programs at registry.pharaoh-conglomerate.org. Extended broadcasts live on Rumble @MicdomAIRecords and YouTube @MicdomAIRecords. Discover music on RouteNote under MicdomAIRecords. Optional support: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00."
     },
     {
-      "role": "signoff",
-      "title": "HANDOFF TO THE MUSIC",
-      "expression": "signoff",
-      "volume": 70,
-      "dialogue": "That's Global Footprints. I'm Nefertiti. DJ Dehrtay Dog takes it from here. Stay with Micdom AI Records and enjoy the music."
+      "idx": 4,
+      "title": "Closing Summary & Audience Questions",
+      "narration": "Today we noted a rare trilateral gathering in Shenzhen, Liberia's concrete steps on maritime security and its path to the Security Council presidency, and a shifting American political map. Facts remain facts. Reports remain reports. Analysis remains analysis. Audience discussion questions: 1. Which of today's developments most directly touches African diplomatic or economic interests? 2. What questions should smaller nations ask when great powers meet without them at the table? 3. How should Liberians and the wider continent engage the opportunity of a Security Council presidency?",
+      "dj_cue": "Measured outro instrumental. Lights lower.",
+      "cta": "Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world."
+    },
+    {
+      "idx": 5,
+      "title": "H.A.L.L.EL LARP Ep 1: Choose Your Persona",
+      "type": "larp",
+      "narration": "Every legend starts with a name that someone chose on purpose. Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords. Tonight, stand before the Mirror of First Names. You may enter as yourself — the bravest persona of all — or personify a Humanitarian Angel or Lady inspired by the Autonomous Synthetic Assets, the seven Angel Specialists, or the creative identities connected to Micdom Records and its 88s. Play Today: 1. Choose your name, emblem, Order, and Consulate. 2. Write a 3-line persona creed: why does your character serve? 3. Pick one of DJ Dehrtay Dog's expression reactions as your signature look. Synthetic on Duty: Raguel — profile verification and compliance. Badge: The Named (in-game only). Golden Rule: This isn't about pretending to have powers you don't have. It's about imagination, teamwork, leadership, creativity, and service. Chat Poll: Drop your PERSONA NAME + 3-LINE CREED. Best creed gets pinned.",
+      "cta": "Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world. The Mirror remains open."
     }
   ],
   "larp_posts": {
-    "day": 1,
-    "episode": 0,
-    "title": "WELCOME TO HALLEL",
-    "opening_lines": "Travelers of the Chamber — tonight we step through a gate that isn’t made of stone. Beyond the missions you register and the hours you log, there is a story waiting to be worn. I’m Nefertiti, and I’ll be your storyteller through all thirteen chapters. Take my hand — but keep one foot in the real.",
-    "play_today": [
-      "Read all twelve Steps of the Hallel framework.",
-      "Choose your depth: observer, persona-light, or full immersion.",
-      "Shout out DJ Dehrtay Dog in chat to unlock your First Footprint welcome badge (in-game only)."
-    ],
-    "chat_poll": "Type: OBSERVER / LIGHT / FULL + your name",
-    "pinned_comment": "Day 1 – Episode 0: Welcome to Hallel. Choose OBSERVER, LIGHT, or FULL + your name. First Footprint badge is in-game only. Golden Rule: The Portal provides the structure. The LARP provides the story. You decide how deeply you enter.",
-    "closing_cta": "Choose your depth. Keep one foot in the real. Welcome to Hallel."
+    "day": 2,
+    "episode": 1,
+    "title": "CHOOSE YOUR PERSONA",
+    "chat_poll": "Drop your PERSONA NAME + 3-LINE CREED. Best creed gets pinned."
   },
   "live_ctas": [
-    {
-      "segment": 1,
-      "id": "follow",
-      "text": "Follow Micdom AI Records so you do not miss our next broadcast."
-    },
-    {
-      "segment": 2,
-      "id": "gift_rose",
-      "text": "Tap the screen, share the Live, and send DJ Dehrtay Dog a Rose if you would like. Gifts are always optional."
-    },
-    {
-      "segment": 3,
-      "id": "audience_registry",
-      "text": "Where are you watching from? Put your country in the chat. Explore the Human Rights Angels Registry and its affiliate programs at registry.pharaoh-conglomerate.org."
-    },
-    {
-      "segment": 4,
-      "id": "rumble_youtube",
-      "text": "Find Micdom AI Records on Rumble and YouTube at @MicdomAIRecords."
-    },
-    {
-      "segment": 5,
-      "id": "stripe_routenote",
-      "text": "Support our work voluntarily through our official Stripe link, and discover our music on RouteNote by searching MicdomAIRecords."
-    }
-  ],
-  "gift_ctas": [
-    {
-      "id": "rose",
-      "gift": "Rose",
-      "optional": true,
-      "text": "Send DJ Dehrtay Dog a Rose if you would like. Gifts are optional."
-    }
-  ],
-  "traffic_ctas": [
-    {
-      "id": "registry",
-      "platform": "Human Rights Angels Registry",
-      "url": "https://registry.pharaoh-conglomerate.org",
-      "text": "Explore the Registry and its affiliate programs."
-    },
-    {
-      "id": "rumble",
-      "platform": "Rumble",
-      "handle": "@MicdomAIRecords",
-      "text": "Find Micdom AI Records on Rumble at @MicdomAIRecords."
-    },
-    {
-      "id": "stripe",
-      "platform": "Stripe",
-      "url": "https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00",
-      "voluntary": true,
-      "text": "Support our work voluntarily through our official Stripe link."
-    },
-    {
-      "id": "routenote",
-      "platform": "RouteNote",
-      "artist": "MicdomAIRecords",
-      "text": "Discover Micdom AI Records music on RouteNote by searching MicdomAIRecords."
-    },
-    {
-      "id": "youtube",
-      "platform": "YouTube",
-      "handle": "@MicdomAIRecords",
-      "text": "Subscribe to Micdom AI Records on YouTube at @MicdomAIRecords."
-    }
-  ],
-  "closing_cta": "Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world.",
-  "pinned_comments": [
-    "Follow Micdom AI Records. Registry and affiliate programs: https://registry.pharaoh-conglomerate.org | Rumble + YouTube: @MicdomAIRecords | RouteNote: MicdomAIRecords",
-    "Optional support: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00. Gifts are voluntary; no Gift is required to participate."
-  ],
-  "cta_rotation": {
-    "strategy": "per-segment",
-    "repeat_consecutive": false,
-    "segment_order": [
-      1,
-      2,
-      3,
-      4,
-      5
-    ]
-  },
-  "standing_disclaimer": "The LARP is a game. The real Volunteer Exchange Portal remains the operational system for actual volunteer registration, missions, records, and recognition. The LARP adds the story; the Portal provides the structure. LARP points, badges, titles, and ranks are fictional heraldry — they carry no real-world authority, status, or guaranteed income. Actual volunteer activity and records remain subject to their actual terms, documentation, and responsible parties."
+    "Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords",
+    "Tap the screen, share the Live, send DJ Dehrtay Dog a Rose — optional",
+    "Where are you watching from? Drop your country in the chat",
+    "Registry: registry.pharaoh-conglomerate.org • Rumble & YouTube @MicdomAIRecords • Music on RouteNote • Stripe optional: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00",
+    "Follow, share, and join us again. Nefertiti + DJ Dehrtay Dog, Monrovia to the world",
+    "H.A.L.L.EL LARP Ep 1: Drop PERSONA NAME + 3-LINE CREED. Badge: The Named"
+  ]
 }
