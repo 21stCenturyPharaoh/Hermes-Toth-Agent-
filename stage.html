@@ -120,6 +120,7 @@ let metatronBaseVolume = null;
 let stageOwnerOK = false;
 let ownerAuthAttempt = 0;
 function log(m){ console.log("[chamber]", m); const l=$("log"); l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; }
+function lt_setNarration(txt){ window.__currentNarration = txt; window.__currentSegmentText = txt; }
 function lt(h,p){ $("lt").querySelector("h1").innerHTML = h; $("ltp").textContent = p || ""; }
 
 function lockStageOwner(message) {
@@ -440,9 +441,14 @@ function renderLarpEp1() {
     + "<b>MID-SHOW:</b> " + LARP_EP1.mid_cta + "<br><br>"
     + "<b>CLOSING:</b> " + LARP_EP1.closing + "<br><br>"
     + "<b>PINNED:</b> " + LARP_EP1.pinned_comment;
+    // MAIN = LARP (replaces narration where it used to be)
+    var mainEl = document.querySelector("#ltp") || document.querySelector("#lt");
+    if(mainEl){ mainEl.innerHTML = "<b>H.A.L.L.EL LARP Day " + LARP_EP1.day + " Ep " + LARP_EP1.episode + ": " + LARP_EP1.title + "</b><br>" + "<i>" + LARP_EP1.standing_disclaimer + "</i><br><br>" + "<b>OPENING:</b> " + LARP_EP1.opening + "<br><br>" + "<b>PLAY TODAY:</b><br>" + LARP_EP1.play_today.join("<br>") + "<br><br>" + "<b>BADGE:</b> " + LARP_EP1.badge + "<br>" + "<b>CHAT POLL:</b> " + LARP_EP1.chat_poll; }
+    var larpPanelEl = document.getElementById("larpPanel");
+    if(larpPanelEl){ larpPanelEl.style.display="block"; larpPanelEl.innerHTML = mainEl ? mainEl.innerHTML : ""; }
   try {
     const tickSpan = document.querySelector("#tick span");
-    if (tickSpan) tickSpan.textContent = "H.A.L.L.EL LARP Day 2 Ep 1: CHOOSE YOUR PERSONA | Drop PERSONA NAME + 3-LINE CREED | " + LARP_EP1.mid_cta + " | TIKTOK LIVE - MONROVIA TO ZION - PHARAOH CHAMBER";
+    if (tickSpan) tickSpan.textContent = (window.__currentNarration || window.__currentSegmentText || "NEFERTITI LIVE - SHENZHEN - GLOBAL FOOTPRINTS - MICROPHONE KINGDOM AI RECORDS");
   } catch (e) {}
 }
 
@@ -754,6 +760,31 @@ setTimeout(() => {
   }
 }, 600);
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+
+// OUTRO — generic slot, hides Stage, fullscreen
+function outroFullscreen(on){
+  ['tick','banner','larpPanel','ctaPanel','disclaimerPanel','stage-controls','log'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display = on ? 'none' : '';
+  });
+  const ltp=document.querySelector("#ltp");
+  if(ltp) ltp.style.display = on ? 'none' : '';
+}
+async function playOutroVideo(){
+  try{
+    const r=await fetch('episodes/assets/outro.json?v='+Date.now());
+    const outro=await r.json();
+    let v=document.getElementById('outroVideo');
+    if(!v){ v=document.createElement('video'); v.id='outroVideo'; document.body.appendChild(v); }
+    v.src=outro.video; v.controls=true; v.autoplay=true; v.playsInline=true;
+    v.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;object-fit:contain;background:#000;z-index:9999;';
+    outroFullscreen(true);
+    await v.play();
+    console.log('OUTRO PLAYING:', outro.title);
+    v.onended=()=>{ outroFullscreen(false); v.remove(); };
+  }catch(e){ console.log('OUTRO FAILED:', e); outroFullscreen(false); }
+}
+
 </script>
 <!-- === owner-vs-public - FINAL === -->
 <section id="public-stage" style="text-align:center;padding:20px 0">
@@ -868,6 +899,6 @@ body.game-mode-on #owner-panel { display:none !important; }
 })();
 </script>
 
-<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#ltp");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=0.7;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#tick span") || document.querySelector("#tick");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var txtSpeak=txt.replace(/Micdom AI Records/g,'Microphone Kingdom AI Records').replace(/\bMicdom\b/g,'Microphone Kingdom');var u=new SpeechSynthesisUtterance(txtSpeak);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=0.7;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>
