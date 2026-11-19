@@ -3,39 +3,39 @@
   "subtitle": "Nefertiti + DJ Dehrtay Dog | Shenzhen Trilateral | Liberia Maritime & UNSC Path | US Shift | LARP Ep 1",
   "segments": [
     {
-      "role": "Nefertiti",
+      "role": "welcome",
       "title": "Opening & Date",
-      "expression": "WELCOME",
-      "volume": 100,
-      "dialogue": "Good day from the Pharaoh Chamber. This is Global Footprints, Micdom AI Records, 19 November 2026. We examine verified developments, reported proposals, and the questions they raise for Africa and the wider world. DJ Dehrtay Dog — set the tone. Welcome to the Pharaoh Chamber. Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords so you never miss the next broadcast."
+      "expression": "welcome",
+      "volume": 70,
+      "dialogue": "Good day from the Pharaoh Chamber. This is Global Footprints, Micdom AI Records, 19 November 2026. We examine verified developments, reported proposals, and the questions they raise for Africa and the wider world. DJ Dehrtay Dog — set the tone. Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords so you never miss the next broadcast."
     },
     {
-      "role": "Nefertiti",
-      "title": "Lead Story: Historic Trilateral in Shenzhen",
-      "expression": "BREAKING",
-      "volume": 100,
-      "dialogue": "In Shenzhen, Chinese President Xi Jinping personally greeted U.S. President 【entity-Donald Trump¦canonical_name=Donald Trump】 on the tarmac — a rare gesture. Russian President Vladimir Putin joined them for handshakes, a group photo, and a banquet on the sidelines of the APEC summit. Formal trilateral talks are the focus of today. Reported topics include the war in Ukraine, the situation involving Iran, nuclear arms control, trade, and artificial intelligence. Xi and Putin earlier delivered speeches criticizing protectionism and sanctions. This is the first time these three leaders have sat down together in this format. VERIFIED: arrivals, greetings, scheduled talks. REPORTED: specific agenda outcomes still developing. Sources: 【entity-Reuters¦canonical_name=Reuters】, 【entity-The Guardian¦canonical_name=The Guardian】, 【entity-PBS NewsHour¦canonical_name=PBS NewsHour】, wire reports 18-19 Nov 2026. Question: What does a first-ever formal trilateral among these three powers mean for African nations that have long navigated multipolar diplomacy? Tap the screen, share the Live, send DJ Dehrtay Dog a Rose if you would like — optional."
+      "role": "scripture_question",
+      "title": "Shenzhen Trilateral",
+      "expression": "breaking",
+      "volume": 75,
+      "dialogue": "In Shenzhen, Chinese President Xi Jinping personally greeted U.S. President 【entity-Donald Trump¦canonical_name=Donald Trump】 on the tarmac — a rare gesture. Russian President Vladimir Putin joined them for handshakes, a group photo, and a banquet on the sidelines of the APEC summit. Formal trilateral talks are the focus of today. Reported topics include Ukraine, Iran, nuclear arms control, trade, and AI. Xi and Putin earlier criticized protectionism and sanctions. This is the first time these three leaders have sat down together in this format. VERIFIED: arrivals, greetings, talks. REPORTED: outcomes still developing. Sources: 【entity-Reuters¦canonical_name=Reuters】, 【entity-Guardian¦canonical_name=Guardian】, 【entity-PBS NewsHour¦canonical_name=PBS NewsHour】, 18-19 Nov 2026. What does this first trilateral mean for African nations navigating multipolar diplomacy? Tap, share, send DJ a Rose if you like — optional."
     },
     {
-      "role": "Nefertiti",
-      "title": "Liberia Maritime Dialogue & UNSC Path",
-      "expression": "BREAKING",
-      "volume": 100,
-      "dialogue": "Today in Marshall, Margibi County, Liberia hosts a high-level Global Maritime Security Dialogue under the theme of enhancing safety, security, and the welfare of seafarers. The gathering comes as Liberia prepares to assume the rotating presidency of the United Nations Security Council in December — the first time in 65 years. President Joseph Nyuma Boakai is expected to deliver a keynote. The dialogue addresses piracy, cyber threats, illegal fishing, and the responsibilities that come with Liberia's position as a major flag state. This builds on the recent adoption of Liberia's Feminist Foreign Policy. VERIFIED. Sources: Liberia Maritime Authority, The New Dawn, GNN Liberia, Ministry of Information, 17-18 Nov 2026. Maritime insecurity affects African coastal economies, food supply chains, and seafarer safety. Where are you watching from? Drop your country in the chat."
+      "role": "history_context",
+      "title": "Liberia Maritime & UNSC Path",
+      "expression": "neutral",
+      "volume": 70,
+      "dialogue": "Today in Marshall, Margibi County, Liberia hosts a high-level Global Maritime Security Dialogue on safety, security, and seafarer welfare. Liberia prepares to assume the rotating presidency of the UN Security Council in December — the first time in 65 years. President Joseph Nyuma Boakai is expected to deliver a keynote. The dialogue addresses piracy, cyber threats, illegal fishing, and Liberia's duties as a major flag state. This builds on Liberia's Feminist Foreign Policy. VERIFIED. Sources: Liberia Maritime Authority, The New Dawn, GNN Liberia, 17-18 Nov 2026. Maritime insecurity affects African coastal economies, food chains, and seafarer safety. Where are you watching from? Drop your country in the chat."
     },
     {
-      "role": "Nefertiti",
-      "title": "Additional Story: U.S. Political Shift",
-      "expression": "BREAKING",
-      "volume": 100,
-      "dialogue": "In the United States, Democrat Mary Peltola has won the Alaska Senate race, contributing to a projected 56-seat Democratic majority in the new Senate. 【entity-House Democrats¦canonical_name=House Democrats】 have formally nominated 【entity-Hakeem Jeffries¦canonical_name=Hakeem Jeffries】 for Speaker of the House, positioning him to become the first Black lawmaker to hold that role. These developments follow the recent midterm elections and will shape the legislative landscape the incoming Congress inherits. VERIFIED: election outcomes and nomination. Sources: AP, NPR, U.S. reports 18 Nov 2026. Question: How might shifts in U.S. congressional leadership affect African policy priorities, trade, and diplomatic engagement? Registry: registry.pharaoh-conglomerate.org. Rumble & YouTube @MicdomAIRecords. Music on RouteNote. Stripe optional: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00."
+      "role": "hebrews_teaching",
+      "title": "US Political Shift",
+      "expression": "thinking",
+      "volume": 70,
+      "dialogue": "In the United States, Democrat Mary Peltola has won the Alaska Senate race, contributing to a projected 56-seat 【entity-Democratic¦canonical_name=Democratic Party】 majority in the new Senate. 【entity-House Democrats¦canonical_name=House Democrats】 have formally nominated 【entity-Hakeem Jeffries¦canonical_name=Hakeem Jeffries】 for Speaker, positioning him to become the first Black lawmaker to hold that role. These follow the recent midterm elections and will shape the incoming Congress. VERIFIED: election outcomes and nomination. Sources: AP, 【entity-NPR¦canonical_name=NPR】, 18 Nov 2026. How might shifts in U.S. leadership affect African policy, trade, and diplomacy? Registry: registry.pharaoh-conglomerate.org. Rumble & YouTube @MicdomAIRecords. Music on RouteNote. Stripe optional: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00."
     },
     {
-      "role": "Nefertiti",
-      "title": "Closing Summary & Audience Questions",
-      "expression": "SIGNOFF",
-      "volume": 100,
-      "dialogue": "Today we noted a rare trilateral gathering in Shenzhen, Liberia's concrete steps on maritime security and its path to the Security Council presidency, and a shifting American political map. Facts remain facts. Reports remain reports. Analysis remains analysis. Questions: 1. Which development most directly touches African diplomatic or economic interests? 2. What questions should smaller nations ask when great powers meet without them at the table? 3. How should Liberians and the wider continent engage the opportunity of a Security Council presidency? Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world."
+      "role": "signoff",
+      "title": "Closing & Questions",
+      "expression": "signoff",
+      "volume": 70,
+      "dialogue": "Today we noted a rare trilateral in Shenzhen, Liberia's steps on maritime security and its path to the Security Council presidency, and a shifting American political map. Facts remain facts. Reports remain reports. Analysis remains analysis. Questions: Which development most touches African interests? What should smaller nations ask when great powers meet without them? How should Liberians engage the Security Council presidency? Follow, share, join us again. Nefertiti with DJ Dehrtay Dog, Monrovia to the world."
     }
   ],
   "larp_posts": {
