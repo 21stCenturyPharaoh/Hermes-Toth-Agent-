@@ -112,5 +112,13 @@
     "registry",
     "follow_close"
   ],
-  "standing_disclaimer": "The LARP is a game. The real Volunteer Exchange Portal remains the operational system for actual volunteer registration, missions, records, and recognition. The LARP adds the story; the Portal provides the structure. LARP points, badges, titles, and ranks are fictional heraldry — they carry no real-world authority, status, or guaranteed income. Actual volunteer activity and records remain subject to their actual terms, documentation, and responsible parties."
+  "standing_disclaimer": "The LARP is a game. The real Volunteer Exchange Portal remains the operational system for actual volunteer registration, missions, records, and recognition. The LARP adds the story; the Portal provides the structure. LARP points, badges, titles, and ranks are fictional heraldry — they carry no real-world authority, status, or guaranteed income. Actual volunteer activity and records remain subject to their actual terms, documentation, and responsible parties.",
+  "outro": {
+    "title": "Democracy's Eulogy",
+    "artist": "Micdom AI Records",
+    "video": "episodes/assets/democracy-eulogy-captioned.mp4",
+    "captions": "captions/democracy-eulogy.srt",
+    "duration": 170.26,
+    "note": "End-card: replaces Welcome video. Small elegant captions + Chinese breadcrumbs. Debt Ceiling Rises / Dred Scott of history corrected."
+  }
 }
