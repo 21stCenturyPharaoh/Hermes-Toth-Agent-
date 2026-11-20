@@ -23,9 +23,9 @@ html,body{height:100%;background:#000;color:var(--gold);font-family:Georgia,'Tim
 #v{width:100%;height:100%;object-fit:cover;display:block}
 #ph{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:12px;padding:12px;background:#0a0703}
 #ph em{font-size:56px;font-style:normal}
-#lt{position:absolute;left:11%;right:19%;bottom:35%;border-left:4px solid var(--gold2);background:rgba(0,0,0,.72);padding:8px 12px}
+#lt{position:absolute;left:11%;right:19%;bottom:35%;border-left:4px solid var(--gold2);background:rgba(0,0,0,.82);padding:8px 12px;max-height:40vh;overflow-y:auto;}
 #lt h1{font-size:17px;letter-spacing:.08em;color:var(--gold2)}
-#lt p{font-size:13px;color:#e9d9a0;margin-top:2px;min-height:1.2em}
+#lt p{font-size:12px;line-height:1.35;color:#e9d9a0;margin-top:2px;min-height:1.2em;max-height:32vh;overflow-y:auto;}
 #g{position:absolute;inset:0;pointer-events:none;display:none;background:linear-gradient(rgba(255,0,0,.1),rgba(255,0,0,.1)) top/100% 12.5% no-repeat}
 #g:before{content:"comments + CTA";position:absolute;left:0;right:0;bottom:0;height:34%;border-top:2px dashed #f55;color:#f88;font-size:11px;padding:4px 8px;background:rgba(255,0,0,.08)}
 #g:after{content:"gifts";position:absolute;top:0;right:0;bottom:34%;width:15%;border-left:2px dashed #f55;color:#f88;font-size:11px;padding:4px;background:rgba(255,0,0,.06)}
@@ -224,7 +224,7 @@ function show(id){
     v.pause();
     v.loop = keep;
     v.muted = !(stageOwnerOK && soundOn && touched);
-    v.volume = $("vol").value/100;
+    v.volume = Math.min(0.25, Number($("vol").value)/100);
     v.src = P[id];
     v.load();
 
@@ -312,41 +312,81 @@ const HALLEL_LINES = [
 "PHARAOH CHAMBER: So Hebrews is using him as a pattern, not a biography?",
 "PHARAOH CHAMBER: The open question is the point. Read it for yourself."
 ];
-function showHallel(i){ const el=document.getElementById("audienceFeed"); const L = window.__episodeLines || HALLEL_LINES; if(el) el.textContent = L[i] || L[0]; renderLarpCtas(i); duckDjForNarration(true); }
+
+function showHallel(i) {
+  const el = document.getElementById("audienceFeed");
+  const L = window.__episodeLines || HALLEL_LINES;
+
+  if (el) {
+    el.textContent = L[i] || L[0];
+  }
+
+  const segments =
+    window.__shenzhenFull &&
+    Array.isArray(window.__shenzhenFull.segments)
+      ? window.__shenzhenFull.segments
+      : [];
+
+  let narration =
+    segments[i] && segments[i].dialogue
+      ? segments[i].dialogue
+      : "";
+
+  // Remove separate calls-to-action from the narration lane.
+  narration = narration
+    .replace(
+      /\s*Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, and Rumble @MicdomAIRecords so you never miss the next broadcast\.?/i,
+      ""
+    )
+    .replace(
+      /\s*Tap, share, send DJ a Rose if you like — optional\.?/i,
+      ""
+    )
+    .replace(
+      /\s*Where are you watching from\? Drop your country in the chat\.?/i,
+      ""
+    )
+    .replace(
+      /\s*Registry:\s*registry\.pharaoh-conglomerate\.org[\s\S]*$/i,
+      ""
+    )
+    .replace(
+      /\s*Follow, share, and join us again\.\s*/i,
+      " "
+    );
+
+  narration = stripEntityTags(narration).trim();
+
+  if (narration) {
+    lt_setNarration(narration);
+
+    const tickSpan = document.querySelector("#tick span");
+
+    if (tickSpan) {
+      tickSpan.textContent = narration;
+    }
+  }
+
+  // CTA and disclaimer stay in their own panels.
+  renderLarpCtas(i);
+
+  duckDjForNarration(true);
+}
+
 let episodeTimer = 0;
 let isAdvancing = false;
 let lastEpisodeHTTPStatus = 0;
 let lastEpisodeError = "";
 function stopIntroLoop(){ const iv=document.getElementById("dj-welcome-video"); if(iv){ iv.loop=false; iv.onpause=null; iv.onended=()=>{ iv.style.display="none"; }; } }
-function playEpisodeOutro(){
+
+function playEpisodeOutro() {
   if (window.__outroPlayed) return;
+
   window.__outroPlayed = true;
 
-  const ov = document.getElementById("dj-welcome-video");
-  if (!ov) return;
-
-  // This long file is the episode outro only. It never uses the chair video.
-  ov.pause();
-  ov.loop = false;
-  ov.muted = !(stageOwnerOK && soundOn && touched);
-  ov.style.display = "block";
-  ov.style.position = "fixed";
-  ov.style.inset = "0";
-  ov.style.width = "100%";
-  ov.style.height = "100%";
-  ov.style.maxWidth = "none";
-  ov.style.objectFit = "contain";
-  ov.style.background = "#000";
-  ov.style.zIndex = "9999";
-  ov.src = "welcome-new-1k.mp4";
-  ov.load();
-  try { ov.currentTime = 0; } catch(e) {}
-  ov.onended = () => { ov.style.display = "none"; };
-  ov.play().catch(() => {
-    ov.muted = true;
-    ov.play().catch(() => {});
-  });
+  playOutroVideo();
 }
+
 function episodeAuto() {
   clearTimeout(episodeTimer);
   episodeTimer = setTimeout(() => {
@@ -380,7 +420,11 @@ async function advanceEpisode(source) {
     if (d.completed) {
       clearTimeout(episodeTimer);
       window.__episodeRunning = false;
-      lt("EPISODE COMPLETE", "Metatron has completed all five segments.");
+      const stageHeading = document.querySelector("#lt h1");
+      if (stageHeading) {
+        stageHeading.textContent = "EPISODE COMPLETE";
+      }
+
       log("METATRON EPISODE COMPLETED");
       playEpisodeOutro();
       return;
@@ -427,32 +471,66 @@ const LARP_EP1 = {
   mid_cta: "Visit the Human Rights Angels Registry and Affiliate Programs at registry.pharaoh-conglomerate.org. Extended content on Rumble @MicdomAIRecords and YouTube @MicdomAIRecords. Music on RouteNote under MicdomAIRecords. Optional support: https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00.",
   closing: "Follow, share, and join us again. This is Nefertiti with DJ Dehrtay Dog, broadcasting from Monrovia to the world. The Mirror remains open."
 };
+
 function renderLarpEp1() {
-  const el = document.getElementById("larpPanel");
-  if (!el) return;
-  el.innerHTML = ""
-    + "<b>H.A.L.L.EL LARP Day " + LARP_EP1.day + " Ep " + LARP_EP1.episode + ": " + LARP_EP1.title + "</b><br>"
-    + "<i>" + LARP_EP1.standing_disclaimer + "</i><br><br>"
-    + "<b>OPENING:</b> " + LARP_EP1.opening + "<br><br>"
-    + "<b>PLAY TODAY:</b><br>" + LARP_EP1.play_today.join("<br>") + "<br><br>"
-    + "<b>SYNTHETIC ON DUTY:</b> " + LARP_EP1.synthetic_on_duty + "<br>"
-    + "<b>BADGE:</b> " + LARP_EP1.badge + "<br>"
-    + "<b>GOLDEN RULE:</b> " + LARP_EP1.golden_rule + "<br><br>"
-    + "<b>CHAT POLL:</b> " + LARP_EP1.chat_poll + "<br><br>"
-    + "<b>MID-SHOW:</b> " + LARP_EP1.mid_cta + "<br><br>"
-    + "<b>CLOSING:</b> " + LARP_EP1.closing + "<br><br>"
-    + "<b>PINNED:</b> " + LARP_EP1.pinned_comment;
-    // MAIN = LARP (replaces narration where it used to be)
-    var mainEl = document.querySelector("#ltp") || document.querySelector("#lt");
-    if(mainEl){ mainEl.innerHTML = "<b>H.A.L.L.EL LARP Day " + LARP_EP1.day + " Ep " + LARP_EP1.episode + ": " + LARP_EP1.title + "</b><br>" + "<i>" + LARP_EP1.standing_disclaimer + "</i><br><br>" + "<b>OPENING:</b> " + LARP_EP1.opening + "<br><br>" + "<b>PLAY TODAY:</b><br>" + LARP_EP1.play_today.join("<br>") + "<br><br>" + "<b>BADGE:</b> " + LARP_EP1.badge + "<br>" + "<b>CHAT POLL:</b> " + LARP_EP1.chat_poll; }
-    var larpPanelEl = document.getElementById("larpPanel");
-    if(larpPanelEl){ larpPanelEl.style.display="block"; larpPanelEl.innerHTML = mainEl ? mainEl.innerHTML : ""; }
-  try {
-    const tickSpan = document.querySelector("#tick span");
-    if (tickSpan) tickSpan.textContent = (window.__currentNarration || window.__currentSegmentText || "NEFERTITI LIVE - SHENZHEN - GLOBAL FOOTPRINTS - MICROPHONE KINGDOM AI RECORDS");
-  } catch (e) {}
+  const heading =
+    "H.A.L.L.EL LARP Day " +
+    LARP_EP1.day +
+    " Ep " +
+    LARP_EP1.episode +
+    ": " +
+    LARP_EP1.title;
+
+  const html =
+    "<b>" + heading + "</b><br><br>" +
+    "<i>" + LARP_EP1.standing_disclaimer + "</i><br><br>" +
+    "<b>OPENING:</b> " + LARP_EP1.opening + "<br><br>" +
+    "<b>PLAY TODAY:</b><br>" +
+    LARP_EP1.play_today.join("<br>") + "<br><br>" +
+    "<b>SYNTHETIC ON DUTY:</b> " +
+    LARP_EP1.synthetic_on_duty + "<br><br>" +
+    "<b>BADGE:</b> " + LARP_EP1.badge + "<br><br>" +
+    "<b>GOLDEN RULE:</b> " +
+    LARP_EP1.golden_rule + "<br><br>" +
+    "<b>CHAT POLL:</b> " +
+    LARP_EP1.chat_poll + "<br><br>" +
+    "<b>MID-SHOW CTA:</b> " +
+    LARP_EP1.mid_cta + "<br><br>" +
+    "<b>CLOSING:</b> " +
+    LARP_EP1.closing + "<br><br>" +
+    "<b>PINNED COMMENT:</b> " +
+    LARP_EP1.pinned_comment;
+
+  const mainHeading = document.querySelector("#lt h1");
+  const mainBody = document.getElementById("ltp");
+  const larpPanel = document.getElementById("larpPanel");
+
+  if (mainHeading) {
+    mainHeading.textContent = heading;
+  }
+
+  if (mainBody) {
+    mainBody.innerHTML = html;
+    mainBody.scrollTop = 0;
+  }
+
+  if (larpPanel) {
+    larpPanel.style.display = "block";
+    larpPanel.innerHTML = html;
+  }
+
+  // The ticker is narration ONLY.
+  const tickSpan = document.querySelector("#tick span");
+
+  if (tickSpan) {
+    tickSpan.textContent =
+      window.__currentNarration || "";
+  }
 }
 
+
+
+renderLarpEp1();
 
 function stripEntityTags(txt) {
   if (!txt) return txt;
@@ -460,36 +538,42 @@ function stripEntityTags(txt) {
 }
 function nefertitiVoiceFor(seg) { return "Nefertiti"; }
 
+
 function renderLarpCtas(segIdx) {
   const full = window.__shenzhenFull || null;
+
   if (!full) return;
-  const larp = full.larp_posts || null;
-  const ctas = Array.isArray(full.live_ctas) ? full.live_ctas : [];
-  const larpEl = document.getElementById("larpPanel");
+
+  const ctas = Array.isArray(full.live_ctas)
+    ? full.live_ctas
+    : [];
+
   const ctaEl = document.getElementById("ctaPanel");
   const disEl = document.getElementById("disclaimerPanel");
-  if (larpEl && larp) {
-    const acts = Array.isArray(larp.play_today) ? larp.play_today.map(a => "<li>" + a + "</li>").join("") : "";
-    const opening = Array.isArray(larp.opening_lines) ? larp.opening_lines.join(" ") : (larp.opening_lines || "");
-    larpEl.innerHTML = "<b>H.A.L.L.EL SORORITY LARP — Day " + (larp.day || "1") + ", Episode " + (larp.episode || "0") + "</b><br>"
-      + "<i>" + (larp.title || "") + "</i><br>"
-      + "<p>" + opening + "</p>"
-      + (acts ? "<ol>" + acts + "</ol>" : "")
-      + (larp.chat_poll ? "<p><b>POLL:</b> " + larp.chat_poll + "</p>" : "")
-      + (larp.pinned_comment ? "<p><b>PINNED:</b> " + larp.pinned_comment + "</p>" : "");
-  }
+
   if (ctaEl) {
     const cta = ctas[Math.min(segIdx, ctas.length - 1)] || null;
-    const closing = (segIdx >= 4 && larp && larp.closing_cta) ? larp.closing_cta : "";
-    var ctaText = (typeof cta === "object" && cta) ? (cta.text || cta.title || cta.label || JSON.stringify(cta)) : cta; ctaEl.innerHTML = (ctaText ? "<b>LIVE CTA:</b> " + ctaText : "") + (closing ? "<br><b>CLOSING:</b> " + closing : "");
+
+    const ctaText =
+      typeof cta === "object" && cta
+        ? (cta.text || cta.title || cta.label || "")
+        : (cta || "");
+
+    const closing =
+      segIdx >= 4 && full.closing_cta
+        ? full.closing_cta
+        : "";
+
+    ctaEl.textContent =
+      (ctaText ? "LIVE CTA: " + ctaText : "") +
+      (closing ? "\nCLOSING: " + closing : "");
   }
-  if (disEl && full.standing_disclaimer) disEl.textContent = full.standing_disclaimer;
-  try {
-    const tick = (window.__currentNarration || window.__currentSegmentText || ''); // TICKER = Nefertiti narration, NOT LARP
-    const tickSpan = document.querySelector("#tick span");
-    if (tick && tickSpan) tickSpan.textContent = tick;
-  } catch (e) {}
+
+  if (disEl && full.standing_disclaimer) {
+    disEl.textContent = full.standing_disclaimer;
+  }
 }
+
 function duckDjForNarration(on) {
   try {
     const v = document.querySelector("video");
@@ -580,15 +664,23 @@ function applyMasterVolume(value) {
   const normalized = level / 100;
 
   $("vol").value = String(level);
-  v.volume = normalized;
-  window.__metatronNarrationVolume = normalized;
 
+  // DJ prepared video is ALWAYS capped at 25%.
+  v.volume = Math.min(0.25, normalized);
+
+  // Narration remains on its independent full-volume lane.
+  window.__metatronNarrationVolume = 1.0;
+
+  // Crowd audio follows the owner-controlled slider.
   AUDS.forEach(a => {
     try { a.volume = normalized; } catch(e) {}
   });
 
   const outro = $("dj-welcome-video");
-  if (outro) outro.volume = normalized;
+  if (outro) outro.volume = 0.25;
+
+  const outroVideo = document.getElementById("outroVideo");
+  if (outroVideo) outroVideo.volume = 0.25;
 }
 
 function setMetatronVolume(value) {
@@ -723,31 +815,80 @@ setInterval(() => { if (document.visibilityState === "visible") refreshCtl(); },
 // ---- METATRON AUTOMATION: public read-only poll; owner ARMS the session ----
 const WORKER_BASE = "https://hermes-toth-agent-worker.pharangels.workers.dev";   // e.g. "https://YOUR-WORKER.workers.dev"  (empty = automation off)
 let lastStageKey = "";
+
 async function pollStage() {
   if (!WORKER_BASE || document.visibilityState !== "visible") return;
+
   let s;
+
   try {
-    const r = await fetch(WORKER_BASE.replace(/\/+$/, "") + "/api/v1/micdom/stage/state", { cache: "no-store" });
+    const r = await fetch(
+      WORKER_BASE.replace(/\/+$/, "") +
+      "/api/v1/micdom/stage/state",
+      { cache: "no-store" }
+    );
+
     s = await r.json();
-    if (!r.ok || !s || s.ok !== true) throw new Error("bad state");
-  } catch (e) { s = { active: false, expression: "idle", audio: false, seq: 0 }; }   // safe visitor mode
-  const key = [s.active, s.expression, s.seq, s.volume].join(":");
+
+    if (!r.ok || !s || s.ok !== true) {
+      throw new Error("bad state");
+    }
+  } catch (e) {
+    s = {
+      active: false,
+      expression: "idle",
+      audio: false,
+      seq: 0
+    };
+  }
+
+  const key = [
+    s.active,
+    s.expression,
+    s.seq,
+    s.volume
+  ].join(":");
+
   if (key === lastStageKey) return;
+
   lastStageKey = key;
+
   if (!EX.some(x => x[0] === s.expression)) return;
+
   window.__stageAudio = !!(s.active && s.audio);
   window.__fromAudience = (s.source === "metatron");
-  if (s.active && s.source === "metatron" && Number.isFinite(Number(s.volume))) {
+
+  if (
+    s.active &&
+    s.source === "metatron" &&
+    Number.isFinite(Number(s.volume))
+  ) {
     setMetatronVolume(s.volume);
   } else {
     restoreMetatronVolume();
   }
-  setExp(s.expression, !!(s.active && s.expression !== "idle"));   // hold until the Worker moves on
-  if (!(s.active && s.audio)) v.muted = true;   // Chair clip audio follows the armed stage audio setting
-  if (!s.active && window.stopWelcomeVideo) window.stopWelcomeVideo();   // halt or expiry cuts the overlay
-  if(s.text){var tick=document.querySelector("#ltp");if(tick){tick.textContent=s.text;}try{if(typeof lt==="function"){lt("NEFERTITI + DJ DEHRTAY DOG LIVE", s.text);}}catch(e){}}
-  log("metatron: " + s.expression + (s.active ? "" : " (safe mode)"));
+
+  setExp(
+    s.expression,
+    !!(s.active && s.expression !== "idle")
+  );
+
+  if (!(s.active && s.audio)) {
+    v.muted = true;
+  }
+
+  if (!s.active && window.stopWelcomeVideo) {
+    window.stopWelcomeVideo();
+  }
+
+  // Stage text must not overwrite the LARP or narration ticker.
+  log(
+    "metatron: " +
+    s.expression +
+    (s.active ? "" : " (safe mode)")
+  );
 }
+
 setInterval(pollStage, 4000);
 pollStage();
 // ---- INIT ----
@@ -763,28 +904,152 @@ setTimeout(() => {
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 
 // OUTRO — generic slot, hides Stage, fullscreen
-function outroFullscreen(on){
-  ['tick','banner','larpPanel','ctaPanel','disclaimerPanel','stage-controls','log'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.style.display = on ? 'none' : '';
+
+function outroFullscreen(on) {
+  const ids = [
+    "tick",
+    "banner",
+    "prod",
+    "chair",
+    "audienceFeed",
+    "lt",
+    "g",
+    "dot",
+    "dr",
+    "stage-controls",
+    "larpPanel",
+    "ctaPanel",
+    "disclaimerPanel",
+    "log",
+    "public-stage",
+    "owner-panel"
+  ];
+
+  if (on) {
+    if (!window.__outroStageDisplays) {
+      window.__outroStageDisplays = {};
+    }
+
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+
+      if (!el) return;
+
+      if (!(id in window.__outroStageDisplays)) {
+        window.__outroStageDisplays[id] = el.style.display;
+      }
+
+      el.style.display = "none";
+    });
+
+    return;
+  }
+
+  const saved = window.__outroStageDisplays || {};
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+
+    if (!el) return;
+
+    if (id in saved) {
+      el.style.display = saved[id];
+    } else {
+      el.style.display = "";
+    }
   });
-  const ltp=document.querySelector("#ltp");
-  if(ltp) ltp.style.display = on ? 'none' : '';
+
+  window.__outroStageDisplays = null;
 }
-async function playOutroVideo(){
-  try{
-    const r=await fetch('episodes/assets/outro.json?v='+Date.now());
-    const outro=await r.json();
-    let v=document.getElementById('outroVideo');
-    if(!v){ v=document.createElement('video'); v.id='outroVideo'; document.body.appendChild(v); }
-    v.src=outro.video; v.controls=true; v.autoplay=true; v.playsInline=true;
-    v.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;object-fit:contain;background:#000;z-index:9999;';
+
+
+async function playOutroVideo() {
+  let v = null;
+
+  try {
+    const r = await fetch(
+      "episodes/assets/outro.json?v=" + Date.now(),
+      { cache: "no-store" }
+    );
+
+    if (!r.ok) {
+      throw new Error("Outro manifest HTTP " + r.status);
+    }
+
+    const outro = await r.json();
+
+    if (!outro || !outro.video) {
+      throw new Error("Outro manifest has no video.");
+    }
+
+    v = document.getElementById("outroVideo");
+
+    if (!v) {
+      v = document.createElement("video");
+      v.id = "outroVideo";
+      document.body.appendChild(v);
+    }
+
+    v.pause();
+    v.src = outro.video;
+    v.controls = true;
+    v.autoplay = true;
+    v.playsInline = true;
+    v.volume = 0.25;
+    v.muted = !(stageOwnerOK && soundOn && touched);
+
+    v.style.cssText =
+      "position:fixed;" +
+      "inset:0;" +
+      "width:100vw;" +
+      "height:100vh;" +
+      "object-fit:contain;" +
+      "background:#000;" +
+      "z-index:99999;";
+
+    // Restore Stage on either completion or video failure.
+    v.onended = function() {
+      outroFullscreen(false);
+      v.remove();
+      window.__outroPlayed = false;
+      log("OUTRO COMPLETED: STAGE RESTORED");
+    };
+
+    v.onerror = function() {
+      outroFullscreen(false);
+      v.remove();
+      window.__outroPlayed = false;
+      log("OUTRO VIDEO ERROR: STAGE RESTORED");
+    };
+
     outroFullscreen(true);
-    await v.play();
-    console.log('OUTRO PLAYING:', outro.title);
-    v.onended=()=>{ outroFullscreen(false); v.remove(); };
-  }catch(e){ console.log('OUTRO FAILED:', e); outroFullscreen(false); }
+    v.load();
+
+    try {
+      await v.play();
+    } catch (playError) {
+      // Retry muted if the browser blocks autoplay with sound.
+      v.muted = true;
+      await v.play();
+    }
+
+    log("OUTRO PLAYING: " + (outro.title || "Current outro"));
+  } catch (e) {
+    outroFullscreen(false);
+
+    if (v) {
+      v.remove();
+    }
+
+    window.__outroPlayed = false;
+
+    log(
+      "OUTRO FAILED — STAGE RESTORED: " +
+      (e && e.message ? e.message : String(e))
+    );
+  }
 }
+
 
 </script>
 <!-- === owner-vs-public - FINAL === -->
@@ -900,6 +1165,6 @@ body.game-mode-on #owner-panel { display:none !important; }
 })();
 </script>
 
-<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#tick span") || document.querySelector("#tick");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var txtSpeak=txt.replace(/Micdom AI Records/g,'Microphone Kingdom AI Records').replace(/\bMicdom\b/g,'Microphone Kingdom');var u=new SpeechSynthesisUtterance(txtSpeak);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=0.7;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
+<script>(function(){var last="";setInterval(function(){var el=document.querySelector("#tick span") || document.querySelector("#tick");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var txtSpeak=txt.replace(/Micdom AI Records/g,'Microphone Kingdom AI Records').replace(/\bMicdom\b/g,'Microphone Kingdom');var u=new SpeechSynthesisUtterance(txtSpeak);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=1.0;level=1.0;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
 </body>
 </html>

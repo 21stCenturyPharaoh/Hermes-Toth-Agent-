@@ -1,0 +1,198 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Global Footprints — Player</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:#fff;font-family:system-ui,sans-serif}
+#ticker{background:#d4a017;color:#000;overflow:hidden;white-space:nowrap;padding:10px;font-weight:700}
+#ticker span{display:inline-block;padding-left:100%;animation:t 26s linear infinite}
+@keyframes t{to{transform:translateX(-100%)}}
+#main{padding:16px;max-width:800px;margin:0 auto}
+.gold{color:#d4a017}
+section{display:none}section.on{display:block}
+#stageVideo{width:100%;max-height:78vh;background:#000}
+#djVideo{width:100%;max-height:55vh;background:#000;display:none}
+#djFallback{display:none;padding:40px 10px;text-align:center;border:1px dashed #d4a017;color:#d4a017}
+.btn{background:#d4a017;color:#000;border:0;padding:14px 20px;font-weight:800;margin:8px 6px 8px 0;font-size:1rem}
+.err{color:#ff7777}
+#castText{font-size:1.15rem;line-height:1.5}
+#expTag{color:#d4a017;font-size:.85rem;letter-spacing:.1em}
+</style></head><body>
+<div id="ticker"><span id="tickText">GLOBAL FOOTPRINTS - MICROPHONE KINGDOM AI RECORDS</span></div>
+<div id="main">
+<section id="s0" class="on">
+  <h1 id="title" class="gold">Global Footprints</h1>
+  <p id="status">Loading release…</p>
+  <button class="btn" id="startBtn" disabled>▶ START</button>
+</section>
+<section id="s1">
+  <h2 class="gold">Nefertiti + DJ Dehrtay Dog</h2>
+  <video id="djVideo" playsinline></video>
+  <div id="djFallback"></div>
+  <p id="expTag"></p>
+  <p id="castText"></p>
+  <button class="btn" id="skipBtn">SKIP LEAD-IN</button>
+</section>
+<section id="s2">
+  <video id="stageVideo" controls playsinline></video>
+</section>
+<section id="s3">
+  <div id="larp"></div>
+  <div id="report"></div>
+  <button class="btn" id="replayBtn">↻ REPLAY</button>
+</section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let REL=null,EP=null,MED=null,skipLead=null,leadRun=0,expToken=0,DJ_AUDIO=false;
+
+// Same alias map and clip search order as the legacy stage
+const DJ_MAP={idle:'idle',welcome:'welcome',scripture:'thinking',history:'neutral',hebrews:'breaking',signoff:'signoff',question:'thinking',open:'breaking',shocked:'shocked',neutral:'neutral',thinking:'thinking',breaking:'breaking',nodding:'nodding'};
+const CLIP={};
+function probe(p){return new Promise(res=>{const t=document.createElement('video');t.preload='metadata';t.muted=true;t.onloadedmetadata=()=>res(true);t.onerror=()=>res(false);t.src=p;});}
+function findClip(id){
+  if(CLIP[id])return CLIP[id];
+  const cid=DJ_MAP[id]||id;
+  const paths=['dj/'+cid+'.mp4','dj/expressions-v2/'+cid+'.mp4',cid+'.mp4'];
+  CLIP[id]=(async()=>{for(const p of paths){if(await probe(p))return p;}return null;})();
+  return CLIP[id];
+}
+async function setExp(id){
+  id=String(id||'neutral').toLowerCase();
+  const my=++expToken;
+  $('expTag').textContent='expression: '+id;
+  const path=await findClip(id);
+  if(my!==expToken)return;
+  const d=$('djVideo'),fb=$('djFallback');
+  if(!path){d.pause();d.style.display='none';fb.textContent=id.toUpperCase()+' — clip missing';fb.style.display='block';return;}
+  fb.style.display='none';d.style.display='block';
+  const idle=(DJ_MAP[id]||id)==='idle';
+  d.pause();d.loop=idle;d.muted=!DJ_AUDIO;d.volume=0.25;
+  d.onended=idle?null:()=>setExp('idle');
+  d.src=path;d.load();
+  try{d.currentTime=0;}catch(e){}
+  d.play().catch(()=>{});
+}
+
+function strip(s){
+  return String(s==null?'':s)
+    .replace(/[\[【]entity-([^¦|\]】]+)[¦|][^\]】]*[\]】]/g,'$1')
+    .replace(/[\[【]entity-[^\]】]*[\]】]/g,'')
+    .replace(/\s{2,}/g,' ').trim();
+}
+function speak(s){
+  return strip(s).replace(/Micdom AI Records/g,'Microphone Kingdom AI Records').replace(/\bMicdom\b/g,'Microphone Kingdom');
+}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
+function show(n){document.querySelectorAll('section').forEach((s,i)=>s.classList.toggle('on',i===n));}
+function safePath(p){
+  if(!p||!/^[\w\-./]+$/.test(p)||p.includes('..')||p.startsWith('/'))return null;
+  return p;
+}
+async function getJSON(u){const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(u+' → '+r.status);return r.json();}
+async function resolveBase(){
+  const re=/^releases\/[a-z0-9-]+$/i;
+  const q=new URLSearchParams(location.search).get('release');
+  if(q){if(!re.test(q))throw new Error('Invalid release path');return q;}
+  try{const p=(await getJSON('releases/latest.json')).path;if(re.test(p))return p;}catch(e){}
+  return 'releases/demo-democracy-eulogy';
+}
+function srt2vtt(s){return 'WEBVTT\n\n'+s.replace(/\r/g,'').replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g,'$1.$2');}
+
+async function init(){
+  try{
+    const base=await resolveBase();
+    REL=await getJSON(base+'/release.json');
+    EP=await getJSON(base+'/episode.json');
+    MED=await getJSON(base+'/media.json');
+    $('title').textContent=REL.title+' — Micdom AI Records';
+    $('tickText').textContent=strip(EP.castLeadIn.ticker||EP.castLeadIn.text);
+    const vp=safePath(MED.video||(EP.musicVideo&&EP.musicVideo.file));
+    if(!vp)throw new Error('Missing or unsafe video path');
+    const v=$('stageVideo');v.src=vp;
+    const cp=safePath(MED.captions);
+    if(cp){
+      try{
+        const r=await fetch(cp);
+        if(r.ok){
+          const tr=document.createElement('track');
+          tr.kind='captions';tr.label='Captions';tr.srclang='en';tr.default=true;
+          tr.src=URL.createObjectURL(new Blob([srt2vtt(await r.text())],{type:'text/vtt'}));
+          v.appendChild(tr);
+        }
+      }catch(e){}
+    }
+    ['idle','welcome','neutral','thinking','nodding','shocked','breaking','signoff'].forEach(findClip);
+    $('status').textContent='Release ready: '+REL.releaseId;
+    $('startBtn').disabled=false;
+  }catch(e){
+    $('status').textContent='Could not load release: '+e.message;
+    $('status').className='err';
+  }
+}
+
+function phase1(){
+  show(1);
+  const lead=EP.castLeadIn;
+  DJ_AUDIO=!!lead.djClipAudio;
+  const cues=(Array.isArray(lead.cues)&&lead.cues.length)?lead.cues:[{say:lead.text,expression:'welcome'}];
+  const run=++leadRun;let i=0,t=null;
+  skipLead=()=>{
+    if(run!==leadRun)return;
+    leadRun++;clearTimeout(t);
+    try{speechSynthesis.cancel();}catch(e){}
+    setExp('idle');
+    phase2();
+  };
+  const step=()=>{
+    if(run!==leadRun)return;
+    if(i>=cues.length){skipLead();return;}
+    const c=cues[i++];
+    const txt=strip(c.say);
+    $('castText').textContent=txt;
+    setExp(c.expression||'neutral');
+    let adv=false;
+    const go=()=>{if(adv||run!==leadRun)return;adv=true;clearTimeout(t);step();};
+    try{
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(speak(c.say));
+      u.rate=0.9;u.pitch=0.8;u.onend=go;u.onerror=go;
+      speechSynthesis.speak(u);
+      t=setTimeout(go,Math.max(6000,txt.length*120));
+    }catch(e){t=setTimeout(go,4000);}
+  };
+  step();
+}
+function phase2(){
+  show(2);
+  const v=$('stageVideo');
+  v.currentTime=0;
+  v.onended=phase3;
+  v.play().catch(()=>{});
+}
+function phase3(){
+  const L=EP.larp,lp=$('larp');lp.replaceChildren();
+  lp.append(el('h2','gold',strip(L.title)));
+  const d=el('p');d.append(el('i','',strip(L.standing_disclaimer)));lp.append(d);
+  [['POLL: ',L.poll],['PINNED: ',L.pinned_comment]].forEach(([k,t])=>{
+    const p=el('p');p.append(el('b','',k),document.createTextNode(strip(t)));lp.append(p);
+  });
+  const rp=$('report');rp.replaceChildren(el('h3','gold','RELEASE REPORT'));
+  const appr=typeof REL.ownerApproval==='string'?REL.ownerApproval:(REL.ownerApproval&&REL.ownerApproval.status)||'PENDING';
+  const dest=Array.isArray(REL.destinations)
+    ?REL.destinations.map(n=>[n,'NOT VERIFIED'])
+    :Object.entries(REL.destinations||{}).map(([n,v])=>[n,(v.status||'NOT_PUBLISHED')+(v.url?' — '+v.url:'')]);
+  const rows=[
+    ['Release',REL.releaseId],['Status',REL.status],['Owner approval',appr],
+    ['Duration',(MED.duration||0)+' s'],['Size',((MED.size||0)/1048576).toFixed(1)+' MB'],
+    ['Resolution',MED.resolution||'—'],['SHA-256',MED.sha256?MED.sha256.slice(0,12)+'…':'—'],
+    ...dest.map(([n,s])=>['→ '+n,s])
+  ];
+  rows.forEach(([k,v])=>{const p=el('p');p.append(el('b','',k+': '),document.createTextNode(String(v)));rp.append(p);});
+  show(3);
+}
+$('startBtn').onclick=phase1;
+$('skipBtn').onclick=()=>skipLead&&skipLead();
+$('replayBtn').onclick=phase1;
+init();
+</script></body></html>
