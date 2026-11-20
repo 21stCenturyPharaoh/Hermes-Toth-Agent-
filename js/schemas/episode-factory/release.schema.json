@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schemaVersion": "1.0.0",
+  "title": "Micdom Episode Factory Release",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "episodeId",
+    "releaseTitle",
+    "artist",
+    "description",
+    "platforms",
+    "ownerApproval",
+    "distributionStatus"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "episodeId": { "type": "string" },
+    "releaseTitle": { "type": "string", "maxLength": 160 },
+    "artist": { "type": "string", "maxLength": 120 },
+    "description": { "type": "string", "maxLength": 5000 },
+    "platforms": {
+      "type": "object",
+      "properties": {
+        "micdom": { "$ref": "#/$defs/platform" },
+        "youtube": { "$ref": "#/$defs/platform" },
+        "tiktok": { "$ref": "#/$defs/platform" },
+        "rumble": { "$ref": "#/$defs/platform" }
+      }
+    },
+    "ownerApproval": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["pending", "approved", "rejected"] },
+        "approvedAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "distributionStatus": {
+      "enum": ["draft", "ready", "approved", "queued", "publishing", "published", "failed"]
+    }
+  },
+  "$defs": {
+    "platform": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": ["pending", "ready", "approved", "queued", "publishing", "published", "failed"]
+        },
+        "url": { "type": ["string", "null"] },
+        "publishedAt": { "type": ["string", "null"], "format": "date-time" },
+        "error": { "type": ["string", "null"], "maxLength": 1000 }
+      }
+    }
+  }
+}

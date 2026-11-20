@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schemaVersion": "1.0.0",
+  "title": "Micdom Episode Factory Media",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "assetId",
+    "filename",
+    "mimeType",
+    "sizeBytes",
+    "durationSeconds",
+    "width",
+    "height",
+    "sha256",
+    "storage",
+    "validation"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "assetId": { "type": "string" },
+    "filename": { "type": "string", "maxLength": 255 },
+    "mimeType": { "const": "video/mp4" },
+    "sizeBytes": { "type": "integer", "minimum": 0 },
+    "durationSeconds": { "type": ["number", "null"], "minimum": 0 },
+    "width": { "type": ["integer", "null"], "minimum": 0 },
+    "height": { "type": ["integer", "null"], "minimum": 0 },
+    "sha256": { "type": ["string", "null"] },
+    "storage": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string" },
+        "objectKey": { "type": ["string", "null"] },
+        "url": { "type": ["string", "null"] }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["pending", "passed", "failed"] },
+        "checks": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  }
+}

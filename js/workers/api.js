@@ -1,5 +1,6 @@
 import { handleStageRoute } from "./stage-cue.js";
 import { handleEpisodeRoute } from "./episode-agent.js";
+import { handleEpisodeFactoryRoute } from "./episode-factory/routes.js";
 /**
  * HERMES-TOTH AGENT
  * Hybrid Authority API — development release
@@ -38,7 +39,7 @@ function makeHeaders(origin) {
 
   if (origin && ALLOWED_ORIGINS.has(origin)) {
     headers["Access-Control-Allow-Origin"] = origin;
-    headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";
+    headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, OPTIONS";
     headers["Access-Control-Allow-Headers"] =
       "Content-Type, Authorization";
     headers["Access-Control-Max-Age"] = "86400";
@@ -662,7 +663,22 @@ export default {
         }, 200, origin);
       }
 
-      // metatron-episode-agent
+      // Micdom Episode Factory
+const factoryResponse = await handleEpisodeFactoryRoute(
+  request, env, path, method, origin,
+  {
+    jsonResponse,
+    authenticateOwner,
+    getEvidenceVault,
+    requireKV,
+    readJSONBody,
+    cleanText,
+    writeAudit
+  }
+);
+if (factoryResponse) return factoryResponse;
+
+// metatron-episode-agent
       const episodeResponse = await handleEpisodeRoute(
         request, env, path, method, origin,
         { jsonResponse, authenticateOwner, getEvidenceVault, requireKV,
@@ -683,7 +699,7 @@ export default {
       if (deviceResponse) return deviceResponse;
 
       if (path.startsWith("/api/v1/")) {
-        if (method !== "GET" && method !== "POST") {
+        if (method !== "GET" && method !== "POST" && method !== "PATCH") {
           return jsonResponse({
             ok: false,
             error: "Method not allowed"

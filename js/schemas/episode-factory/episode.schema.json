@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schemaVersion": "1.0.0",
+  "title": "Micdom Episode Factory Episode",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "episodeId",
+    "organization",
+    "title",
+    "idea",
+    "series",
+    "cast",
+    "leadIn",
+    "musicVideo",
+    "larp",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "episodeId": { "type": "string", "minLength": 1 },
+    "organization": { "const": "micdom" },
+    "title": { "type": "string", "maxLength": 160 },
+    "idea": { "type": "string", "minLength": 1, "maxLength": 3000 },
+    "series": { "type": "string", "maxLength": 120 },
+    "cast": {
+      "type": "array",
+      "items": { "type": "string", "maxLength": 120 },
+      "maxItems": 20
+    },
+    "leadIn": {
+      "type": "object",
+      "required": ["enabled", "script", "status"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "script": { "type": "string", "maxLength": 5000 },
+        "status": { "enum": ["draft", "ready", "approved"] }
+      }
+    },
+    "musicVideo": {
+      "type": "object",
+      "required": ["assetId", "filename", "mimeType", "durationSeconds"],
+      "properties": {
+        "assetId": { "type": "string" },
+        "filename": { "type": "string", "maxLength": 255 },
+        "mimeType": { "const": "video/mp4" },
+        "durationSeconds": {
+          "type": ["number", "null"],
+          "minimum": 0
+        }
+      }
+    },
+    "larp": {
+      "type": "object",
+      "required": [
+        "template",
+        "title",
+        "persona",
+        "mission",
+        "audiencePrompt",
+        "poll",
+        "disclaimer"
+      ],
+      "properties": {
+        "template": { "const": "HALLEL" },
+        "title": { "type": "string", "maxLength": 160 },
+        "persona": { "type": "string", "maxLength": 1000 },
+        "mission": { "type": "string", "maxLength": 2000 },
+        "audiencePrompt": { "type": "string", "maxLength": 1000 },
+        "poll": {
+          "type": "array",
+          "maxItems": 10,
+          "items": { "type": "string", "maxLength": 300 }
+        },
+        "disclaimer": { "type": "string", "maxLength": 1000 }
+      }
+    },
+    "status": {
+      "enum": ["draft", "validated", "packaged", "approved", "published", "archived"]
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}
