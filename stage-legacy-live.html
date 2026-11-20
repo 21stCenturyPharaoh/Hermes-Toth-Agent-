@@ -58,7 +58,7 @@ body:not(.open) #audienceFeed { bottom:12px; }
  </svg>
  <div id="banner"><b>BREAKING NEWS</b><div id="tick"><span>TIKTOK LIVE &bull; MONROVIA TO ZION &bull; LIBERIA &rarr; ASIA &rarr; WORLD &bull; PHARAOH CHAMBER &bull; SPHINX LOCKED &bull; MICDOM AI RECORDS &bull; TIKTOK &bull; RUMBLE &bull; ROUTENOTE &bull; APPLE MUSIC &bull; SPOTIFY &bull;</span></div></div>
  <div id="prod"><i>EP1</i><i>EP2</i><i>EP3</i></div>
- <div id="chair"><video id="v" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
+ <div id="chair"><video id="v" src="dj/welcome.mp4" muted loop autoplay playsinline></video><div id="ph"><em id="phE"></em><div id="phT"></div></div></div>
  <div id="audienceFeed" style="margin:8px 0 0 0;padding:8px 10px;border:1px solid #444;border-radius:8px;background:#111;font-size:14px;line-height:1.4;min-height:44px"></div>
 <div id="lt"><h1>NEFERTITI + DJ DEHRTAY DOG LIVE</h1><p id="ltp">Chamber ready</p></div>
  <div id="g"><span style="position:absolute;top:4px;left:8px;font-size:11px;color:#f88">profile + viewers</span></div>
@@ -1166,5 +1166,14 @@ body.game-mode-on #owner-panel { display:none !important; }
 </script>
 
 <script>(function(){var last="";setInterval(function(){var el=document.querySelector("#tick span") || document.querySelector("#tick");var txt=el?el.textContent.trim():"";if(txt&&txt!==last){last=txt;try{speechSynthesis.cancel();var txtSpeak=txt.replace(/Micdom AI Records/g,'Microphone Kingdom AI Records').replace(/\bMicdom\b/g,'Microphone Kingdom');var u=new SpeechSynthesisUtterance(txtSpeak);var level=Number(window.__metatronNarrationVolume);if(!Number.isFinite(level))level=1.0;level=1.0;u.volume=Math.max(0,Math.min(1,level));u.rate=0.9;u.pitch=0.8;speechSynthesis.speak(u);}catch(e){}}},1000);})();</script>
-</body>
+<script>/*DJ_DEFAULT_FALLBACK*/
+(function(){var v=document.getElementById('v');if(!v)return;
+v.volume=0.25;
+var tried=0;
+v.addEventListener('error',function(){
+  if(tried===0){tried=1;v.src='dj/neutral.mp4';v.play().catch(function(){});}
+  else{var ph=document.getElementById('ph');if(ph){ph.style.display='flex';var e=document.getElementById('phE');if(e)e.textContent='DJ';var tx=document.getElementById('phT');if(tx)tx.textContent='DJ Dehrtay Dog - clip loading';}}
+},true);
+v.play().catch(function(){});
+})();</script></body>
 </html>
