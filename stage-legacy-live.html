@@ -249,11 +249,11 @@ function show(id){
     }
   }
   else {
-    v.pause(); v.removeAttribute("src"); v.style.display = "none";
+    if (!v.getAttribute("src") && !v.currentSrc) { v.src = "dj/welcome.mp4"; } v.style.display = "block"; v.load(); v.play().catch(function(){});
     const e = EX.find(x=>x[0]===id);
     $("phE").textContent = e[2];
     $("phT").textContent = e[1] + " - clip missing";
-    $("ph").style.display = "flex";
+    $("ph").style.display = "none";
   }
 }
 const DJ_MAP = { welcome:"welcome", scripture:"thinking", history:"neutral", hebrews:"breaking", signoff:"signoff", question:"thinking", open:"breaking", shocked:"shocked", neutral:"neutral", thinking:"thinking", breaking:"breaking", nodding:"nodding" };

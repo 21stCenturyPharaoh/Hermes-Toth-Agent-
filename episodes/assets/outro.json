@@ -1,9 +1,9 @@
 {
   "slot": "outro-current",
   "title": "Democracy's Eulogy",
-  "artist": "Micdom AI Records",
+  "artist": "Microphone Kingdom AI Records",
   "video": "episodes/assets/outro-current.mp4",
   "captions": "captions/democracy-eulogy.srt",
-  "duration": 170.26,
+  "duration": 176.24,
   "note": "Template: outro-current.mp4 is ALWAYS the current end video. Swap the file + update title/captions here, Stage plays the new one. Do NOT hardcode a song title in Stage."
 }
