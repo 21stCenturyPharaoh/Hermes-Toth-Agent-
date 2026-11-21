@@ -3,3 +3,6 @@ index.backup-*
 compressed_promo.jpg
 icon-96.png
 *.backup
+episodes/assets/democracy-eulogy-captioned.mp4
+episodes/assets/*.mp4
+!episodes/assets/outro-current.mp4
