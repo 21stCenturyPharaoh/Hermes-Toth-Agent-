@@ -1,11 +1,11 @@
 {
-  "releaseId": "MICDOM-2026-11-19-DEMOCRACY-EULOGY",
   "title": "Democracy's Eulogy",
-  "artist": "Micdom AI Records",
-  "label": "Microphone Kingdom AI Records",
-  "idea": "Global Footprints Shenzhen — Democracy's Eulogy as end video / official music video",
-  "status": "READY_FOR_REVIEW",
-  "ownerApproval": "PENDING",
-  "destinations": ["TikTok-post", "Rumble", "YouTube", "Micdom-website"],
-  "note": "TikTok = regular video post, NEVER prerecorded as TikTok LIVE. RouteNote = separate audio distribution, not video."
+  "kind": "legacy-video",
+  "expected_duration_s": 176.24,
+  "intro_secs": 8,
+  "music_start_s": 8,
+  "chamber_windows": [],
+  "outro": false,
+  "captions": "captions/democracy-eulogy-fixed.srt",
+  "caption_style": "FontSize=16,Alignment=2,PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,Outline=1,Shadow=0,MarginV=40"
 }

@@ -1,11 +1,8 @@
 {
-  "releaseId": "MICDOM-2026-11-19-DEMOCRACY-EULOGY",
-  "video": "episodes/assets/outro-current.mp4",
-  "captions": "captions/democracy-eulogy.srt",
-  "duration": 170.26,
-  "size": 21550051,
-  "resolution": "720x1280",
-  "audio": "aac 96k",
-  "captionsStyle": "FontSize 16, small elegant, bottom, Chinese breadcrumbs",
-  "lyricsFixed": ["Debt Ceiling Rises", "Dred Scott of history", "dead Jim Crow-led feds", "Mob mentality", "Liberties a lie", "Snakes in the Senate", "Stink of the environment"]
+  "intro_mode": "drawtext-card",
+  "intro_lines": ["GLOBAL FOOTPRINTS", "NEFERTITI + DJ DEHRTAY DOG", "PHARAOH CHAMBER", "Democracy's Eulogy"],
+  "main_video": "Termux_Compress.mp4",
+  "main_duration_s": 170.23,
+  "main_trim_to_s": 168.24,
+  "note": "Source is 170.23s, trimmed to 168.24s to reproduce V4b 176.24s total"
 }

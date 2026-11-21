@@ -1,0 +1,11 @@
+{
+  "releaseId": "MICDOM-2026-11-19-DEMOCRACY-EULOGY",
+  "video": "episodes/assets/outro-current.mp4",
+  "captions": "captions/democracy-eulogy.srt",
+  "duration": 170.26,
+  "size": 21550051,
+  "resolution": "720x1280",
+  "audio": "aac 96k",
+  "captionsStyle": "FontSize 16, small elegant, bottom, Chinese breadcrumbs",
+  "lyricsFixed": ["Debt Ceiling Rises", "Dred Scott of history", "dead Jim Crow-led feds", "Mob mentality", "Liberties a lie", "Snakes in the Senate", "Stink of the environment"]
+}
