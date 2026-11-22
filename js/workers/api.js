@@ -1,6 +1,7 @@
 import { handleStageRoute } from "./stage-cue.js";
 import { handleEpisodeRoute } from "./episode-agent.js";
 import { handleEpisodeFactoryRoute } from "./episode-factory/routes.js";
+import { handleGoogleDriveRoute } from "./google-drive.js";
 /**
  * HERMES-TOTH AGENT
  * Hybrid Authority API — development release
@@ -663,7 +664,20 @@ export default {
         }, 200, origin);
       }
 
-      // Micdom Episode Factory
+      // Micdom Google Drive Media Vault
+const driveResponse = await handleGoogleDriveRoute(
+  request, env, path, method, origin,
+  {
+    jsonResponse,
+    authenticateOwner,
+    getEvidenceVault,
+    requireKV,
+    writeAudit
+  }
+);
+if (driveResponse) return driveResponse;
+
+// Micdom Episode Factory
 const factoryResponse = await handleEpisodeFactoryRoute(
   request, env, path, method, origin,
   {
