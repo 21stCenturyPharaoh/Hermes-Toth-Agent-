@@ -138,6 +138,15 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 #release-library video{width:100%;max-height:320px;background:#000;display:block}
 #release-library .release-card a[download]{background:#ffd700;color:#000;font-weight:900}
 
+
+#global-ticker,#larp-ticker{overflow:hidden;border:1px solid #80652c;border-radius:9px;background:#090909;color:#ffd700;margin:10px 0;padding:10px;font-weight:900}
+#global-ticker .ticker-track,#larp-ticker .ticker-track{display:block;white-space:nowrap;animation:micdomTicker 28s linear infinite}
+#larp-ticker{border-color:#554477;color:#d7b7ff;background:#100b18}
+@keyframes micdomTicker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+#public-chamber .expression-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#public-chamber .expression-grid button{min-height:48px;padding:10px;background:#111;color:#ffd700;border:1px solid #80652c;border-radius:9px;font-weight:900}
+#public-dj-expression{width:100%;max-height:480px;background:#000}
+
 </style>
 <script type="application/ld+json">
 {
@@ -173,6 +182,26 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
   <div style="font-size:13px;margin-top:2px;">Monrovia to Zion • Liberia to the World • Pharaoh Chamber</div>
 </div>
 
+
+<!-- PUBLIC PHARAOH CHAMBER — FACTORY -->
+<section class="card" id="public-chamber">
+<h2 class="gold">PHARAOH CHAMBER — 法老密室</h2>
+<div class="chamber-art"><img src="./pharaoh-chamber-final.jpg" alt="Pharaoh Chamber" onerror="this.style.display='none'"></div>
+<div class="chamber-caption"><strong>DJ DEHRTAY DOG • ASA-003 GIMEL</strong><p>Monrovia to Zion — Liberia to the World. Welcome to the Pharaoh Chamber.</p></div>
+<video id="public-dj-expression" controls playsinline preload="metadata" poster="./assets/roster/gimel_ai-dj_dehrtay-dog.jpeg"><source src="./dj/expressions-v2/welcome.mp4" type="video/mp4"></video>
+<p id="public-expression-label" class="small">DJ Dehrtay Dog — Welcome expression. Choose an expression below.</p>
+<div class="expression-grid"><button data-public-expression="welcome">WELCOME</button><button data-public-expression="idle">IDLE</button><button data-public-expression="neutral">NEUTRAL</button><button data-public-expression="nodding">NODDING</button><button data-public-expression="shocked">SHOCKED</button><button data-public-expression="thinking">THINKING</button><button data-public-expression="breaking">BREAKING</button><button data-public-expression="signoff">SIGNOFF</button></div>
+</section>
+<!-- UPPER TICKER — Nefertiti script + CTAs scroll, TTS reads it -->
+<div id="global-ticker" role="region" aria-label="Global Footprints ticker"><span class="ticker-track">BREAKING NEWS • JUDGING FREEDOM LENS: Sachs on China meetings | Blumenthal, Marandi, Macgregor on Iran | INTEL Roundtable wrap | Free speech is a natural right • Follow Micdom AI Records on TikTok, YouTube @MicdomAIRecords, Rumble @MicdomAIRecords • </span></div>
+<!-- LARP TICKER — beneath Pharaoh Chamber Chair, supplementary only -->
+<div id="larp-ticker" role="region" aria-label="LARP supplementary ticker"><span class="ticker-track">H.A.L.L.EL. LARP • SUPPLEMENTARY GAME PROGRAM • PHARAOH CHAMBER AND MICDOM AI RECORDS REMAIN THE MAIN STAGE • LARP POINTS ARE FICTIONAL HERALDRY • </span></div>
+<section class="card"><h2 class="gold">NEFERTITI — EPISODE PRESENTATION</h2><div id="nefertiti-presenter"><img src="./assets/roster/yod_ai-nefertiti.jpg" alt="Nefertiti" onerror="this.style.display='none'"><div><p class="big">Nefertiti introduces Micdom AI Records releases and Global Footprints episodes.</p><p>Nefertiti TTS reads the script. Script + CTAs scroll on the upper Breaking News ticker. DJ + Chamber are main. LARP is supplementary.</p></div></div></section>
+<section class="card" id="release-library"><h2 class="gold">MICDOM AI RECORDS — RELEASE LIBRARY • FACTORY</h2><p>Factory shelf — every Episode displays on the platform, is stored on the platform, and is downloadable from the platform.</p><div class="grid2">
+<article class="release-card"><h3 class="gold">JUDGING FREEDOM LENS — 21 NOV 2026</h3><p>Global Footprints • China Meetings, Iran Dynamics & Constitutional Guardrails</p><video controls playsinline preload="metadata" src="./releases/judging-freedom-lens/master.mp4"></video><a href="./releases/judging-freedom-lens/master.mp4" download>⬇ DOWNLOAD FACTORY MASTER</a><a href="./releases/judging-freedom-lens/master.mp4" target="_blank" rel="noopener">▶ WATCH ON PLATFORM</a></article>
+<article class="release-card"><h3 class="gold">DEMOCRACY'S EULOGY — KEPT</h3><p>Global Footprints • Micdom AI Records • Kept as-is</p><video controls playsinline preload="metadata" src="./releases/demo-democracy-eulogy/Termux_Compress.mp4"></video><a href="./releases/demo-democracy-eulogy/Termux_Compress.mp4" download>⬇ DOWNLOAD FACTORY MASTER</a></article>
+</div></section>
+<section class="card" id="hallel-public"><h2 class="gold">H.A.L.L.EL. LARP — SUPPORTING PROGRAM</h2><p>The LARP is supplementary programming. The Pharaoh Chamber, DJ Dehrtay Dog, and Micdom AI Records releases remain the main stage. <strong>The LARP is a game.</strong> LARP points, badges, titles are fictional heraldry.</p></section>
 
 <!-- ========== PRESERVED: METATRON PUBLIC FACE ========== -->
 <div class="hero">
@@ -454,7 +483,15 @@ find functions js -maxdepth 2 -type f | sort</code>
 "use strict";
 const $ = id => document.getElementById(id);
 const video = $("dj-video");
-const expressions = ["idle","welcome","shocked","neutral","nodding","breaking","thinking","signoff"];
+const expressions = ["idle"
+const publicVideo = document.getElementById("public-dj-expression");
+document.querySelectorAll("[data-public-expression]").forEach(button => {
+  button.addEventListener("click", () => {
+    const e = button.dataset.publicExpression;
+    publicVideo.pause(); publicVideo.src = "./dj/expressions-v2/" + e + ".mp4"; publicVideo.load();
+    document.getElementById("public-expression-label").textContent = "DJ Dehrtay Dog — " + e.toUpperCase() + " expression. Press Play to watch.";
+  });
+});,"welcome","shocked","neutral","nodding","breaking","thinking","signoff"];
 let ownerToken = "";
 let ownerOK = false;
 let muted = true;
