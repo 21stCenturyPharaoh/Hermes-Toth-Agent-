@@ -129,6 +129,15 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 .global-footprints a:focus{outline:4px solid #fff;outline-offset:3px}
 @media(max-width:600px){.global-footprints .global-grid{grid-template-columns:1fr}}
 
+
+/* Factory fix: DJ+Chamber are main, LARP never covers them */
+#public-chamber{position:relative;z-index:3}
+#public-dj-expression{position:relative;z-index:3}
+#larp-ticker{position:relative;z-index:1;margin-top:-2px}
+#global-ticker{position:relative;z-index:2}
+#release-library video{width:100%;max-height:320px;background:#000;display:block}
+#release-library .release-card a[download]{background:#ffd700;color:#000;font-weight:900}
+
 </style>
 <script type="application/ld+json">
 {
