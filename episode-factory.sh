@@ -44,9 +44,7 @@ build_one(){
   WORK="$(mktemp -d)"; # trap disabled for debug
 trap 'rm -rf "$WORK"' EXIT
   say "step 1/4 intro card 8s"
-  ffmpeg -nostdin -hide_banner -loglevel error -y -f lavfi -i color=c=black:s=${W}x${H}:r=$FPS:d=$INTRO_SECS -f lavfi -i anullsrc=r=44100:cl=stereo -vf "drawtext=text='GLOBAL FOOTPRINTS':fontsize=56:fontcolor=0xFFD700:x=60:y=400,drawtext=text='NEFERTITI + DJ DEHRTAY DOG':fontsize=40:fontcolor=0xFFD700:x=60:y=500,drawtext=text='PHARAOH CHAMBER':fontsize=44:fontcolor=0xFFD700:x=60:y=600,drawtext=text='Democracy\x27s Eulogy':fontsize=44:fontcolor=0xFFD700:x=60:y=700" -c:v libx264 -pix_fmt yuv420p -r $FPS -c:a aac -b:a 128k -shortest "$WORK/intro-card.mp4"
-  say "step 2/4 join intro + main"
-  ffmpeg -nostdin -hide_banner -loglevel error -y -i "$main" -t 168.24 -vf "scale=720:1280,fps=25,format=yuv420p" -c:v libx264 -preset veryfast -crf 23 -video_track_timescale 12800 -c:a aac -b:a 128k -ar 44100 -ac 2 "$WORK/main-trim.mp4"
+  ffmpeg -nostdin -hide_banner -loglevel error -y -f lavfi -i color=c=black:s=${W}x${H}:r=$FPS:d=$INTRO_SECS -f lavfi -i anullsrc=r=44100:cl=stereo -vf "fps=25,format=yuv420p" -c:v libx264 -preset veryfast -crf 23 -video_track_timescale 12800 -c:a aac -b:a 128k -ar 44100 -ac 2 "$WORK/main-trim.mp4"
   printf "file '%s'\nfile '%s'\n" "$WORK/intro-card.mp4" "$WORK/main-trim.mp4" > "$WORK/join.txt"
   ffmpeg -nostdin -hide_banner -loglevel error -y -f concat -safe 0 -i "$WORK/join.txt" -c copy "$WORK/joined-nocap.mp4"
   say "step 3/4 burn captions"
