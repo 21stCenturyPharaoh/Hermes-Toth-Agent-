@@ -29,7 +29,11 @@ function b64(bytes) {
 }
 
 function unb64(value) {
-  const binary = atob(value);
+  // Base64URL + padding fix: base64url() strips '=' padding on encode,
+  // atob() requires length % 4 == 0. Restore padding + convert URL chars.
+  const normalized = String(value).replace(/-/g, "+").replace(/_/g, "/");
+  const pad = (4 - (normalized.length % 4)) % 4;
+  const binary = atob(normalized + "=".repeat(pad));
   return Uint8Array.from(binary, c => c.charCodeAt(0));
 }
 
@@ -67,12 +71,8 @@ async function verifyState(env, state) {
   let signatureBytes;
 
   try {
-    payloadBytes = unb64(
-      parts[0].replace(/-/g, "+").replace(/_/g, "/")
-    );
-    signatureBytes = unb64(
-      parts[1].replace(/-/g, "+").replace(/_/g, "/")
-    );
+    payloadBytes = unb64(parts[0]);
+    signatureBytes = unb64(parts[1]);
   } catch {
     return false;
   }
