@@ -44,6 +44,73 @@ function randomString(size = 32) {
   return base64url(crypto.getRandomValues(new Uint8Array(size)));
 }
 
+async function signState(env, payload) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    unb64(env.GOOGLE_TOKEN_ENCRYPTION_KEY),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+
+  const bytes = new TextEncoder().encode(payload);
+  const signature = await crypto.subtle.sign("HMAC", key, bytes);
+
+  return base64url(bytes) + "." + base64url(signature);
+}
+
+async function verifyState(env, state) {
+  const parts = state.split(".");
+  if (parts.length !== 2) return false;
+
+  let payloadBytes;
+  let signatureBytes;
+
+  try {
+    payloadBytes = unb64(
+      parts[0].replace(/-/g, "+").replace(/_/g, "/")
+    );
+    signatureBytes = unb64(
+      parts[1].replace(/-/g, "+").replace(/_/g, "/")
+    );
+  } catch {
+    return false;
+  }
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    unb64(env.GOOGLE_TOKEN_ENCRYPTION_KEY),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+
+  const valid = await crypto.subtle.verify(
+    "HMAC",
+    key,
+    signatureBytes,
+    payloadBytes
+  );
+
+  if (!valid) return false;
+
+  try {
+    const payload = JSON.parse(
+      new TextDecoder().decode(payloadBytes)
+    );
+
+    const age = Date.now() - payload.issuedAt;
+
+    return Boolean(
+      payload.nonce &&
+      age >= -60000 &&
+      age <= 600000
+    );
+  } catch {
+    return false;
+  }
+}
+
 async function cryptoKey(env) {
   if (!env.GOOGLE_TOKEN_ENCRYPTION_KEY) {
     throw new Error("Encryption key is not configured");
@@ -280,7 +347,7 @@ export async function handleGoogleDriveRoute(
 
   /*
    * OAuth callback:
-   * Public endpoint protected by one-time expiring state.
+   * Public endpoint protected by signed, expiring OAuth state.
    */
   if (path === root + "/callback" && method === "GET") {
     const url = new URL(request.url);
@@ -305,26 +372,10 @@ export async function handleGoogleDriveRoute(
       );
     }
 
-    const stateKey = STATE_PREFIX + state;
-    const stateRaw = await kv.get(stateKey);
-
-    if (!stateRaw) {
+    if (!(await verifyState(env, state))) {
       return response(
         helpers,
         { ok: false, error: "OAuth state invalid or expired" },
-        401,
-        origin
-      );
-    }
-
-    await kv.delete(stateKey);
-
-    const stateData = JSON.parse(stateRaw);
-
-    if (stateData.expiresAt < Date.now()) {
-      return response(
-        helpers,
-        { ok: false, error: "OAuth state expired" },
         401,
         origin
       );
@@ -360,7 +411,9 @@ export async function handleGoogleDriveRoute(
       );
     }
 
+    const expectedEmail = "micdom.media.vault@gmail.com";
     let email = "";
+    let profileData;
 
     try {
       const profile = await fetch(
@@ -372,10 +425,30 @@ export async function handleGoogleDriveRoute(
         }
       );
 
-      if (profile.ok) {
-        email = (await profile.json()).email || "";
+      if (!profile.ok) {
+        throw new Error("Google account verification failed");
       }
-    } catch {}
+
+      profileData = await profile.json();
+    } catch {
+      return response(
+        helpers,
+        { ok: false, error: "Could not verify the Google account" },
+        502,
+        origin
+      );
+    }
+
+    email = String(profileData.email || "").trim().toLowerCase();
+
+    if (email !== expectedEmail || profileData.verified_email !== true) {
+      return response(
+        helpers,
+        { ok: false, error: "Only the verified Micdom Media Vault account is permitted" },
+        403,
+        origin
+      );
+    }
 
     const tokenRecord = {
       ...tokens,
@@ -450,13 +523,12 @@ export async function handleGoogleDriveRoute(
   }
 
   if (path === root + "/connect" && method === "POST") {
-    const state = randomString();
+    const statePayload = JSON.stringify({
+      issuedAt: Date.now(),
+      nonce: randomString()
+    });
 
-    await kv.put(
-      STATE_PREFIX + state,
-      JSON.stringify({ expiresAt: Date.now() + 600000 }),
-      { expirationTtl: 600 }
-    );
+    const state = await signState(env, statePayload);
 
     const params = new URLSearchParams({
       client_id: env.GOOGLE_CLIENT_ID,
