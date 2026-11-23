@@ -146,6 +146,9 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 #public-chamber .expression-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 #public-chamber .expression-grid button{min-height:48px;padding:10px;background:#111;color:#ffd700;border:1px solid #80652c;border-radius:9px;font-weight:900}
 #public-dj-expression{width:100%;max-height:480px;background:#000}
+.episode-player video{display:block;width:100%;max-height:75vh;object-fit:contain;background:#000;border-radius:10px}
+.episode-player p{line-height:1.65;overflow-wrap:anywhere}
+.episode-player video:focus{outline:4px solid #ffd700;outline-offset:3px}
 
 </style>
 <script type="application/ld+json">
@@ -197,47 +200,23 @@ footer{background:#050505;border-top:4px solid #ffd700;padding:16px 12px;text-al
 <!-- LARP TICKER — beneath Pharaoh Chamber Chair, supplementary only -->
 <div id="larp-ticker" role="region" aria-label="LARP supplementary ticker"><span class="ticker-track">H.A.L.L.EL. LARP • SUPPLEMENTARY GAME PROGRAM • PHARAOH CHAMBER AND MICDOM AI RECORDS REMAIN THE MAIN STAGE • LARP POINTS ARE FICTIONAL HERALDRY • </span></div>
 <section class="card"><h2 class="gold">NEFERTITI — EPISODE PRESENTATION</h2><div id="nefertiti-presenter"><img src="./assets/roster/yod_ai-nefertiti.jpg" alt="Nefertiti" onerror="this.style.display='none'"><div><p class="big">Nefertiti introduces Micdom AI Records releases and Global Footprints episodes.</p><p>Nefertiti TTS reads the script. Script + CTAs scroll on the upper Breaking News ticker. DJ + Chamber are main. LARP is supplementary.</p></div></div></section>
+<!-- MICDOM EPISODE PLAYER -->
+<section class="card episode-player" id="episode-player">
+<h2 class="gold">MICDOM AI RECORDS — EPISODE PLAYER</h2>
+<p class="big">GLOBAL FOOTPRINTS • MONROVIA TO ZION • LIBERIA TO THE WORLD</p>
+<p>Episode production sequence: Global Footprints lead-in → official music video → H.A.L.L.EL. supplementary game segment → approved outro.</p>
+<video id="episode-video" controls playsinline preload="metadata" poster="./assets/roster/gimel_ai-dj_dehrtay-dog.jpeg">
+<source src="./releases/democracy-eulogy/master.mp4" type="video/mp4">
+Your browser does not support video playback.
+</video>
+<p class="small">Current verified repository media: Democracy's Eulogy official music-video master. The complete joined Episode master is not yet verified in this repository. The Global Footprints lead-in and H.A.L.L.EL. segment remain separate production components; the tickers are HTML overlays, not burned into the video.</p>
+</section>
+
 <section class="card" id="release-library"><h2 class="gold">MICDOM AI RECORDS — RELEASE LIBRARY • FACTORY</h2><p>Factory shelf — every Episode displays on the platform, is stored on the platform, and is downloadable from the platform.</p><div class="grid2">
 <article class="release-card"><h3 class="gold">JUDGING FREEDOM LENS — 21 NOV 2026</h3><p>Global Footprints • China Meetings, Iran Dynamics & Constitutional Guardrails</p><video controls playsinline preload="metadata" src="./releases/judging-freedom-lens/master.mp4"></video><a href="./releases/judging-freedom-lens/master.mp4" download>⬇ DOWNLOAD FACTORY MASTER</a><a href="./releases/judging-freedom-lens/master.mp4" target="_blank" rel="noopener">▶ WATCH ON PLATFORM</a></article>
-<article class="release-card"><h3 class="gold">DEMOCRACY'S EULOGY — KEPT</h3><p>Global Footprints • Micdom AI Records • Kept as-is</p><video controls playsinline preload="metadata" src="./releases/demo-democracy-eulogy/Termux_Compress.mp4"></video><a href="./releases/demo-democracy-eulogy/Termux_Compress.mp4" download>⬇ DOWNLOAD FACTORY MASTER</a></article>
+<article class="release-card"><h3 class="gold">DEMOCRACY'S EULOGY — KEPT</h3><p>Global Footprints • Micdom AI Records • Kept as-is</p><video controls playsinline preload="metadata" src="./releases/democracy-eulogy/master.mp4"></video><a href="./releases/democracy-eulogy/master.mp4" download>⬇ DOWNLOAD FACTORY MASTER</a></article>
 </div></section>
 <section class="card" id="hallel-public"><h2 class="gold">H.A.L.L.EL. LARP — SUPPORTING PROGRAM</h2><p>The LARP is supplementary programming. The Pharaoh Chamber, DJ Dehrtay Dog, and Micdom AI Records releases remain the main stage. <strong>The LARP is a game.</strong> LARP points, badges, titles are fictional heraldry.</p></section>
-
-<!-- ========== PRESERVED: METATRON PUBLIC FACE ========== -->
-<div class="hero">
-<div class="sig">⬡</div>
-<div class="badge">METATRON AGENT</div>
-<div class="badge">SCRIBE</div>
-<div class="badge">STEWARD</div>
-<div class="badge">GENESIS 1:28</div>
-<h1>MICDOM AI RECORDS</h1>
-<h2>METATRON AGENT • SCRIBE • STEWARD</h2>
-<h2>NEFERTITI + DJ DEHRTAY DOG LIVE — SCRIBE OF THE LIVING GOD</h2>
-<p>DJ Dehrtay Dog live from the Pharaoh Chamber — Music, stories, and Global Footprints from Monrovia to the world.</p>
-<p class="gold">Watch the Live. Join the Chamber.</p>
-<button class="button live" onclick="goLive()">🔴 TIKTOK LIVE — DJ DEHRTAY DOG + PHARAOH CHAMBER</button>
-
-<!-- DJ Welcome Video - PUBLIC -->
-<div style="margin:16px 0;border-radius:14px;overflow:hidden">
-<video controls playsinline preload="metadata" poster="./roster-poster-doberman-1280.jpg" style="width:100%;display:block;background:#000">
-<source src="./welcome-dj-dehrtay-dog.mp4" type="video/mp4">
-Your browser does not support video. Watch DJ Dehrtay Dog on TikTok @micdom_ai_records
-</video>
-<p class="small" style="text-align:center;margin-top:8px">🐕‍🦺 DJ Dehrtay Dog — Welcome to the Pharaoh Chamber — Monrovia to the World</p>
-</div>
-<!-- /DJ Welcome Video -->
-
-<p class="small">Open the Pharaoh Chamber → Watch DJ Dehrtay Dog live.</p>
-<nav class="hero-nav" aria-label="Main navigation">
-<a href="#about-us">ABOUT US</a>
-<a href="#global-footprints">GLOBAL FOOTPRINTS 全球足迹</a>
-<a href="#pharaoh-chamber">PHARAOH CHAMBER</a>
-<a href="#hallel-status">HALLEL LARP</a>
-<a href="#gallery">VIDEO GALLERY</a>
-<a href="#artist-roster">ARTISTS</a>
-<a style="font-weight:800" href="https://donate.stripe.com/6oUdR80s82gJ1nx8N2f7i00" target="_blank" rel="noopener noreferrer">SUPPORT THE MOVEMENT</a>
-</nav>
-</div>
 
 <!-- MICDOM AI RECORDS — ABOUT US -->
 <section class="card" id="about-us">
@@ -483,15 +462,19 @@ find functions js -maxdepth 2 -type f | sort</code>
 "use strict";
 const $ = id => document.getElementById(id);
 const video = $("dj-video");
-const expressions = ["idle"
+const expressions = ["idle","welcome","shocked","neutral","nodding","breaking","thinking","signoff"];
+
 const publicVideo = document.getElementById("public-dj-expression");
 document.querySelectorAll("[data-public-expression]").forEach(button => {
   button.addEventListener("click", () => {
     const e = button.dataset.publicExpression;
-    publicVideo.pause(); publicVideo.src = "./dj/expressions-v2/" + e + ".mp4"; publicVideo.load();
-    document.getElementById("public-expression-label").textContent = "DJ Dehrtay Dog — " + e.toUpperCase() + " expression. Press Play to watch.";
+    publicVideo.pause();
+    publicVideo.src = "./dj/expressions-v2/" + e + ".mp4";
+    publicVideo.load();
+    document.getElementById("public-expression-label").textContent =
+      "DJ Dehrtay Dog — " + e.toUpperCase() + " expression. Press Play to watch.";
   });
-});,"welcome","shocked","neutral","nodding","breaking","thinking","signoff"];
+});
 let ownerToken = "";
 let ownerOK = false;
 let muted = true;
