@@ -63,52 +63,41 @@ async function signState(env, payload) {
   return base64url(bytes) + "." + base64url(signature);
 }
 
-async function verifyState(env, state) {
-  const parts = state.split(".");
-  if (parts.length !== 2) return false;
-
-  let payloadBytes;
-  let signatureBytes;
-
+async function verifyStateWhy(env, state) {
   try {
-    payloadBytes = unb64(parts[0]);
-    signatureBytes = unb64(parts[1]);
-  } catch {
-    return false;
-  }
-
-  const key = await crypto.subtle.importKey(
-    "raw",
-    unb64(env.GOOGLE_TOKEN_ENCRYPTION_KEY),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["verify"]
-  );
-
-  const valid = await crypto.subtle.verify(
-    "HMAC",
-    key,
-    signatureBytes,
-    payloadBytes
-  );
-
-  if (!valid) return false;
-
-  try {
-    const payload = JSON.parse(
-      new TextDecoder().decode(payloadBytes)
+    const parts = String(state || "").split(".");
+    if (parts.length !== 2) return "shape_" + parts.length;
+    let payloadBytes, signatureBytes;
+    try {
+      payloadBytes = unb64(parts[0]);
+      signatureBytes = unb64(parts[1]);
+    } catch {
+      return "decode";
+    }
+    const key = await crypto.subtle.importKey(
+      "raw",
+      unb64(env.GOOGLE_TOKEN_ENCRYPTION_KEY),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
     );
-
+    const valid = await crypto.subtle.verify(
+      "HMAC", key, signatureBytes, payloadBytes
+    );
+    if (!valid) return "signature";
+    const payload = JSON.parse(new TextDecoder().decode(payloadBytes));
+    if (!payload.nonce) return "nonce";
     const age = Date.now() - payload.issuedAt;
-
-    return Boolean(
-      payload.nonce &&
-      age >= -60000 &&
-      age <= 600000
-    );
-  } catch {
-    return false;
+    if (!Number.isFinite(age)) return "time_field";
+    if (age < -60000 || age > 600000) return "expired";
+    return null;
+  } catch (e) {
+    return "exception_" + (e && e.name);
   }
+}
+
+async function verifyState(env, state) {
+  return (await verifyStateWhy(env, state)) === null;
 }
 
 async function cryptoKey(env) {
@@ -351,7 +340,7 @@ export async function handleGoogleDriveRoute(
    */
   if (path === root + "/callback" && method === "GET") {
     const url = new URL(request.url);
-    const state = url.searchParams.get("state") || "";
+    const state = (url.searchParams.get("state") || "").trim().replace(/[^A-Za-z0-9_.-]/g, "").replace(/\.+$/, "");
     const code = url.searchParams.get("code") || "";
 
     if (url.searchParams.has("error")) {
@@ -372,10 +361,11 @@ export async function handleGoogleDriveRoute(
       );
     }
 
-    if (!(await verifyState(env, state))) {
+    const why = await verifyStateWhy(env, state);
+    if (why) {
       return response(
         helpers,
-        { ok: false, error: "OAuth state invalid or expired" },
+        { ok: false, error: "OAuth state invalid or expired", reason: why, stateLength: state.length },
         401,
         origin
       );
@@ -549,7 +539,9 @@ export async function handleGoogleDriveRoute(
         authorizationUrl:
           "https://accounts.google.com/o/oauth2/v2/auth?" +
           params.toString(),
-        expiresIn: 600
+        expiresIn: 600,
+        stateSelfCheck: (await verifyStateWhy(env, state)) === null,
+        stateLength: state.length
       },
       200,
       origin
