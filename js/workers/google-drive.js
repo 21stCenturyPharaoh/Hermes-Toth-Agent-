@@ -161,7 +161,7 @@ function response(helpers, data, status, origin) {
 }
 
 async function googleFetch(token, path, options = {}) {
-  const res = await fetch(DRIVE_API + path, {
+  const res = await fetch(path.startsWith("https://") ? path : DRIVE_API + path, {
     ...options,
     headers: {
       Authorization: "Bearer " + token,
@@ -734,7 +734,7 @@ export async function handleGoogleDriveRoute(
 
     const uploaded = await googleFetch(
       token.access_token,
-      "/files?uploadType=multipart&fields=id,name,mimeType,size,createdTime,webViewLink",
+      "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,mimeType,size,createdTime,webViewLink",
       {
         method: "POST",
         headers: {
